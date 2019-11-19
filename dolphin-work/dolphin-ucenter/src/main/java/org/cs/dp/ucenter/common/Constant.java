@@ -10,11 +10,11 @@ public class Constant {
     /**
      * swagger项目显示标题
      */
-    public static final String PROJECT_TITLE = "模块标题";
+    public static final String PROJECT_TITLE = "模块标题:用户中心";
     /**
      * swagger项目显示描述
      */
-    public static final String PROJECT_description = "模块描述";
+    public static final String PROJECT_description = "模块描述:用户信息管理";
     /**
      * 项目版本
      */
