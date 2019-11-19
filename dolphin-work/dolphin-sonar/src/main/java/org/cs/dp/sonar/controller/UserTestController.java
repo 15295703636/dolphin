@@ -14,6 +14,10 @@ public class UserTestController {
     @Autowired
     private IUserClient iUserClient;
 
+    /**
+     * 测试提交
+     * @return
+     */
     @RequestMapping("/test22")
     private ReturnInfo test(){
         ReturnInfo r =  iUserClient.selectUserByOrg(1,20,1);
