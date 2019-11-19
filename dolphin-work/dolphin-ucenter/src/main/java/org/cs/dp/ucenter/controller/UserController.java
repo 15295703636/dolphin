@@ -3,6 +3,7 @@ package org.cs.dp.ucenter.controller;
 import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.utils.RedisUtil;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ public class UserController {
     @RequestMapping("/getList")
     private ReturnInfo getList(@RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "2") Integer rows){
+        RedisUtil.set("testkey","12345");
+        System.out.println("testkey="+RedisUtil.get("testkey"));
         SplitPageInfo pageInfo = new SplitPageInfo();
         pageInfo.setCurrPage(page);
         pageInfo.setPerPageNum(rows);
