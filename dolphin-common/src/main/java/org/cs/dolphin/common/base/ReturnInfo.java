@@ -47,7 +47,7 @@ public class ReturnInfo implements Serializable {
      * @return
      */
     public ReturnInfo(long code, String msg) {
-        msg = msg;
+        this.msg = msg;
         returnCode = code;
     }
 
