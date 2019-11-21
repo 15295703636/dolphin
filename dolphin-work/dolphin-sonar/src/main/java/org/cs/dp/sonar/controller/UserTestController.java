@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.sonar.domain.PostTestBean;
+import org.cs.dp.sonar.domain.XxlJobBean;
+import org.cs.dp.sonar.service.ITestService;
 import org.cs.dp.ucenter.api.feign.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ public class UserTestController {
 
     @Autowired
     private IUserClient iUserClient;
+    @Autowired
+    private ITestService iTestService;
 
     @GetMapping("/getTest/{page}")
     @ApiOperation(value = "方法业务说明；例：测试Get方法", notes = "用户信息")
@@ -27,4 +31,12 @@ public class UserTestController {
     public ReturnInfo PostTest(@RequestBody PostTestBean param) {
         return new ReturnInfo();
     }
+
+    @PostMapping("/addJob")
+    @ApiOperation(value = "方法业务说明；例：添加定时任务", notes = "用户信息")
+    public ReturnInfo addJob(@RequestBody XxlJobBean param){
+        return iTestService.addJob(param);
+    }
+
+
 }
