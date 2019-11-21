@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dolphin.common.utils.MD5Util;
-import org.cs.dolphin.common.utils.RedisUtil;
-import org.cs.dolphin.common.utils.StringUtil;
+import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.User;
@@ -52,7 +50,7 @@ public class UserServiceImpl implements IUserService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_MSG);
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
-        String token = MD5Util.MD5(param.getUserName());
+        String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
         boolean result = RedisUtil.set(RedisUtil.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisUtil.USER_TOKEN_EXPIRED_TIME);
         if (!result) {
             return new ReturnInfo(MessageCode.DB_CONNECTION_EXCEPTION, Constant.EXCEPTION_MSG);
