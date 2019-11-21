@@ -15,6 +15,15 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RedisUtil {
 
+    /**
+     * 用户token路径
+     */
+    public static String USER_TOKEN_PATH = "user:token:";
+    /**
+     * 用户token有效时间
+     */
+    public static int USER_TOKEN_EXPIRED_TIME = 1800;
+
     protected static ReentrantLock lockPool = new ReentrantLock();
     protected static ReentrantLock lockJedis = new ReentrantLock();
 
@@ -145,15 +154,18 @@ public class RedisUtil {
      * @param value
      * @param seconds 以秒为单位
      */
-    public synchronized static void set(String key, String value, int seconds) {
+    public synchronized static boolean set(String key, String value, int seconds) {
+        boolean result = false;
         try {
             value = StringUtils.isBlank(value) ? "" : value;
             Jedis jedis = getJedis();
             jedis.setex(key, seconds, value);
             jedis.close();
+            result = true;
         } catch (Exception e) {
             LOGGER.error("Set keyex error : " + e);
         }
+        return result;
     }
 
     /**

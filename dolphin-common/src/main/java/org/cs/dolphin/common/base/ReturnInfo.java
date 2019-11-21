@@ -40,6 +40,17 @@ public class ReturnInfo implements Serializable {
         returnCode = MessageCode.COMMON_SUCCEED_FLAG;
     }
 
+    /**
+     * 失败构造方法
+     * @param code
+     * @param msg
+     * @return
+     */
+    public ReturnInfo(long code, String msg) {
+        msg = msg;
+        returnCode = code;
+    }
+
     public static ReturnInfo build(long status, String msg) {
         return new ReturnInfo(status, msg, null);
     }

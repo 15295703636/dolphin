@@ -57,6 +57,10 @@ public class GatewayApplication {
                 .build();
     }
 
+    @Bean
+    public Filter tokenFilter() {
+        return new Filter();
+    }
 }
 
 

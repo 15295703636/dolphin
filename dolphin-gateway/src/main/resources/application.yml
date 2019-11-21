@@ -20,3 +20,8 @@ management:
     web:
       exposure:
         include: '*'
+
+getWay:
+  white:
+    list: /v1/login,  #白名单放行
+  prefix: /api   #为网关设置一个公共的前缀

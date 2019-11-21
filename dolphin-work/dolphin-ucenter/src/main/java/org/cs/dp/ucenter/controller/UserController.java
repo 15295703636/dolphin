@@ -1,35 +1,36 @@
 package org.cs.dp.ucenter.controller;
 
-import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dolphin.common.utils.RedisUtil;
+import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@SuppressWarnings("ALL")
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/user")
+@Api(tags = "【用户信息】")
 public class UserController {
-    @Autowired
-    IUserService iUserService;
 
-    @GetMapping("/getList")
-    private ReturnInfo getList(@RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "2") Integer rows){
-        RedisUtil.set("testkey","12345");
-        System.out.println("testkey="+RedisUtil.get("testkey"));
-        SplitPageInfo pageInfo = new SplitPageInfo();
-        pageInfo.setCurrPage(page);
-        pageInfo.setPerPageNum(rows);
-        PageInfo pInfo = iUserService.selectUserByOrg(pageInfo,null);
-        ReturnInfo r = ReturnInfo.ok(pInfo.getList());
-        r.setPage(pageInfo);
-        return r;
+    @Autowired
+    private IUserService iUserService;
+
+    @PostMapping("login")
+    @ApiOperation(value = "登录接口", notes = "用户信息")
+    public ReturnInfo login(@RequestBody UPBean param) {
+        return iUserService.login(param);
+    }
+
+    @PostMapping("loginOut")
+    @ApiOperation(value = "退出接口", notes = "用户信息")
+    public ReturnInfo loginOut(HttpServletRequest request) {
+        return iUserService.loginOut(request);
     }
 
 }
