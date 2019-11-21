@@ -33,4 +33,22 @@ public class UserController {
         return iUserService.loginOut(request);
     }
 
+    @PostMapping("getUsersByOrg")
+    @ApiOperation(value = "根据组织查询用户列表", notes = "用户信息")
+    public ReturnInfo getUsersByOrg() {
+        return null;
+    }
+
+    @PostMapping("delUserById")
+    @ApiOperation(value = "根据ID删除用户信息", notes = "用户信息")
+    public ReturnInfo delUserById(@RequestBody String id) {
+        return null;
+    }
+
+    @PostMapping("editUserById")
+    @ApiOperation(value = "根据ID修改用户信息", notes = "用户信息")
+    public ReturnInfo editUserById() {
+        return null;
+    }
+
 }

@@ -18,11 +18,11 @@ public class RedisUtil {
     /**
      * 用户token路径
      */
-    public static String USER_TOKEN_PATH = "user:token:";
+    public static final String USER_TOKEN_PATH = "user:token:";
     /**
      * 用户token有效时间
      */
-    public static int USER_TOKEN_EXPIRED_TIME = 1800;
+    public static final int USER_TOKEN_EXPIRED_TIME = 1800;
 
     protected static ReentrantLock lockPool = new ReentrantLock();
     protected static ReentrantLock lockJedis = new ReentrantLock();

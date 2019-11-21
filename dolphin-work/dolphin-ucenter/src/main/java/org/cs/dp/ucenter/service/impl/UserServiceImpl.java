@@ -63,7 +63,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
         String token = request.getHeader("token");
-        RedisUtil.remove(token);
+        RedisUtil.remove(RedisUtil.USER_TOKEN_PATH + token);
         return new ReturnInfo();
     }
 
