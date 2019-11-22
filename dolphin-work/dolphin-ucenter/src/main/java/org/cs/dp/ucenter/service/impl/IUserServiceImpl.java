@@ -23,7 +23,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 @Slf4j
 @Service
-public class UserServiceImpl implements IUserService {
+public class IUserServiceImpl implements IUserService {
 
     @Autowired
     UserMapper userMapper;
