@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cs.dp.ucenter.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.UserEntity">
+<mapper namespace="org.cs.dp.ucenter.mapper.SuperUserMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.SuperUserEntity">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -15,7 +15,7 @@
             <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
         </constructor>
     </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.UserEntity">
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.SuperUserEntity">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -42,25 +42,26 @@
         <include refid="Base_Column_List"/>
         ,
         <include refid="Blob_Column_List"/>
-        from user
+        from super_user
         where user_id = #{user_id,jdbcType=INTEGER}
     </select>
+
 
     <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         ,
         <include refid="Blob_Column_List"/>
-        from user
+        from super_user
         where user_name = #{userName,jdbcType=INTEGER}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from user
+    delete from super_user
     where user_id = #{user_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.UserEntity">
-    insert into user (user_id, user_name, user_qname, 
+    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    insert into super_user (user_id, user_name, user_qname, 
       user_pwd, user_email, role_id, 
       user_statu, user_number, user_tel, 
       user_code, user_desc)
@@ -69,8 +70,8 @@
       #{user_statu,jdbcType=BIT}, #{user_number,jdbcType=VARCHAR}, #{user_tel,jdbcType=VARCHAR}, 
       #{user_code,jdbcType=VARCHAR}, #{user_desc,jdbcType=LONGVARCHAR})
   </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.UserEntity">
-        insert into user
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+        insert into super_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="user_id != null">
                 user_id,
@@ -142,8 +143,8 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.UserEntity">
-        update user
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+        update super_user
         <set>
             <if test="user_name != null">
                 user_name = #{user_name,jdbcType=VARCHAR},
@@ -178,8 +179,8 @@
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.UserEntity">
-    update user
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    update super_user
     set user_name = #{user_name,jdbcType=VARCHAR},
       user_qname = #{user_qname,jdbcType=VARCHAR},
       user_pwd = #{user_pwd,jdbcType=VARCHAR},
@@ -192,8 +193,8 @@
       user_desc = #{user_desc,jdbcType=LONGVARCHAR}
     where user_id = #{user_id,jdbcType=INTEGER}
   </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.UserEntity">
-    update user
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    update super_user
     set user_name = #{user_name,jdbcType=VARCHAR},
       user_qname = #{user_qname,jdbcType=VARCHAR},
       user_pwd = #{user_pwd,jdbcType=VARCHAR},

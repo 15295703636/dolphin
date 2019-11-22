@@ -53,8 +53,15 @@
 
         </javaClientGenerator>
 
-        <table tableName="user" domainObjectName="User" enableCountByExample="false"
+
+        <!-- ————————————————————————————重点在这————————————————————————————-->
+        <table tableName="user" domainObjectName="UserEntity"
+               enableCountByExample="false"
                enableUpdateByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="true" />
+        </table>
     </context>
 </generatorConfiguration>

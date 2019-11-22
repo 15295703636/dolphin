@@ -15,13 +15,13 @@ public class XxlJobBean {
     @ApiModelProperty(value = "任务执行CRON表达式", required = true)
     private String jobCron;
 
-    @ApiModelProperty(value = "任务描述", required = true)
+    @ApiModelProperty(value = "任务描述:开课/结束；必填", hidden= true)
     private String jobDesc;
 
     @ApiModelProperty(value = "任务执行器的ID,server端执行器页面配置好后会自动生成", hidden = true)
     private int jobGroup;
 
-    @ApiModelProperty(value = "负责人 == 创建人", hidden = true)
+    @ApiModelProperty(value = "负责人==创建人", hidden = true)
     private String author;
 
     @ApiModelProperty(value = "任务Handler名称 ：调用哪一个执行器", hidden = true)

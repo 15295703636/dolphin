@@ -10,7 +10,7 @@ import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.User;
+import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 @Slf4j
 @Service
-public class UserServiceImpl implements IUserService {
+public class IUserServiceImpl implements IUserService {
 
     @Autowired
     UserMapper userMapper;
@@ -41,12 +41,12 @@ public class UserServiceImpl implements IUserService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
         }
         //根据用户名查询用户信息，判断用户是否存在
-        User user = userMapper.selectByUserName(param.getUserName());
+        UserEntity user = userMapper.selectByUserName(param.getUserName());
         if (null == user) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_MSG);
         }
         //判断用户名密码是否正确
-        if (!user.getUserPwd().equals(param.getPassWord())) {
+        if (!user.getUser_pwd().equals(param.getPassWord())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_MSG);
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
@@ -62,6 +62,29 @@ public class UserServiceImpl implements IUserService {
     public ReturnInfo loginOut(HttpServletRequest request) {
         String token = request.getHeader("token");
         RedisUtil.remove(RedisUtil.USER_TOKEN_PATH + token);
+        return new ReturnInfo();
+    }
+
+    /**
+     * 添加用户的同时，需不需要添加组织和用户的关系
+     * @param record
+     * @return
+     */
+    @Override
+    public ReturnInfo add(UserEntity record) {
+        userMapper.insertSelective(record);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo del(Integer user_id) {
+        userMapper.deleteByPrimaryKey(user_id);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo edit(UserEntity record) {
+        userMapper.updateByPrimaryKeySelective(record);
         return new ReturnInfo();
     }
 

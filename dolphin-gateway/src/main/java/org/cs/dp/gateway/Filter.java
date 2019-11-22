@@ -40,8 +40,11 @@ public class Filter implements GlobalFilter, Ordered {
         final String requestUri = serverHttpRequest.getURI().getPath().substring(prefix.length());
         //白名单过滤
         if (!isStartWith(requestUri)) {
-            //token校验
+            //token校验,先获取url路径上的token，获取不到，从请求头中获取
             String token = serverHttpRequest.getQueryParams().getFirst("token");
+            if (null == token) {
+                token = serverHttpRequest.getHeaders().getFirst("token");
+            }
             if (StringUtil.isNull(token) || StringUtil.isNull(RedisUtil.get(RedisUtil.USER_TOKEN_PATH + token))) {
                 ServerHttpResponse response = exchange.getResponse();
                 byte[] bits = JSON.toJSONString(new ReturnInfo(-1, "Token无效请登录!")).getBytes(StandardCharsets.UTF_8);
@@ -51,6 +54,8 @@ public class Filter implements GlobalFilter, Ordered {
                 response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
                 return response.writeWith(Mono.just(buffer));
             }
+            //统一放入请求头中，业务模块从请求头中获取,降低业务数据之间的耦合
+            exchange = exchange.mutate().request(serverHttpRequest.mutate().header("token", token).build()).build();
             //刷新token有效时间
             RedisUtil.getJedis().expire(RedisUtil.USER_TOKEN_PATH + token, RedisUtil.USER_TOKEN_EXPIRED_TIME);
         }
