@@ -1,27 +1,27 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.cs.dp.ucenter.domain.User;
+import org.cs.dp.ucenter.domain.UserEntity;
 
 import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    int deleteByPrimaryKey(Integer userId);
+    int deleteByPrimaryKey(Integer user_id);
 
-    int insert(User record);
+    int insert(UserEntity record);
 
-    int insertSelective(User record);
+    int insertSelective(UserEntity record);
 
-    List<User> getList();
+    UserEntity selectByPrimaryKey(Integer user_id);
 
-    User selectByPrimaryKey(Integer userId);
+    UserEntity selectByUserName(String userName);
 
-    User selectByUserName(String userName);
+    int updateByPrimaryKeySelective(UserEntity record);
 
-    int updateByPrimaryKeySelective(User record);
+    int updateByPrimaryKeyWithBLOBs(UserEntity record);
 
-    int updateByPrimaryKeyWithBLOBs(User record);
+    int updateByPrimaryKey(UserEntity record);
 
-    int updateByPrimaryKey(User record);
+    List<UserEntity> getList();
 }
