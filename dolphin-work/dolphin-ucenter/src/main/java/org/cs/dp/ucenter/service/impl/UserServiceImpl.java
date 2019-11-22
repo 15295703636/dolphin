@@ -65,6 +65,29 @@ public class UserServiceImpl implements IUserService {
         return new ReturnInfo();
     }
 
+    /**
+     * 添加用户的同时，需不需要添加组织和用户的关系
+     * @param record
+     * @return
+     */
+    @Override
+    public ReturnInfo add(UserEntity record) {
+        userMapper.insertSelective(record);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo del(Integer user_id) {
+        userMapper.deleteByPrimaryKey(user_id);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo edit(UserEntity record) {
+        userMapper.updateByPrimaryKeySelective(record);
+        return new ReturnInfo();
+    }
+
     @Override
     public List getList() {
         return null;

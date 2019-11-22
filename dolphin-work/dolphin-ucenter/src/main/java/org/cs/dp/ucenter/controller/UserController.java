@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,16 +40,22 @@ public class UserController {
         return null;
     }
 
+    @PostMapping("add")
+    @ApiOperation(value = "添加用户信息", notes = "用户信息")
+    public ReturnInfo add(@RequestBody UserEntity param) {
+        return iUserService.add(param);
+    }
+
     @PostMapping("delUserById")
     @ApiOperation(value = "根据ID删除用户信息", notes = "用户信息")
-    public ReturnInfo delUserById(@RequestBody String id) {
-        return null;
+    public ReturnInfo delUserById(@RequestBody int id) {
+        return iUserService.del(id);
     }
 
     @PostMapping("editUserById")
     @ApiOperation(value = "根据ID修改用户信息", notes = "用户信息")
-    public ReturnInfo editUserById() {
-        return null;
+    public ReturnInfo editUserById(@RequestBody UserEntity param) {
+        return iUserService.edit(param);
     }
 
 }
