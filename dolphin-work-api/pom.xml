@@ -13,6 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>dolphin-ucenter-api</module>
+        <module>dolphin-radar-api</module>
+        <module>dolphin-sonar-api</module>
     </modules>
 
     <dependencies>

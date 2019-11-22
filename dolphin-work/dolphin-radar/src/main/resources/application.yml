@@ -1,0 +1,19 @@
+server:
+  port: 9010 #提供者的端口
+spring:
+  application:
+    name: dolphin-radar
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${nacos.server.ip}
+  rabbitmq:
+    host: ${rabbit.server.ip}
+    port: ${rabbit.server.port}
+    username: guest
+    password: guest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,4 +1,4 @@
-package org.cs.dp.sonar;
+package org.cs.dp.radar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients("org.cs.dp.*.api.feign")
-public class SonarApplication {
+public class RadarApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SonarApplication.class, args);
+        SpringApplication.run(RadarApplication.class, args);
     }
 }
