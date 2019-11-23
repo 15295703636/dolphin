@@ -23,7 +23,10 @@
     <select id="getList" resultMap="BaseResultMap" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
         select
         <include refid="Base_Column_List"/>
-        from organization
+        from organization where 1=1
+        <if test="customer_id != null and customer_id != ''">
+           and customer_id = #{customer_id}
+        </if>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

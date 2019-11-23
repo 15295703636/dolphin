@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -41,7 +42,7 @@ public class IUserServiceImpl implements IUserService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
         }
         //根据用户名查询用户信息，判断用户是否存在
-        UserEntity user = userMapper.selectByUserName(param.getUserName());
+        UserInfo user = userMapper.selectByUserName(param.getUserName());
         if (null == user) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_MSG);
         }
@@ -51,6 +52,7 @@ public class IUserServiceImpl implements IUserService {
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
+
         boolean result = RedisUtil.set(RedisUtil.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisUtil.USER_TOKEN_EXPIRED_TIME);
         if (!result) {
             return new ReturnInfo(MessageCode.DB_CONNECTION_EXCEPTION, Constant.EXCEPTION_MSG);
@@ -67,6 +69,7 @@ public class IUserServiceImpl implements IUserService {
 
     /**
      * 添加用户的同时，需不需要添加组织和用户的关系
+     *
      * @param record
      * @return
      */
@@ -89,20 +92,18 @@ public class IUserServiceImpl implements IUserService {
     }
 
     @Override
-    public List getList() {
-        return null;
+    public ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, Integer> param) {
+        SplitPageInfo splitPageInfo = param.getPage();
+        PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
+        List<UserEntity> userEntities = userMapper.getListByOrgId(param.getInfo(), ThreadLocalUserInfoUtil.get().getUser_id());
+        PageInfo p = new PageInfo(userEntities);
+        splitPageInfo.setTotals((int) p.getTotal());
+        return new ReturnInfo(splitPageInfo, userEntities);
     }
 
     @Override
-    public PageInfo selectUserByOrg(SplitPageInfo page, Map map) {
-        if (page != null) {
-            PageHelper.startPage(page.getCurrPage(), page.getPerPageNum());
-        }
-        List list = userMapper.getList();
-        PageInfo p = new PageInfo(list);
-        page.setTotals((int) p.getTotal());
-        log.info("selectUserByOrg end");
-        return p;
+    public List getList() {
+        return null;
     }
 
 }

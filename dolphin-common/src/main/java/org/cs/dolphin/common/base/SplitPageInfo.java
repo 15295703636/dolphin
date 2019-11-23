@@ -1,11 +1,13 @@
 package org.cs.dolphin.common.base;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.cs.dolphin.common.utils.StringUtil;
 
 import java.io.Serializable;
 
-
+@ApiModel(value = "分页参数")
 public class SplitPageInfo implements Serializable {
     /**
      * 注释内容
@@ -15,36 +17,43 @@ public class SplitPageInfo implements Serializable {
     /**
      * 开始记录数
      */
+    @ApiModelProperty(value = "开始记录数")
     protected int beginNum = 0;
 
     /**
      * 结束记录数
      */
+    @ApiModelProperty(value = "结束记录数")
     protected int endNum;
 
     /**
      * 分页查询的URL
      */
+    @ApiModelProperty(value = "")
     private String queryURL;
 
     /**
      * 记录总数
      */
+    @ApiModelProperty(value = "记录总数(前端不传这个字段)")
     private int totals;
 
     /**
      * 每页显示记录数
      */
+    @ApiModelProperty(value = "每页显示记录数")
     private int perPageNum;
 
     /**
      * 总页数
      */
+    @ApiModelProperty(value = "总页数")
     private int allPage;
 
     /**
      * 当前页
      */
+    @ApiModelProperty(value = "当前页")
     private int currPage;
 
     /**

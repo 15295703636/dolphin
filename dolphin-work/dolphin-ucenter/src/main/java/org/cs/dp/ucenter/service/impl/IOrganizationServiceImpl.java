@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.domain.OrganizationEntity;
 import org.cs.dp.ucenter.mapper.OrganizationMapper;
 import org.cs.dp.ucenter.service.IOrganizationService;
@@ -53,10 +54,11 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         if (null != param.getPage()) {
             PageHelper.startPage(param.getPage().getCurrPage(), param.getPage().getPerPageNum());
         }
+        param.getInfo().setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         List<OrganizationEntity> list = organizationMapper.getList(param.getInfo());
         PageInfo p = new PageInfo(list);
         param.getPage().setTotals((int) p.getTotal());
-        return new ReturnInfo(new RequestPage(param.getPage(), list));
+        return new ReturnInfo(param.getPage(), list);
     }
 
     @Override

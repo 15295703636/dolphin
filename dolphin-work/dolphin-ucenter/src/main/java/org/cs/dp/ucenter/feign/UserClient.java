@@ -1,6 +1,6 @@
 package org.cs.dp.ucenter.feign;
 
-import com.github.pagehelper.PageInfo;
+import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.ucenter.api.feign.IUserClient;
@@ -22,9 +22,6 @@ public class UserClient implements IUserClient {
         pageInfo.setCurrPage(page);
         pageInfo.setPerPageNum(rows);
         System.out.println("org_id===="+org_id);
-        PageInfo pInfo = service.selectUserByOrg(pageInfo,null);
-        ReturnInfo r = ReturnInfo.ok(pInfo.getList());
-        r.setPage(pageInfo);
-        return r;
+        return service.getUsersByOrgId(new RequestPage<>(pageInfo,org_id));
     }
 }

@@ -12,6 +12,8 @@ public interface ISuperUserService {
 
     ReturnInfo loginOut(HttpServletRequest request);
 
+    ReturnInfo add(SuperUserEntity record);
+
     ReturnInfo del(Integer user_id);
 
     ReturnInfo edit(SuperUserEntity record);

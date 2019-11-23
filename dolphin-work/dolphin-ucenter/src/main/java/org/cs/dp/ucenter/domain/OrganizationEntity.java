@@ -1,6 +1,5 @@
 package org.cs.dp.ucenter.domain;
 
-import com.fasterxml.jackson.core.TreeNode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

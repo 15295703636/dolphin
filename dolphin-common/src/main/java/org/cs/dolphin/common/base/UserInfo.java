@@ -1,29 +1,48 @@
 package org.cs.dolphin.common.base;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class UserInfo {
-    private Integer userId;
+    @ApiModelProperty(value = "ID")
+    private Integer user_id;
 
-    private String userName;
+    @ApiModelProperty(value = "用户登录名")
+    private String user_name;
 
-    private String userQname;
+    @ApiModelProperty(value = "用户名称")
+    private String user_qname;
 
-    private String userPwd;
+    @ApiModelProperty(value = "用户密码")
+    private String user_pwd;
 
-    private String userEmail;
+    @ApiModelProperty(value = "用户邮箱")
+    private String user_email;
 
-    private Integer roleId;
+    @ApiModelProperty(value = "权限类别ID")
+    private Integer role_id;
 
-    private Boolean userStatu;
+    @ApiModelProperty(value = "用户状态")
+    private Boolean user_statu;
 
-    private String userNumber;
+    @ApiModelProperty(value = "")
+    private String user_number;
 
-    private String userTel;
+    @ApiModelProperty(value = "用户手机号")
+    private String user_tel;
 
-    private String userCode;
+    @ApiModelProperty(value = "身份证号")
+    private String user_code;
 
-    private String userDesc;
+    @ApiModelProperty(value = "租户ID")
+    private Integer customer_id;
+
+    @ApiModelProperty(value = "组织ID")
+    private Integer org_id;
+
+    @ApiModelProperty(value = "")
+    private String user_desc;
+
 
 }

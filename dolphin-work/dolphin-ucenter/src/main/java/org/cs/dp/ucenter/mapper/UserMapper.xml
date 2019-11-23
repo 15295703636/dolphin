@@ -31,7 +31,7 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
+    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number,
     user_tel, user_code
   </sql>
     <sql id="Blob_Column_List">
@@ -46,13 +46,12 @@
         where user_id = #{user_id,jdbcType=INTEGER}
     </select>
 
-    <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
-        select
-        <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
-        from user
-        where user_name = #{userName,jdbcType=INTEGER}
+    <select id="selectByUserName" parameterType="java.lang.String" resultType="org.cs.dolphin.common.base.UserInfo">
+       SELECT uo.*,org.customer_id FROM
+        (SELECT u.*, o.org_id FROM USER u
+            LEFT JOIN user2org o ON u.user_id = o.user_id where user_name = #{userName,jdbcType=INTEGER}
+        ) uo
+        LEFT JOIN organization org ON org.org_id = uo.org_id
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -205,4 +204,25 @@
       user_code = #{user_code,jdbcType=VARCHAR}
     where user_id = #{user_id,jdbcType=INTEGER}
   </update>
+
+    <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.UserEntity">
+        select u.user_id,
+               u.user_name,
+               u.user_qname,
+               u.user_pwd,
+               u.user_email,
+               u.role_id,
+               u.user_statu,
+               u.user_number,
+               u.user_tel,
+               u.user_code,
+               u.user_desc from user2org uo
+        LEFT JOIN USER u ON uo.user_id = u.user_id
+        WHERE
+        <![CDATA[
+            0<(SELECT uo.org_id FROM user2org uo WHERE uo.org_id = #{orgId} AND uo.user_id = #{userId} )
+        ]]>
+        and uo.org_id = #{orgId}
+    </select>
+
 </mapper>

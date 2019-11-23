@@ -40,6 +40,11 @@ public class ReturnInfo implements Serializable {
         returnCode = MessageCode.COMMON_SUCCEED_FLAG;
     }
 
+    public ReturnInfo(SplitPageInfo page,List dataList) {
+        this.page = page;
+        this.returnData = dataList;
+    }
+
     /**
      * 失败构造方法
      * @param code

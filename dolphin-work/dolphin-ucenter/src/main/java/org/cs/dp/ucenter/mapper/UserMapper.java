@@ -1,6 +1,8 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dp.ucenter.domain.UserEntity;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface UserMapper {
 
     UserEntity selectByPrimaryKey(Integer user_id);
 
-    UserEntity selectByUserName(String userName);
+    UserInfo selectByUserName(String userName);
 
     int updateByPrimaryKeySelective(UserEntity record);
 
@@ -23,5 +25,5 @@ public interface UserMapper {
 
     int updateByPrimaryKey(UserEntity record);
 
-    List<UserEntity> getList();
+    List<UserEntity> getListByOrgId(@Param(value = "orgId") int orgId,@Param(value = "userId")int userId);
 }

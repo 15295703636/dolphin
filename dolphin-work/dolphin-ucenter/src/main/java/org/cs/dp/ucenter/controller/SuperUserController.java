@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.ucenter.domain.SuperUserEntity;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.service.ISuperUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,16 +40,21 @@ public class SuperUserController {
         return iSuperUserService.loginOut(request);
     }
 
-    @PostMapping("delUserById")
+    @PostMapping("delById")
     @ApiOperation(value = "根据ID删除用户信息", notes = "用户信息")
-    public ReturnInfo delUserById(@RequestBody int id) {
+    public ReturnInfo delById(@RequestBody int id) {
         return iSuperUserService.del(id);
     }
 
-    @PostMapping("editUserById")
+    @PostMapping("editById")
     @ApiOperation(value = "根据ID修改用户信息", notes = "用户信息")
-    public ReturnInfo editUserById(@RequestBody SuperUserEntity param) {
+    public ReturnInfo editById(@RequestBody SuperUserEntity param) {
         return iSuperUserService.edit(param);
     }
 
+    @PostMapping("add")
+    @ApiOperation(value = "根据ID修改用户信息", notes = "用户信息")
+    public ReturnInfo add(@RequestBody SuperUserEntity param) {
+        return iSuperUserService.add(param);
+    }
 }
