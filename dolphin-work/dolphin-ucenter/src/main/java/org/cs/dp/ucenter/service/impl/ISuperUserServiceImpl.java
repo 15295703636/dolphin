@@ -38,7 +38,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         //根据用户名查询用户信息，判断用户是否存在
         SuperUserEntity user = superUserMapper.selectByUserName(param.getUserName());
         if (null == user) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_MSG);
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_NO_EXIST_MSG);
         }
         //判断用户名密码是否正确
         if (!user.getUser_pwd().equals(param.getPassWord())) {
@@ -64,6 +64,10 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     public ReturnInfo add(SuperUserEntity record) {
         if (StringUtil.isNull(record.getUser_name()) || StringUtil.isNull(record.getUser_pwd())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
+        }
+
+        if (null != superUserMapper.selectByUserName(record.getUser_name())) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }
         superUserMapper.insertSelective(record);
         return new ReturnInfo();
