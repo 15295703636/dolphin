@@ -15,7 +15,7 @@ public class ISoBaioServiceImpl implements ISoBaioService {
     @Autowired
     IBaioClient iBaioClient;
     @Override
-    public ReturnInfo sendMsgToBaio(String msg) {
-        return iBaioClient.sendmsg(msg);
+    public ReturnInfo sendMsgToBaio(String msg,String method) {
+        return iBaioClient.sendmsg(msg,method);
     }
 }

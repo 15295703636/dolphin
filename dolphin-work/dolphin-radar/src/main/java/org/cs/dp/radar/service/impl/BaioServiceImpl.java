@@ -2,6 +2,7 @@ package org.cs.dp.radar.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.jsonrpc.JsonRpcReq;
 import org.cs.dp.radar.api.entity.Ut12Entity;
 import org.cs.dp.radar.config.BaioSender;
 import org.cs.dp.radar.service.IBaioService;
@@ -24,8 +25,12 @@ public class BaioServiceImpl implements IBaioService {
     ISomqClient iSomqClient;
 
     @Override
-    public ReturnInfo sendmsg(String msg) {
-        baioSender.sendAll(msg);
+    public ReturnInfo sendmsg(String msg,String method) {
+        JsonRpcReq jsonRpcReq = new JsonRpcReq();
+        jsonRpcReq.setMethod(method);
+        jsonRpcReq.setParams(msg);
+        String json = JsonRpcReq.generateJsonStr(jsonRpcReq);
+        baioSender.sendAll(json);
         return null;
     }
 
