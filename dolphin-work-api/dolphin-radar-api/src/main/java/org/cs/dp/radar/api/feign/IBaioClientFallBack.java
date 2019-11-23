@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class IBaioClientFallBack implements IBaioClient {
 
     @Override
-    public ReturnInfo sendmsg(String msg) {
+    public ReturnInfo sendmsg(String msg,String method) {
         return null;
     }
 }

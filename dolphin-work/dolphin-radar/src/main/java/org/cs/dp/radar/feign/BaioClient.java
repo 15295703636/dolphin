@@ -26,7 +26,7 @@ public class BaioClient implements IBaioClient {
 
     @Override
     @GetMapping(API_PREFIX+"/sendmsg")
-    public ReturnInfo sendmsg(@RequestParam String msg) {
-        return iBaioService.sendmsg(msg);
+    public ReturnInfo sendmsg(@RequestParam String msg,@RequestParam String method) {
+        return iBaioService.sendmsg(msg,method);
     }
 }
