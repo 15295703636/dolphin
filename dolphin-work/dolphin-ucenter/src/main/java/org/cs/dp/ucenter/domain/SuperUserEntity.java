@@ -3,6 +3,7 @@ package org.cs.dp.ucenter.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.cs.dp.ucenter.common.Constant;
 
 import javax.validation.constraints.NotBlank;
 
@@ -12,14 +13,14 @@ public class SuperUserEntity {
     @ApiModelProperty(value = "ID")
     private Integer user_id;
 
-    @NotBlank(message = "用户登录名不能为空")
+    @NotBlank(message = Constant.USER_NAME_MSG)
     @ApiModelProperty(value = "用户登录名")
     private String user_name;
 
     @ApiModelProperty(value = "用户名称")
     private String user_qname;
 
-    @NotBlank(message = "用户密码不能为空")
+    @NotBlank(message = Constant.PWD_MSG)
     @ApiModelProperty(value = "用户密码")
     private String user_pwd;
 

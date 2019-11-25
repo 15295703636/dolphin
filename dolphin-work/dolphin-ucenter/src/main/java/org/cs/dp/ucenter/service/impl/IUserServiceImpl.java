@@ -38,9 +38,6 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ReturnInfo login(UPBean param) {
-        if (StringUtil.isNull(param.getPassWord()) || StringUtil.isNull(param.getUserName())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
-        }
         //根据用户名查询用户信息，判断用户是否存在
         UserInfo user = userMapper.selectByUserName(param.getUserName());
         if (null == user) {
@@ -48,7 +45,7 @@ public class IUserServiceImpl implements IUserService {
         }
         //判断用户名密码是否正确
         if (!user.getUser_pwd().equals(param.getPassWord())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_MSG);
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
@@ -75,9 +72,6 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ReturnInfo add(UserEntity record) {
-        if (StringUtil.isNull(record.getUser_name()) || StringUtil.isNull(record.getUser_pwd())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
-        }
         if (null != userMapper.selectByUserName(record.getUser_name())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }

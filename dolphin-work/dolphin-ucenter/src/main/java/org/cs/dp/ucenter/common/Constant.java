@@ -27,10 +27,14 @@ public class Constant {
     /**
      * 用户登录提示信息
      */
-    public static final String NAME_PWD_MSG = "用户名或密码不能为空!";
+    public static final String USER_LOGIN_MSG = "请输入登录名";
+    public static final String PWD_LOGIN_MSG = "请输入登录密码";
+
+    public static final String USER_NAME_MSG = "用户名不能为空!";
+    public static final String PWD_MSG = "密码不能为空!";
     public static final String NAME_NO_EXIST_MSG = "用户不存在!";
     public static final String NAME_EXIST_MSG = "用户已存在!";
-    public static final String PWD_MSG = "密码错误!";
+    public static final String PWD_ERROR_MSG = "密码错误!";
 
     public static final String EXCEPTION_MSG = "服务异常!";
 

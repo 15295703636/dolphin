@@ -32,9 +32,6 @@ public class ISuperUserServiceImpl implements ISuperUserService {
      */
     @Override
     public ReturnInfo login(UPBean param) {
-        if (StringUtil.isNull(param.getPassWord()) || StringUtil.isNull(param.getUserName())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
-        }
         //根据用户名查询用户信息，判断用户是否存在
         SuperUserEntity user = superUserMapper.selectByUserName(param.getUserName());
         if (null == user) {
@@ -42,7 +39,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         }
         //判断用户名密码是否正确
         if (!user.getUser_pwd().equals(param.getPassWord())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_MSG);
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));

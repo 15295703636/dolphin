@@ -2,6 +2,9 @@ package org.cs.dp.ucenter.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.cs.dp.ucenter.common.Constant;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName PostTestBean
@@ -12,10 +15,12 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "用户名密码")
 public class UPBean {
 
+    @NotBlank(message = Constant.USER_LOGIN_MSG)
     @ApiModelProperty(value = "用户名称", required = true)
     private String userName;
 
-    @ApiModelProperty(value = "身份证", required = true)
+    @NotBlank(message = Constant.PWD_LOGIN_MSG)
+    @ApiModelProperty(value = "密码", required = true)
     private String passWord;
 
     public String getUserName() {
