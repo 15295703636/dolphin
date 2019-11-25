@@ -63,6 +63,41 @@ public class RabbitMqConfiguration {
         return new FanoutExchange("baio.exchangete.all");
     }
 
+    @Bean
+    public FanoutExchange brsAllexchange(){
+        return new FanoutExchange("brs.exchangete.all");
+    }
+
+    @Bean
+    public TopicExchange brsTopicexchange(){
+        return new TopicExchange("brs.exchangete.topic");
+    }
+
+    /**
+     * 声明一个名为topic.message2的队列
+     */
+    @Bean
+    public Queue brstopicQueue1() {
+        return new Queue("topic.brs1");
+    }
+
+    /**
+     * 声明一个名为exchange的交换机
+     */
+    @Bean
+    public TopicExchange brsexchange(){
+        return new TopicExchange("brs.exchange");
+    }
+
+    /**
+     * 将topic.message1的队列绑定到exchange交换机
+     */
+    @Bean
+    public Binding bindMessagebrs1(){
+        return BindingBuilder.bind(brstopicQueue1()).to(brsexchange()).with("topic.brs1");
+    }
+
+
 
     /**
      * 声明一个名为fanout.1的队列

@@ -6,6 +6,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.jsonrpc.JsonRpcReq;
+import org.cs.dp.radar.api.feign.IBaioClient;
+import org.cs.dp.radar.api.feign.IBrsClient;
 import org.cs.dp.sonar.domain.PostTestBean;
 import org.cs.dp.sonar.domain.XxlJobBean;
 import org.cs.dp.sonar.service.ITestService;
@@ -23,11 +25,18 @@ public class UserTestController {
     private IUserClient iUserClient;
     @Autowired
     private ITestService iTestService;
+    @Autowired
+    private IBaioClient iBaioClient;
+    @Autowired
+    private IBrsClient iBrsClient;
 
     @GetMapping("/getTest/{page}")
     @ApiOperation(value = "方法业务说明；例：测试Get方法", notes = "用户信息")
     public ReturnInfo GetTest(@PathVariable(value = "page") Integer page) {
-        return iUserClient.selectUserByOrg(page, 20, 1);
+        iBaioClient.sendmsg("123","m1");
+        iBrsClient.sendmsg("456","m2");
+        return  null;
+//        return iUserClient.selectUserByOrg(page, 20, 1);
     }
 
     @PostMapping("/postTest")

@@ -5,6 +5,9 @@ spring:
     name: dolphin-gateway
   cloud:
     nacos:
+      config:
+        server-addr: ${nacos.server.ip}
+        prefix: dolphin-config
       discovery:
         server-addr: ${nacos.server.ip}
     sentinel:
