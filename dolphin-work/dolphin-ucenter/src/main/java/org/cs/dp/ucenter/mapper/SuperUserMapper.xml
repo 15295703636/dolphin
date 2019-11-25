@@ -27,21 +27,15 @@
             <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
     user_tel, user_code
   </sql>
-    <sql id="Blob_Column_List">
-    user_desc
-  </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
         from super_user
         where user_id = #{user_id,jdbcType=INTEGER}
     </select>
@@ -50,10 +44,12 @@
     <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
         from super_user
-        where user_name = #{userName,jdbcType=INTEGER}
+        where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByUserNameCou" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from super_user where user_name = #{userName,jdbcType=VARCHAR}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -64,11 +60,11 @@
     insert into super_user (user_id, user_name, user_qname, 
       user_pwd, user_email, role_id, 
       user_statu, user_number, user_tel, 
-      user_code, user_desc)
+      user_code)
     values (#{user_id,jdbcType=INTEGER}, #{user_name,jdbcType=VARCHAR}, #{user_qname,jdbcType=VARCHAR}, 
       #{user_pwd,jdbcType=VARCHAR}, #{user_email,jdbcType=VARCHAR}, #{role_id,jdbcType=INTEGER}, 
       #{user_statu,jdbcType=BIT}, #{user_number,jdbcType=VARCHAR}, #{user_tel,jdbcType=VARCHAR}, 
-      #{user_code,jdbcType=VARCHAR}, #{user_desc,jdbcType=LONGVARCHAR})
+      #{user_code,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
         insert into super_user
@@ -103,9 +99,6 @@
             <if test="user_code != null">
                 user_code,
             </if>
-            <if test="user_desc != null">
-                user_desc,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="user_id != null">
@@ -137,9 +130,6 @@
             </if>
             <if test="user_code != null">
                 #{user_code,jdbcType=VARCHAR},
-            </if>
-            <if test="user_desc != null">
-                #{user_desc,jdbcType=LONGVARCHAR},
             </if>
         </trim>
     </insert>
@@ -173,9 +163,6 @@
             <if test="user_code != null">
                 user_code = #{user_code,jdbcType=VARCHAR},
             </if>
-            <if test="user_desc != null">
-                user_desc = #{user_desc,jdbcType=LONGVARCHAR},
-            </if>
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
     </update>
@@ -189,8 +176,7 @@
       user_statu = #{user_statu,jdbcType=BIT},
       user_number = #{user_number,jdbcType=VARCHAR},
       user_tel = #{user_tel,jdbcType=VARCHAR},
-      user_code = #{user_code,jdbcType=VARCHAR},
-      user_desc = #{user_desc,jdbcType=LONGVARCHAR}
+      user_code = #{user_code,jdbcType=VARCHAR}
     where user_id = #{user_id,jdbcType=INTEGER}
   </update>
     <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">

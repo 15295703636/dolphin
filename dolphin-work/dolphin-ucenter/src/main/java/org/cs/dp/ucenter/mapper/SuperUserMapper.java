@@ -12,4 +12,6 @@ public interface SuperUserMapper {
     int updateByPrimaryKeySelective(SuperUserEntity record);
 
     SuperUserEntity selectByUserName(String name);
+
+    int selectByUserNameCou(String name);
 }

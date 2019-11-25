@@ -55,7 +55,7 @@
 
 
         <!-- ————————————————————————————重点在这————————————————————————————-->
-        <table tableName="user" domainObjectName="UserEntity"
+        <table tableName="super_user" domainObjectName="SuperUserEntity"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

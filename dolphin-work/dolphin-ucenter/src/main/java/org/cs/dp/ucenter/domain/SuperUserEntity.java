@@ -4,18 +4,22 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @ApiModel(value = "平台管理员实体")
 public class SuperUserEntity {
     @ApiModelProperty(value = "ID")
     private Integer user_id;
 
+    @NotBlank(message = "用户登录名不能为空")
     @ApiModelProperty(value = "用户登录名")
     private String user_name;
 
     @ApiModelProperty(value = "用户名称")
     private String user_qname;
 
+    @NotBlank(message = "用户密码不能为空")
     @ApiModelProperty(value = "用户密码")
     private String user_pwd;
 
@@ -37,10 +41,7 @@ public class SuperUserEntity {
     @ApiModelProperty(value = "身份证号")
     private String user_code;
 
-    @ApiModelProperty(value = "")
-    private String user_desc;
-
-    public SuperUserEntity(Integer user_id, String user_name, String user_qname, String user_pwd, String user_email, Integer role_id, Boolean user_statu, String user_number, String user_tel, String user_code, String user_desc) {
+    public SuperUserEntity(Integer user_id, String user_name, String user_qname, String user_pwd, String user_email, Integer role_id, Boolean user_statu, String user_number, String user_tel, String user_code) {
         this.user_id = user_id;
         this.user_name = user_name;
         this.user_qname = user_qname;
@@ -51,7 +52,5 @@ public class SuperUserEntity {
         this.user_number = user_number;
         this.user_tel = user_tel;
         this.user_code = user_code;
-        this.user_desc = user_desc;
     }
-
 }

@@ -62,11 +62,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Override
     public ReturnInfo add(SuperUserEntity record) {
-        if (StringUtil.isNull(record.getUser_name()) || StringUtil.isNull(record.getUser_pwd())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_PWD_MSG);
-        }
-
-        if (null != superUserMapper.selectByUserName(record.getUser_name())) {
+        if (0 < superUserMapper.selectByUserNameCou(record.getUser_name())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }
         superUserMapper.insertSelective(record);
