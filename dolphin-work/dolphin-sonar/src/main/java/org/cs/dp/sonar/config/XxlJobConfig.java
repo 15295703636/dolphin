@@ -37,8 +37,10 @@ public class XxlJobConfig {
     @Value("${xxl.job.executor.logretentiondays}")
     private int logRetentionDays;
 
+    @Value("${xxl.job.start}")
+    private boolean isStart;
 
-    @Bean(initMethod = "start", destroyMethod = "destroy")
+    @Bean( destroyMethod = "destroy")
     public XxlJobSpringExecutor xxlJobExecutor() {
         logger.info(">>>>>>>>>>> xxl-job config init.");
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
@@ -51,6 +53,13 @@ public class XxlJobConfig {
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);
 
         return xxlJobSpringExecutor;
+    }
+
+    @Bean
+    public void startXxlJob() throws Exception {
+        if(isStart){
+            xxlJobExecutor().start();
+        }
     }
 
 }
