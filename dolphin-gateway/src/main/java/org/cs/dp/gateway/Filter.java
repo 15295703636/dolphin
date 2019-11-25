@@ -3,8 +3,9 @@ package org.cs.dp.gateway;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.utils.RedisUtil;
+import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -32,6 +33,9 @@ public class Filter implements GlobalFilter, Ordered {
     @Value("${getWay.prefix}")
     private String prefix;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
@@ -45,7 +49,7 @@ public class Filter implements GlobalFilter, Ordered {
             if (null == token) {
                 token = serverHttpRequest.getHeaders().getFirst("token");
             }
-            if (StringUtil.isNull(token) || StringUtil.isNull(RedisUtil.get(RedisUtil.USER_TOKEN_PATH + token))) {
+            if (StringUtil.isNull(token) || StringUtil.isNull(redisUtil.getStr(RedisConstant.USER_TOKEN_PATH + token))) {
                 ServerHttpResponse response = exchange.getResponse();
                 byte[] bits = JSON.toJSONString(new ReturnInfo(-1, "Token无效请登录!")).getBytes(StandardCharsets.UTF_8);
                 DataBuffer buffer = response.bufferFactory().wrap(bits);
@@ -57,7 +61,7 @@ public class Filter implements GlobalFilter, Ordered {
             //统一放入请求头中，业务模块从请求头中获取,降低业务数据之间的耦合
             exchange = exchange.mutate().request(serverHttpRequest.mutate().header("token", token).build()).build();
             //刷新token有效时间
-            RedisUtil.getJedis().expire(RedisUtil.USER_TOKEN_PATH + token, RedisUtil.USER_TOKEN_EXPIRED_TIME);
+            redisUtil.setExpire(RedisConstant.USER_TOKEN_PATH + token, RedisConstant.USER_TOKEN_EXPIRED_TIME);
         }
 
         return chain.filter(exchange);
