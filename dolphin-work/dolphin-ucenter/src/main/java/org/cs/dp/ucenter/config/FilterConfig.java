@@ -33,7 +33,10 @@ public class FilterConfig implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String token = httpServletRequest.getHeader("token");
+        String token = httpServletRequest.getParameter("token");
+        if(null == token){
+            token = httpServletRequest.getHeader("token");
+        }
         //因为网关做了白名单过滤，业务模块不需要在做判断;获取到当前信息，存入到 ThreadLocal 中
         if (null != token) {
             ThreadLocalUserInfoUtil.set((UserInfo)redisUtil.getObject(RedisConstant.USER_TOKEN_PATH + token, UserInfo.class));

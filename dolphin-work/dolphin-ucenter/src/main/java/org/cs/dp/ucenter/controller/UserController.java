@@ -2,10 +2,8 @@ package org.cs.dp.ucenter.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.cs.dolphin.common.base.ParamValid;
-import org.cs.dolphin.common.base.RequestPage;
-import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.base.*;
+import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
@@ -34,6 +32,12 @@ public class UserController {
         return iUserService.login(param);
     }
 
+    @PostMapping("getUserInfo")
+    @ApiOperation(value = "获取用户信息", notes = "用户信息")
+    public ReturnInfo<UserInfo> getUserInfo() {
+        return iUserService.getUserInfo();
+    }
+
     @PostMapping("loginOut")
     @ApiOperation(value = "退出接口", notes = "用户信息")
     public ReturnInfo loginOut(HttpServletRequest request) {
@@ -59,10 +63,9 @@ public class UserController {
         return iUserService.edit(param);
     }
 
-
     @PostMapping("getUsersByOrgId")
-    @ApiOperation(value = "组织Id查询用户列表", notes = "租户关联信息")
-    public ReturnInfo getUsersByOrgId(@RequestBody RequestPage<SplitPageInfo, Integer> param) {
+    @ApiOperation(value = "组织Id查询用户列表", notes = "用户信息")
+    public ReturnInfo getUsersByOrgId(@RequestBody RequestPage<SplitPageInfo, OrgIdAndTokenBean> param) {
         return iUserService.getUsersByOrgId(param);
     }
 

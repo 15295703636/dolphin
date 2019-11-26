@@ -22,6 +22,6 @@ public class UserClient implements IUserClient {
         pageInfo.setCurrPage(page);
         pageInfo.setPerPageNum(rows);
         System.out.println("org_id===="+org_id);
-        return service.getUsersByOrgId(new RequestPage<>(pageInfo,org_id));
+        return service.getUsersByOrgId(new RequestPage(pageInfo,org_id));
     }
 }

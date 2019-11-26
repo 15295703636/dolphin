@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@ApiModel(value = "租户实体")
+@ApiModel(value = "组织实体")
 public class OrganizationEntity  {
     @ApiModelProperty(value = "id")
     private Integer org_id;

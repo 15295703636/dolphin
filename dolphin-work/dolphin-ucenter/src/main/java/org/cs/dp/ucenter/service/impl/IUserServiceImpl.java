@@ -13,6 +13,7 @@ import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
@@ -62,6 +63,11 @@ public class IUserServiceImpl implements IUserService {
     }
 
     @Override
+    public ReturnInfo getUserInfo() {
+        return new ReturnInfo<UserInfo>(ThreadLocalUserInfoUtil.get());
+    }
+
+    @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
         String token = request.getHeader("token");
         redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
@@ -96,10 +102,10 @@ public class IUserServiceImpl implements IUserService {
     }
 
     @Override
-    public ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, Integer> param) {
+    public ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, OrgIdAndTokenBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<UserEntity> userEntities = userMapper.getListByOrgId(param.getInfo(), ThreadLocalUserInfoUtil.get().getUser_id());
+        List<UserEntity> userEntities = userMapper.getListByOrgId(param.getInfo().getOrg_id(), ThreadLocalUserInfoUtil.get().getUser_id());
         PageInfo p = new PageInfo(userEntities);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, userEntities);
