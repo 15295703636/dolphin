@@ -1,28 +1,30 @@
 package org.cs.dp.gateway;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @ClassName RedisConfig
- * @Description redis工具类
+ * @ClassName RedisUtil
+ * @Description redis工具类，主要判断是集群配置，还是单点配置
  * @Author Liujt
- * @Date 2019/11/25 15:12
+ * @Date 2019/11/26 10:22
  **/
 @Slf4j
 @Configuration
 @EnableCaching
 @SuppressWarnings("all")
-public class RedisUtil {
-    @Autowired
+public class RedisUtil<T> {
+
+    @Resource(name = "redisTemplate")
     private RedisTemplate redisTemplate;
 
     /**
@@ -79,6 +81,17 @@ public class RedisUtil {
         ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
         result = operations.get(key);
         return result;
+    }
+
+    /**
+     * 根据出入类型返回对象
+     *
+     * @param key
+     * @param obj
+     * @return
+     */
+    public Object getObject(String key, Class<T> obj) {
+        return JSONObject.parseObject(getStr(key), obj);
     }
 
     /**
