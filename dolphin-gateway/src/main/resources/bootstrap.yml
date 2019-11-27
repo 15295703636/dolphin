@@ -64,3 +64,16 @@ getWay:
   white:
     list: /v1/login,  #白名单放行
   prefix: /api   #为网关设置一个公共的前缀
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: ${hystrix.threadpool.default.coreSize}  #并发执行的最大线程数，默认10
+      maxQueueSize: ${hystrix.threadpool.default.maxQueueSize} #BlockingQueue的最大队列数
+      queueSizeRejectionThreshold: ${hystrix.threadpool.default.queueSizeRejectionThreshold} #即使maxQueueSize没达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: ${hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds} #单位毫秒

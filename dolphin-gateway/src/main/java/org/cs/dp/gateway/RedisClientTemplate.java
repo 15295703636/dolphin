@@ -76,7 +76,7 @@ public class RedisClientTemplate {
      * key 和 value 都为String类型
      * 都使用Jackson2JsonRedisSerializer进行序列化
      */
-    @Bean(name = "redisClusterTemplate")
+    @Bean
     @Conditional(RedisClusterCondition.class)
     public RedisTemplate redisClusterTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
@@ -104,7 +104,7 @@ public class RedisClientTemplate {
     }
 
 
-    @Bean(name = "redisSimTemplate")
+    @Bean
     @Conditional(RedisSimCondition.class)
     public RedisTemplate redisSimTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();

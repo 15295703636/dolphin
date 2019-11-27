@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
+import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +52,7 @@ public class Filter implements GlobalFilter, Ordered {
             }
             if (StringUtil.isNull(token) || StringUtil.isNull(redisUtil.getStr(RedisConstant.USER_TOKEN_PATH + token))) {
                 ServerHttpResponse response = exchange.getResponse();
-                byte[] bits = JSON.toJSONString(new ReturnInfo(-1, "Token无效请登录!")).getBytes(StandardCharsets.UTF_8);
+                byte[] bits = JSON.toJSONString(new ReturnInfo(MessageCode.USER_SESSION, "Token无效请登录!")).getBytes(StandardCharsets.UTF_8);
                 DataBuffer buffer = response.bufferFactory().wrap(bits);
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 //指定编码，否则在浏览器中会中文乱码
