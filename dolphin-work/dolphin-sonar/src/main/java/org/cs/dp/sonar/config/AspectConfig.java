@@ -9,6 +9,12 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.constant.AspectConstant;
+import org.cs.dolphin.common.constant.ModuleConstant;
+import org.cs.dolphin.common.domain.LogEntity;
+import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.ExceptionUtil;
+import org.cs.dp.sonar.service.ISoUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -33,6 +39,9 @@ import java.util.List;
 @Component
 public class AspectConfig {
 
+    @Autowired
+    private ISoUserService iSoUserService;
+
     @Pointcut(AspectConstant.SONAR_SERVER)
     public void webLog() {
     }
@@ -53,19 +62,32 @@ public class AspectConfig {
 
         Object returnObj = null;
 
-        // 获取切入的 Method
-        MethodSignature joinPointObject = (MethodSignature) point.getSignature();
-        Method method = joinPointObject.getMethod();
-        if (method.isAnnotationPresent(ParamValid.class)) {
-            BindingResult result = (BindingResult) point.getArgs()[1];
-            ReturnInfo errorMap = this.validRequestParams(result);
-            if (errorMap != null) {
-                returnObj = errorMap;
-            }else{
+        try {
+            // 获取切入的 Method
+            MethodSignature joinPointObject = (MethodSignature) point.getSignature();
+            Method method = joinPointObject.getMethod();
+            if (method.isAnnotationPresent(ParamValid.class)) {
+                BindingResult result = (BindingResult) point.getArgs()[1];
+                ReturnInfo errorMap = this.validRequestParams(result);
+                if (errorMap != null) {
+                    returnObj = errorMap;
+                } else {
+                    returnObj = point.proceed();
+                }
+            } else {
                 returnObj = point.proceed();
             }
-        } else {
-            returnObj = point.proceed();
+        } catch (Exception e) {
+            log.error("Controller捕获未知异常，{}", e);
+            try {
+                iSoUserService.addLog(new LogEntity(ModuleConstant.MODULE_SONAR,
+                        "error", "error,", request.getRemoteAddr(), request.getRequestURL().toString(),
+                        ExceptionUtil.getStackTrace(e)
+                ));
+            } catch (Exception e1) {
+                log.error("记录日志捕获未知异常，{}", e1);
+            }
+            returnObj = new ReturnInfo(MessageCode.EXCEPTION, "系统繁忙，请稍后重试!");
         }
         // 处理完请求，返回内容
         log.info("统一日志记录RESPONSE : {}", returnObj);

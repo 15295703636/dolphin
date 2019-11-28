@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.constant.ModuleConstant;
+import org.cs.dolphin.common.domain.LogEntity;
 import org.cs.dolphin.common.jsonrpc.JsonRpcReq;
 import org.cs.dp.radar.api.feign.IBaioClient;
 import org.cs.dp.radar.api.feign.IBrsClient;
@@ -42,6 +44,11 @@ public class UserTestController {
     @PostMapping("/postTest")
     @ApiOperation(value = "方法业务说明；例：测试Post方法", notes = "用户信息")
     public ReturnInfo PostTest(@RequestBody PostTestBean param) {
+        iUserClient.allLog(new LogEntity(
+                ModuleConstant.MODULE_SONAR,
+                "error","error","182.168.100.11","postTest","德玛西亚"
+
+        ));
         return new ReturnInfo();
     }
 

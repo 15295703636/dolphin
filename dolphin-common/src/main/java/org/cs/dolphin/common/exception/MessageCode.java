@@ -275,4 +275,6 @@ public interface MessageCode {
      */
     long Fail_Dev_Exist = 4007;
     //*******************************  Classroom Platform End ************************************
+
+    long EXCEPTION = 5000;
 }

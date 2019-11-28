@@ -60,3 +60,12 @@ xxl:
     add:
       job:
         url: /jobinfo/api/add
+
+thread:
+  corePoolSize: 10
+  maxPoolSize: 30
+  queueCapacity: 1000
+  waitFTTCOS: true
+  awaitTerminationSeconds: 60
+  threadNamePrefix: Sonar
+

@@ -2,6 +2,10 @@ package org.cs.dp.ucenter.common;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.cs.dolphin.common.constant.ModuleConstant;
+import org.cs.dolphin.common.domain.LogEntity;
+import org.cs.dolphin.common.utils.ExceptionUtil;
+import org.cs.dp.ucenter.service.ILogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +31,9 @@ public class RedisUtil<T> {
 
     @Resource(name = "redisTemplate")
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private ILogService iLogService;
 
     /**
      * 批量删除对应的value
@@ -121,6 +128,10 @@ public class RedisUtil<T> {
             result = true;
         } catch (Exception e) {
             log.error("写入缓存异常：{}", e);
+            iLogService.addLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
+                    "error", "error,", null, null,
+                    ExceptionUtil.getStackTrace(e)
+            ));
         }
         return result;
     }
@@ -141,6 +152,10 @@ public class RedisUtil<T> {
             result = true;
         } catch (Exception e) {
             log.error("写入缓存异常：{}", e);
+            iLogService.addLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
+                    "error", "error,", null, null,
+                    ExceptionUtil.getStackTrace(e)
+            ));
         }
         return result;
     }
