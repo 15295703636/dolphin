@@ -3,16 +3,15 @@ package org.cs.dp.ucenter.config;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * @ClassName ControllerExceptionHandle
- * @Description controller层统一异常处理
+ * @Description controller层统一异常处理,用切面直接切入到controller层，暂时不启用
  * @Author Liujt
  * @Date 2019/11/19 17:14
  **/
 @Slf4j
-@RestControllerAdvice
+//@RestControllerAdvice
 public class ControllerExceptionHandle {
 
     @ExceptionHandler(value = Exception.class)

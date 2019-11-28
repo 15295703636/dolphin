@@ -1,9 +1,11 @@
 package org.cs.dp.ucenter.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.cs.dolphin.common.utils.GetRedisUserInfoUtil;
-import org.cs.dolphin.common.utils.RedisUtil;
+import org.cs.dolphin.common.base.UserInfo;
+import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.ucenter.common.RedisUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -19,6 +21,10 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class FilterConfig implements Filter {
+
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
     public void init(javax.servlet.FilterConfig filterConfig) throws ServletException {
 
@@ -27,10 +33,13 @@ public class FilterConfig implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String token = httpServletRequest.getHeader("token");
+        String token = httpServletRequest.getParameter("token");
+        if(null == token){
+            token = httpServletRequest.getHeader("token");
+        }
         //因为网关做了白名单过滤，业务模块不需要在做判断;获取到当前信息，存入到 ThreadLocal 中
         if (null != token) {
-            ThreadLocalUserInfoUtil.set(GetRedisUserInfoUtil.getRedisUserInfo(RedisUtil.USER_TOKEN_PATH + token));
+            ThreadLocalUserInfoUtil.set((UserInfo)redisUtil.getObject(RedisConstant.USER_TOKEN_PATH + token, UserInfo.class));
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

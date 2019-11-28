@@ -44,3 +44,29 @@ management:
     web:
       exposure:
         include: '*'
+
+xxl:
+  job:
+    admin:
+      addresses: ${xxl.job.admin.addresses}
+    executor:
+      appname: xxl-job-executor-sonar
+      ip:
+      port: 9999
+      logpath: ${xxl.job.executor.logpath}
+      logretentiondays: ${xxl.job.executor.logretentiondays}
+    accessToken:
+    start: true
+  api:
+    add:
+      job:
+        url: /jobinfo/api/add
+
+thread:
+  corePoolSize: 10
+  maxPoolSize: 30
+  queueCapacity: 1000
+  waitFTTCOS: true
+  awaitTerminationSeconds: 60
+  threadNamePrefix: Sonar
+

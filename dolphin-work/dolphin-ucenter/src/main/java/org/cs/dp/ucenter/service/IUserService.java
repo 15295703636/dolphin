@@ -3,6 +3,7 @@ package org.cs.dp.ucenter.service;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.UserEntity;
 
@@ -14,6 +15,8 @@ public interface IUserService {
 
     ReturnInfo login(UPBean param);
 
+    ReturnInfo getUserInfo();
+
     ReturnInfo loginOut(HttpServletRequest request);
 
     ReturnInfo add(UserEntity record);
@@ -22,5 +25,5 @@ public interface IUserService {
 
     ReturnInfo edit(UserEntity record);
 
-    ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, Integer> param);
+    ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, OrgIdAndTokenBean> param);
 }

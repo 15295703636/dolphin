@@ -5,6 +5,10 @@ package org.cs.dolphin.common.exception;
  */
 public interface MessageCode {
     /**
+     * 用户状态失效
+     */
+    long USER_SESSION = 4401;
+    /**
      * 本次操作的结果标识，成功：1000；失败：1001；数据不存在：1002 (如需扩展再引申)
      */
     long COMMON_SUCCEED_FLAG = 1000;
@@ -271,4 +275,6 @@ public interface MessageCode {
      */
     long Fail_Dev_Exist = 4007;
     //*******************************  Classroom Platform End ************************************
+
+    long EXCEPTION = 5000;
 }

@@ -1,17 +1,15 @@
 package org.cs.dp.sonar.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.jsonrpc.JsonRpcReq;
-import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.feign.IBaioClient;
 import org.cs.dp.radar.api.feign.IBrsClient;
 import org.cs.dp.sonar.domain.PostTestBean;
 import org.cs.dp.sonar.domain.XxlJobBean;
-import org.cs.dp.sonar.service.ISoMruService;
 import org.cs.dp.sonar.service.ITestService;
 import org.cs.dp.ucenter.api.entity.User;
 import org.cs.dp.ucenter.api.feign.IUserClient;
@@ -31,8 +29,6 @@ public class UserTestController {
     private IBaioClient iBaioClient;
     @Autowired
     private IBrsClient iBrsClient;
-    @Autowired
-    private ISoMruService iSoMruService;
 
     @GetMapping("/getTest/{page}")
     @ApiOperation(value = "方法业务说明；例：测试Get方法", notes = "用户信息")
@@ -63,36 +59,6 @@ public class UserTestController {
         jsonRpcReq.setParams(JSONObject.toJSONString(user));
         String json = JsonRpcReq.generateJsonStr(jsonRpcReq);
         System.out.println(json);
-    }
-
-    @PostMapping("/mru/login")
-    @ApiOperation(value = "Mru用户登录", notes = "用户信息")
-    public ReturnInfo mruLogin(@RequestBody RestWebLoginReq restWebLoginReq){
-        restWebLoginReq.setAccount("develop_api");
-        restWebLoginReq.setIntranet("false");
-        restWebLoginReq.setPassword("api@bizconfedu");
-        String ip = "39.107.143.46";
-
-        ReturnInfo returnInfo = iSoMruService.login(restWebLoginReq,ip);
-        if(returnInfo.getReturnCode()== MessageCode.COMMON_SUCCEED_FLAG){
-           RestWebLoginResp restWebLoginResp = (RestWebLoginResp)returnInfo.getReturnData();
-            System.out.println(restWebLoginResp);
-
-            //终端列表
-//            returnInfo = iSoMruService.getEndpoints(restWebLoginResp.getToken(),ip);
-            //添加终端
-            RestEndpointReq restEndpointReq = new RestEndpointReq();
-            restEndpointReq.setSystemName("陈尚测试");
-            restEndpointReq.setCallProtocol(CallProtocol.SVC);
-            restEndpointReq.setDeviceSn("888888888");
-            restEndpointReq.setEndpointType(EndpointType.M16);
-            returnInfo = iSoMruService.addEndpoint(restWebLoginResp.getToken(),ip,restEndpointReq);
-
-
-        }else{
-
-        }
-        return returnInfo;
     }
 
 }

@@ -62,6 +62,11 @@ public class SplitPageInfo implements Serializable {
     public SplitPageInfo() {
     }
 
+    public SplitPageInfo(int perPageNum, int currPage) {
+        this.perPageNum = perPageNum;
+        this.currPage = currPage;
+    }
+
     /**
      * 取得查询的总记录数
      *

@@ -3,9 +3,11 @@ package org.cs.dp.ucenter.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
+import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.domain.SuperUserEntity;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.mapper.SuperUserMapper;
@@ -21,7 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Autowired
-    SuperUserMapper superUserMapper;
+    private SuperUserMapper superUserMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 1.先登录：根据用户名密码查询用户信息
@@ -43,7 +47,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
-        boolean result = RedisUtil.set(RedisUtil.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisUtil.USER_TOKEN_EXPIRED_TIME);
+        boolean result = redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         if (!result) {
             return new ReturnInfo(MessageCode.DB_CONNECTION_EXCEPTION, Constant.EXCEPTION_MSG);
         }
@@ -53,7 +57,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
         String token = request.getHeader("token");
-        RedisUtil.remove(RedisUtil.USER_TOKEN_PATH + token);
+        redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
         return new ReturnInfo();
     }
 
