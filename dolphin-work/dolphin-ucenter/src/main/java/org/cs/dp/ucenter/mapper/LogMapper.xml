@@ -1,121 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.LogMapper">
-  <resultMap id="BaseResultMap" type="org.cs.dolphin.common.domain.LogEntity">
-    <constructor>
-      <idArg column="log_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="log_module" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="log_user_name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_type" javaType="java.lang.String" jdbcType="CHAR" />
-      <arg column="log_level" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_ip" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_url" javaType="java.lang.String" jdbcType="VARCHAR" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="org.cs.dolphin.common.domain.LogEntity">
-    <constructor>
-      <idArg column="log_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="log_module" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="log_user_name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_type" javaType="java.lang.String" jdbcType="CHAR" />
-      <arg column="log_level" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_ip" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_url" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="log_content" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="org.cs.dolphin.common.domain.LogEntity">
+        <constructor>
+            <idArg column="log_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="log_module" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="log_user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_type" javaType="java.lang.String" jdbcType="CHAR"/>
+            <arg column="log_level" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_ip" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dolphin.common.domain.LogEntity">
+        <constructor>
+            <idArg column="log_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="log_module" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="log_user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_type" javaType="java.lang.String" jdbcType="CHAR"/>
+            <arg column="log_level" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_ip" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="log_content" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
     log_id, log_module, log_time, log_user_name, log_type, log_level, log_ip, log_url
   </sql>
-  <sql id="Blob_Column_List">
+    <sql id="Blob_Column_List">
     log_content
   </sql>
 
-  <select id="selectByTerm" parameterType="org.cs.dp.ucenter.domain.GetLogBean" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from log
-    where 1=1
-      <if test="moduleName != null and moduleName != ''">
-          and log_module = #{moduleName}
-      </if>
-      <if test="startTime != null">
-          <![CDATA[ and log_time  >= #{startTime,jdbcType=TIMESTAMP} ]]>
-      </if>
-      <if test="endTime != null">
-          <![CDATA[ and log_time  <= #{endTime,jdbcType=TIMESTAMP} ]]>
-      </if>
-  </select>
+    <select id="selectByTerm" parameterType="org.cs.dp.ucenter.domain.GetLogBean" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from log
+        where 1=1
+        <if test="moduleName != null and moduleName != ''">
+            and log_module = #{moduleName}
+        </if>
+        <if test="startTime != null">
+            <![CDATA[ and log_time  >= #{startTime,jdbcType=TIMESTAMP} ]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[ and log_time  <= #{endTime,jdbcType=TIMESTAMP} ]]>
+        </if>
+    </select>
 
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <delete id="deleteByDay" parameterType="java.lang.Integer">
     delete from log
-    where log_id = #{log_id,jdbcType=BIGINT}
-  </delete>
+    where <![CDATA[ log_time < DATE_SUB(CURDATE(), INTERVAL #{log_id} DAY)
+        ]]>
+    </delete>
 
-  <insert id="insertSelective" parameterType="org.cs.dolphin.common.domain.LogEntity">
-    insert into log
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="log_id != null">
-        log_id,
-      </if>
-      <if test="log_module != null">
-        log_module,
-      </if>
-      <if test="log_time != null">
-        log_time,
-      </if>
-      <if test="log_user_name != null">
-        log_user_name,
-      </if>
-      <if test="log_type != null">
-        log_type,
-      </if>
-      <if test="log_level != null">
-        log_level,
-      </if>
-      <if test="log_ip != null">
-        log_ip,
-      </if>
-      <if test="log_url != null">
-        log_url,
-      </if>
-      <if test="log_content != null">
-        log_content,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="log_id != null">
-        #{log_id,jdbcType=BIGINT},
-      </if>
-      <if test="log_module != null">
-        #{log_module,jdbcType=VARCHAR},
-      </if>
-      <if test="log_time != null">
-        #{log_time,jdbcType=TIMESTAMP},
-      </if>
-      <if test="log_user_name != null">
-        #{log_user_name,jdbcType=VARCHAR},
-      </if>
-      <if test="log_type != null">
-        #{log_type,jdbcType=CHAR},
-      </if>
-      <if test="log_level != null">
-        #{log_level,jdbcType=VARCHAR},
-      </if>
-      <if test="log_ip != null">
-        #{log_ip,jdbcType=VARCHAR},
-      </if>
-      <if test="log_url != null">
-        #{log_url,jdbcType=VARCHAR},
-      </if>
-      <if test="log_content != null">
-        #{log_content,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
+    <insert id="insertSelective" parameterType="org.cs.dolphin.common.domain.LogEntity">
+        insert into log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="log_id != null">
+                log_id,
+            </if>
+            <if test="log_module != null">
+                log_module,
+            </if>
+            <if test="log_time != null">
+                log_time,
+            </if>
+            <if test="log_user_name != null">
+                log_user_name,
+            </if>
+            <if test="log_type != null">
+                log_type,
+            </if>
+            <if test="log_level != null">
+                log_level,
+            </if>
+            <if test="log_ip != null">
+                log_ip,
+            </if>
+            <if test="log_url != null">
+                log_url,
+            </if>
+            <if test="log_content != null">
+                log_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="log_id != null">
+                #{log_id,jdbcType=BIGINT},
+            </if>
+            <if test="log_module != null">
+                #{log_module,jdbcType=VARCHAR},
+            </if>
+            <if test="log_time != null">
+                #{log_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="log_user_name != null">
+                #{log_user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="log_type != null">
+                #{log_type,jdbcType=CHAR},
+            </if>
+            <if test="log_level != null">
+                #{log_level,jdbcType=VARCHAR},
+            </if>
+            <if test="log_ip != null">
+                #{log_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="log_url != null">
+                #{log_url,jdbcType=VARCHAR},
+            </if>
+            <if test="log_content != null">
+                #{log_content,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
 </mapper>

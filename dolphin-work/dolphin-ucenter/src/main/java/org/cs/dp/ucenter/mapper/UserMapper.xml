@@ -205,7 +205,7 @@
     where user_id = #{user_id,jdbcType=INTEGER}
   </update>
 
-    <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.UserEntity">
+ <!--   <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.UserEntity">
         select u.user_id,
                u.user_name,
                u.user_qname,
@@ -223,6 +223,45 @@
             0<(SELECT uo.org_id FROM user2org uo WHERE uo.org_id = #{orgId} AND uo.user_id = #{userId} )
         ]]>
         and uo.org_id = #{orgId}
+    </select>-->
+
+    <!--1.先根据当前的组织id查询到所有子节点的组织id，
+    2.在关联组织用户关系表，查出用户id，
+    3.在关联用户表查询用户信息-->
+    <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.UserEntity">
+        SELECT
+            u.user_id,
+            u.user_name,
+            u.user_qname,
+            u.user_pwd,
+            u.user_email,
+            u.role_id,
+            u.user_statu,
+            u.user_number,
+            u.user_tel,
+            u.user_code,
+            u.user_desc
+        FROM
+            USER u
+        WHERE
+            user_id IN (
+                SELECT uo.user_id AS res FROM
+                    (SELECT org_id FROM
+                            (SELECT t1.org_id, IF (
+                                    find_in_set(org_preid, @pids) > 0,
+                                    @pids := concat(@pids, ',', org_id),
+                                    0
+                                ) AS ischild
+                                FROM (SELECT org_id, org_preid
+                                        FROM organization t
+                                        ORDER BY org_preid, org_id
+                                    )t1,(SELECT @pids := #{orgId}) t2
+                            ) t3
+                        WHERE ischild != 0
+                    ) orgId, user2org uo
+                WHERE orgId.org_id = uo.org_id
+            )
     </select>
+
 
 </mapper>

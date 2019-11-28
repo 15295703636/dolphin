@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface LogMapper {
-    int deleteByPrimaryKey(Long log_id);
+    int deleteByDay(Integer day);
 
     int insertSelective(LogEntity record);
 

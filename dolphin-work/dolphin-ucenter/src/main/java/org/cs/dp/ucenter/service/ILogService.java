@@ -22,4 +22,5 @@ public interface ILogService {
 
     void exportLog(String moduleName,String startTime,String endTime, HttpServletResponse response) throws Exception;
 
+    int delLogByDay(String day);
 }
