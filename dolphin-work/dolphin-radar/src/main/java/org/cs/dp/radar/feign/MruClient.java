@@ -34,81 +34,81 @@ public class MruClient implements IMruClient {
     @Override
     @PostMapping(API_PREFIX+"/conferences/add")
     public ReturnInfo startConference(@RequestBody RestConfReq restConfReq,@RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.startConference(restConfReq, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/getConferences")
     public ReturnInfo getConferences(@RequestParam String token,@RequestParam String url,
                                      @RequestParam String startTime,@RequestParam String endTime) {
-        return null;
+        return iMruService.getConferences(token, url, startTime, endTime);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/terminate")
     public ReturnInfo stopConference(@RequestParam String confId,@RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.stopConference(confId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/parties/add")
     public ReturnInfo addPeer(@RequestBody RestPartyReq restPartyReq,@RequestParam String confId,
                               @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.addPeer(restPartyReq, confId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/parties/delete")
     public ReturnInfo removePeer(@RequestParam String confId,@RequestParam String partyId,
                                  @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.removePeer(confId, partyId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/parties/connect")
     public ReturnInfo callPeer(@RequestParam String confId,@RequestParam String partyId,
                                @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.callPeer(confId, partyId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/parties/disconnect")
     public ReturnInfo hangupPeer(@RequestParam String confId,@RequestParam String partyId,
                                  @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.hangupPeer(confId, partyId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/info")
     public ReturnInfo getConfInfo(@RequestParam String confId, @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.getConfInfo(confId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/switchToDiscussionMode")
     public ReturnInfo switch2discussionMode(@RequestParam String confId, @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.switch2discussionMode(confId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/setAsLecturer")
     public ReturnInfo setLecturer(@RequestParam String confId,@RequestParam String partyId,
                                   @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.setLecturer(confId, partyId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/startLiveStreaming")
     public ReturnInfo startLiveStreaming(@RequestParam String confId,@RequestBody RestLiveStreamingReq restLiveStreamingReq,
                                          @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.startLiveStreaming(confId, restLiveStreamingReq, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/stopLiveStreaming")
     public ReturnInfo stopLiveStreaming(@RequestParam String confId,
                                         @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.stopLiveStreaming(confId, token, url);
     }
 
     @Override
@@ -116,20 +116,20 @@ public class MruClient implements IMruClient {
     public ReturnInfo muteMultipleParties(@RequestParam String confId,@RequestParam boolean muteAudio,
                                           @RequestBody List<String> peers,
                                           @RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.muteMultipleParties(confId, muteAudio, peers, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/getParties")
     public ReturnInfo getConferencePeers(@RequestParam String confId,@RequestParam String token,@RequestParam String url) {
-        return null;
+        return iMruService.getConferencePeers(confId, token, url);
     }
 
     @Override
     @PostMapping(API_PREFIX+"/conferences/setRecordingLivingPeopleLayout")
     public ReturnInfo setLivingStreamLayout(@RequestParam String confId,@RequestParam String token,@RequestParam String url,
                                             @RequestBody  RestPartyLayout restPartyLayout) {
-        return null;
+        return iMruService.setLivingStreamLayout(confId, token, url, restPartyLayout);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class MruClient implements IMruClient {
     public ReturnInfo setPeerLayout(@RequestParam String confId,@RequestParam String peerId,
                                     @RequestParam String token,@RequestParam String url,
                                     @RequestBody RestPartyLayout restPartyLayoutt) {
-        return null;
+        return iMruService.setPeerLayout(confId, peerId, token, url, restPartyLayoutt);
     }
 
     @Override

@@ -128,47 +128,92 @@ public class MruServiceImpl implements IMruService {
 
     @Override
     public ReturnInfo getConfInfo(String confId, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"?token="+token,HttpMethod.GET);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo switch2discussionMode(String confId, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/control/switchToDiscussionMode?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo setLecturer(String confId, String partyId, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/parties/"+partyId+"/control/setAsLecturer?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo startLiveStreaming(String confId, RestLiveStreamingReq restLiveStreamingReq, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(restLiveStreamingReq,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/control/startLiveStreaming?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo stopLiveStreaming(String confId, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/control/stopLiveStreaming?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(peers,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/control/muteAudioMultipleParties?token="+token+"&muteAudio="+muteAudio,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo getConferencePeers(String confId, String token, String url) {
-        return null;
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/parties?token="+token,HttpMethod.GET);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo setLivingStreamLayout(String confId, String token, String url, RestPartyLayout restPartyLayout) {
-        return null;
+        ResponseEntity<Object>  resp = restful(restPartyLayout,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/control/setRecordingLivingPeopleLayout?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
     public ReturnInfo setPeerLayout(String confId, String peerId, String token, String url, RestPartyLayout restPartyLayout) {
-        return null;
+        ResponseEntity<Object>  resp = restful(restPartyLayout,"http://"+url+"/api/rest/v2.0/ongoingConferences/"+confId+"/parties/"+peerId+"/control/setLayout?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
     }
 
     @Override
