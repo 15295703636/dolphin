@@ -30,6 +30,13 @@ public class Constant {
     public static final String USER_LOGIN_MSG = "请输入登录名";
     public static final String PWD_LOGIN_MSG = "请输入登录密码";
 
+    /**
+     * 重置密码
+     */
+    public static final String RESET_PWD_ID_MSG = "用户ID不能为空";
+    public static final String RESET_PWD_OLD_MSG = "当前密码不能为空";
+    public static final String RESET_PWD_NEW_MSG = "新密码不能为空";
+
     public static final String USER_NAME_MSG = "用户名不能为空!";
     public static final String PWD_MSG = "密码不能为空!";
     public static final String NAME_NO_EXIST_MSG = "用户不存在!";

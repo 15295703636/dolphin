@@ -14,6 +14,7 @@ import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
+import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.UserEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
@@ -73,6 +74,29 @@ public class IUserServiceImpl implements IUserService {
         redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
         return new ReturnInfo();
     }
+
+    /**
+     * 1.判断用户是否存在
+     * 2.判断当前密码是否正确
+     * 3.更新新密码
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public ReturnInfo resetPwd(ResetPwdBean param) {
+        UserEntity userEntity = userMapper.selectByPrimaryKey(param.getUserId());
+        if (null == userEntity) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_NO_EXIST_MSG);
+        }
+        if (!param.getOldPwd().equals(userEntity.getUser_pwd())) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
+        }
+        userEntity.setUser_pwd(param.getNewPwd());
+        int res = userMapper.updateByPrimaryKeySelective(userEntity);
+        return new ReturnInfo();
+    }
+
 
     /**
      * 添加用户的同时，需不需要添加组织和用户的关系

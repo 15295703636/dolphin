@@ -44,5 +44,11 @@ public class UserInfo {
     @ApiModelProperty(value = "")
     private String user_desc;
 
+    @ApiModelProperty(value = "组织类型")
+    private String org_type;
+
+    @ApiModelProperty(value = "组织上级类型")
+    private String org_preid;
+
 
 }

@@ -47,7 +47,7 @@
     </select>
 
     <select id="selectByUserName" parameterType="java.lang.String" resultType="org.cs.dolphin.common.base.UserInfo">
-       SELECT uo.*,org.customer_id FROM
+       SELECT uo.*,org.customer_id,org.org_type ,org.org_preid FROM
         (SELECT u.*, o.org_id FROM USER u
             LEFT JOIN user2org o ON u.user_id = o.user_id where user_name = #{userName,jdbcType=INTEGER}
         ) uo
