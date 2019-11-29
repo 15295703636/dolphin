@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.DeviceMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        <constructor>
+            <idArg column="device_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="device_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="device_nickName" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="device_type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="device_state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="device_mac" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="device_uri" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    device_id, device_name, device_nickName, device_type, device_state, device_mac, device_uri
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device
+        where device_id = #{device_id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByObj" parameterType="java.lang.Object" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device
+        where 1=1
+        <if test="test != null">
+           and device_id = #{device_id,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from device
+    where device_id = #{device_id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+    insert into device (device_id, device_name, device_nickName, 
+      device_type, device_state, device_mac, 
+      device_uri)
+    values (#{device_id,jdbcType=INTEGER}, #{device_name,jdbcType=VARCHAR}, #{device_nickName,jdbcType=VARCHAR}, 
+      #{device_type,jdbcType=VARCHAR}, #{device_state,jdbcType=VARCHAR}, #{device_mac,jdbcType=VARCHAR}, 
+      #{device_uri,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        insert into device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="device_id != null">
+                device_id,
+            </if>
+            <if test="device_name != null">
+                device_name,
+            </if>
+            <if test="device_nickName != null">
+                device_nickName,
+            </if>
+            <if test="device_type != null">
+                device_type,
+            </if>
+            <if test="device_state != null">
+                device_state,
+            </if>
+            <if test="device_mac != null">
+                device_mac,
+            </if>
+            <if test="device_uri != null">
+                device_uri,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="device_id != null">
+                #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_name != null">
+                #{device_name,jdbcType=VARCHAR},
+            </if>
+            <if test="device_nickName != null">
+                #{device_nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="device_type != null">
+                #{device_type,jdbcType=VARCHAR},
+            </if>
+            <if test="device_state != null">
+                #{device_state,jdbcType=VARCHAR},
+            </if>
+            <if test="device_mac != null">
+                #{device_mac,jdbcType=VARCHAR},
+            </if>
+            <if test="device_uri != null">
+                #{device_uri,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        update device
+        <set>
+            <if test="device_name != null">
+                device_name = #{device_name,jdbcType=VARCHAR},
+            </if>
+            <if test="device_nickName != null">
+                device_nickName = #{device_nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="device_type != null">
+                device_type = #{device_type,jdbcType=VARCHAR},
+            </if>
+            <if test="device_state != null">
+                device_state = #{device_state,jdbcType=VARCHAR},
+            </if>
+            <if test="device_mac != null">
+                device_mac = #{device_mac,jdbcType=VARCHAR},
+            </if>
+            <if test="device_uri != null">
+                device_uri = #{device_uri,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where device_id = #{device_id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+    update device
+    set device_name = #{device_name,jdbcType=VARCHAR},
+      device_nickName = #{device_nickName,jdbcType=VARCHAR},
+      device_type = #{device_type,jdbcType=VARCHAR},
+      device_state = #{device_state,jdbcType=VARCHAR},
+      device_mac = #{device_mac,jdbcType=VARCHAR},
+      device_uri = #{device_uri,jdbcType=VARCHAR}
+    where device_id = #{device_id,jdbcType=INTEGER}
+  </update>
+</mapper>
