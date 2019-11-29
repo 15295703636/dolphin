@@ -8,9 +8,7 @@
     <artifactId>dolphin</artifactId>
     <version>1.0.0</version>
     <modules>
-        <module>dolphin-core</module>
         <module>dolphin-common</module>
-        <module>dolphin-auth</module>
         <module>dolphin-gateway</module>
         <module>dolphin-work</module>
         <module>dolphin-work-api</module>
