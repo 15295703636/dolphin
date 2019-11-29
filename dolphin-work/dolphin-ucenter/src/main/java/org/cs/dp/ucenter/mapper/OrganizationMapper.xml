@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.OrganizationMapper">
-    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         <constructor>
             <idArg column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="org_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -20,7 +20,7 @@
         where org_id = #{org_id,jdbcType=INTEGER}
     </select>
 
-    <select id="getList" resultMap="BaseResultMap" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <select id="getList" resultMap="BaseResultMap" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         select
         <include refid="Base_Column_List"/>
         from organization where 1=1
@@ -33,13 +33,13 @@
     delete from organization
     where org_id = #{org_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
     insert into organization (org_id, org_name, org_type, 
       org_preid, customer_id)
     values (#{org_id,jdbcType=INTEGER}, #{org_name,jdbcType=VARCHAR}, #{org_type,jdbcType=INTEGER}, 
       #{org_preid,jdbcType=INTEGER}, #{customer_id,jdbcType=INTEGER})
   </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         insert into organization
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="org_id != null">
@@ -76,7 +76,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         update organization
         <set>
             <if test="org_name != null">
@@ -94,7 +94,7 @@
         </set>
         where org_id = #{org_id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.OrganizationEntity">
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
     update organization
     set org_name = #{org_name,jdbcType=VARCHAR},
       org_type = #{org_type,jdbcType=INTEGER},

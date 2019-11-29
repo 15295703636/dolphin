@@ -1,7 +1,7 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.cs.dp.ucenter.domain.SuperUserEntity;
+import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 
 @Mapper
 public interface SuperUserMapper {

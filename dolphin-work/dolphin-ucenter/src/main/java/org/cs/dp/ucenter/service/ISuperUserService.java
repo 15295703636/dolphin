@@ -1,8 +1,8 @@
 package org.cs.dp.ucenter.service;
 
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dp.ucenter.domain.SuperUserEntity;
 import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 
 import javax.servlet.http.HttpServletRequest;
 

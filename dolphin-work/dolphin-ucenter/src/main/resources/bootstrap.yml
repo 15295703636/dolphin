@@ -86,7 +86,20 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-logging:
-  level:
-    org:
-      cs: debug
+
+xxl:
+  job:
+    admin:
+      addresses: ${xxl.job.admin.addresses}
+    executor:
+      appname: xxl-job-executor-ucenter
+      ip:
+      port: 9991
+      logpath: ${xxl.job.executor.logpath}
+      logretentiondays: ${xxl.job.executor.logretentiondays}
+    accessToken:
+    start: true
+  api:
+    add:
+      job:
+        url: /jobinfo/api/add

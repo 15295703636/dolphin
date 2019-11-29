@@ -1,7 +1,7 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.cs.dp.ucenter.domain.CustomerEntity;
+import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 
 import java.util.List;
 

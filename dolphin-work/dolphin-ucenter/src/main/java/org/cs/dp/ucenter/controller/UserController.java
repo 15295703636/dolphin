@@ -6,7 +6,7 @@ import org.cs.dolphin.common.base.*;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.UserEntity;
+import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
