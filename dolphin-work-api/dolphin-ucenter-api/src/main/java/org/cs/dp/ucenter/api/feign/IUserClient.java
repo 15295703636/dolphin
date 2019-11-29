@@ -21,7 +21,6 @@ public interface IUserClient {
                                @RequestParam(defaultValue = "10") Integer rows,
                                @RequestParam Integer org_id);
 
-    @Async
     @PostMapping(API_PREFIX_LOG + "/add")
     ReturnInfo allLog(@RequestBody LogEntity param);
 }

@@ -21,7 +21,6 @@ public class ISoUserServiceImpl implements ISoUserService {
         return iUserClient.selectUserByOrg(0, 0, 0);
     }
 
-    @Async
     @Override
     public ReturnInfo addLog(LogEntity param) {
         return iUserClient.allLog(param);
