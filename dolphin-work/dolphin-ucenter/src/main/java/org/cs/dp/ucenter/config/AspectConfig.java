@@ -1,5 +1,6 @@
 package org.cs.dp.ucenter.config;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -58,7 +59,7 @@ public class AspectConfig {
         log.info("统一日志记录HTTP_METHOD: {} ", request.getMethod());
         log.info("统一日志记录IP: {} ", request.getRemoteAddr());
         log.info("统一日志记录CLASS_METHOD : {} ", point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName());
-        log.info("统一日志记录PARAM : {} ", Arrays.toString(point.getArgs()));
+        log.info("统一日志记录PARAM : {} ", JSON.toJSONString(point.getArgs()));
 
         Object returnObj = null;
 
