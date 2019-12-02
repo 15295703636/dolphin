@@ -22,20 +22,22 @@ import java.util.*;
 public class GenerateCodeAutoMain {
 
     //--------------------------------生成控制层，接口层，实现类配置--------------------------------
-    //生成类的包头,一个工程设置1次
-    public static final String PACKAGE_PATH = "org.cs.dp.ucenter.";
-    //文件保存位置(可以指定生成的控制层，接口，实现类的保存路径)
-    public static final String SAVE_PATH = null;//"C:\\Users\\Liujt\\Desktop\\test\\";
-    //如果SAVE_PATH 为 null，默认保存在工程中
-    public static final String SRC_PATH = "src/main/java/";
     //数据库表名
     private static final String TABLE_NAME = "log";
     //业务变量名
     public static final String NAME = "Log";
     //业务注释
     public static final String EXPLAIN = "日志信息";
+    //--------------------------------以上信息每次生成代码必须要修改参数------------------------------
+
+    //生成类的包头,一个工程设置1次
+    public static final String PACKAGE_PATH = "org.cs.dp.sonar.";
+    //文件保存位置(可以指定生成的控制层，接口，实现类的保存路径)
+    public static final String SAVE_PATH = null;//"C:\\Users\\Liujt\\Desktop\\test\\";
+    //如果SAVE_PATH 为 null，默认保存在工程中
+    public static final String SRC_PATH = "src/main/java/";
     //作者
-    public static final String AUTHOR = "Liujt";
+    public static final String AUTHOR = "LiuJT";
 
     //--------------------------------mybatis插件配置--------------------------------
     public static Map DATA_SOURCE = new HashMap() {
