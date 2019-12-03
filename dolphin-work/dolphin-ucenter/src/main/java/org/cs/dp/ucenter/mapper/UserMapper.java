@@ -7,7 +7,6 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 
 import java.util.List;
 
-@Mapper
 public interface UserMapper {
     int deleteByPrimaryKey(Integer user_id);
 

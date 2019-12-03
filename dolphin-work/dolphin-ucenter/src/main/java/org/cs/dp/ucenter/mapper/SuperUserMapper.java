@@ -3,7 +3,6 @@ package org.cs.dp.ucenter.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 
-@Mapper
 public interface SuperUserMapper {
     int deleteByPrimaryKey(Integer user_id);
 

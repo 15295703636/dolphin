@@ -6,7 +6,6 @@ import org.cs.dp.ucenter.domain.GetLogBean;
 
 import java.util.List;
 
-@Mapper
 public interface LogMapper {
     int deleteByDay(Integer day);
 

@@ -5,7 +5,6 @@ import org.cs.dp.ucenter.domain.entity.CodeCustomerTypeEntity;
 
 import java.util.List;
 
-@Mapper
 public interface CodeCustomerTypeMapper {
     int deleteByPrimaryKey(Integer id);
 

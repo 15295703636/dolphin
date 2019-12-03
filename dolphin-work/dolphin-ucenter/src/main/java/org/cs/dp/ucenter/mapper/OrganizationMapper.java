@@ -5,7 +5,6 @@ import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 
 import java.util.List;
 
-@Mapper
 public interface OrganizationMapper {
     int deleteByPrimaryKey(Integer org_id);
 
