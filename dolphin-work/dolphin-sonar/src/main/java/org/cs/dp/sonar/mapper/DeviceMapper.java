@@ -1,11 +1,9 @@
 package org.cs.dp.sonar.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 
 import java.util.List;
 
-@Mapper
 public interface DeviceMapper {
     int deleteByPrimaryKey(Integer device_id);
 

@@ -1,12 +1,10 @@
 package org.cs.dp.sonar.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.cs.dp.sonar.domain.entity.ClassScheduleEntity;
 
 /**
  * 课程表
  */
-@Mapper
 public interface ClassScheduleMapper {
     int deleteByPrimaryKey(Integer scheduleId);
 
