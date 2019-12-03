@@ -58,7 +58,7 @@ public class GenerateCodeAutoMain {
             put("xmlPackage", PACKAGE_PATH + "mapper");
             //以上配置理论上一个业务模块只配置一次
 
-            //表明+生成的实体类名称，和 NAME 字段保持一致 TODO 表名
+            //表明+生成的实体类名称，和 NAME 字段保持一致
             put("tableName", TABLE_NAME);
             put("javaBeanName", NAME + "Entity");
         }

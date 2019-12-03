@@ -232,14 +232,10 @@ class CreateADEG {
         String line = null;
         while ((line = bufIn.readLine()) != null) {
             if (line.startsWith("public interface " + oldstr)) {
-                // 将该行写入内存
-                tempStream.write("import org.apache.ibatis.annotations.Mapper;");
-                // 添加换行符
+                /*tempStream.write("import org.apache.ibatis.annotations.Mapper;");
                 tempStream.append(System.getProperty("line.separator"));
-                // 将该行写入内存
                 tempStream.write("@Mapper");
-                // 添加换行符
-                tempStream.append(System.getProperty("line.separator"));
+                tempStream.append(System.getProperty("line.separator"));*/
                 // 将该行写入内存
                 tempStream.write(line.replaceAll(oldstr, newStr));
                 // 添加换行符
