@@ -51,14 +51,4 @@ public class UserTestController {
         return iTestService.addJob(param);
     }
 
-    public static void main(String[] args){
-        User user = new User();
-        user.setUser_id(1);
-        JsonRpcReq jsonRpcReq = new JsonRpcReq();
-        jsonRpcReq.setMethod("add_pear");
-        jsonRpcReq.setParams(JSONObject.toJSONString(user));
-        String json = JsonRpcReq.generateJsonStr(jsonRpcReq);
-        System.out.println(json);
-    }
-
 }
