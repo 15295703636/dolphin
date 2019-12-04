@@ -43,16 +43,23 @@ public class GatewayApplication {
                                         .setFallbackUri("forward:/fallback"))// 熔断到 /fallback, 就是上面配制的那个
                                 .stripPrefix(2))  //路由会去除/api/v1
                         .uri("lb://dolphin-ucenter"))// 将请求路由到指定目标, lb开头是注册中心中的服务, http/https 开头你懂的
-        .route(p -> p
-                .path("/api/v1/**")
-                .filters(f -> f
-                        .hystrix(config -> config   // 对path()指定的请求使用熔断器
-                                .setName("mycmd1")   // 熔断器的名字
-                                .setFallbackUri("forward:/fallback"))  // 熔断到 /fallback, 就是上面配制的那个
-                .stripPrefix(2))  //路由会去除/api/v1
-                .uri("lb://dolphin-sonar"))//http://localhost:9009/api/v1/helloNacos
+                .route(p -> p
+                        .path("/sonar/**")
+                        .filters(f -> f
+                                .hystrix(config -> config   // 对path()指定的请求使用熔断器
+                                        .setName("mycmd1")   // 熔断器的名字
+                                        .setFallbackUri("forward:/fallback"))  // 熔断到 /fallback, 就是上面配制的那个
+                                .stripPrefix(1))  //路由会去除/api/v1
+                        .uri("lb://dolphin-sonar"))//http://localhost:9009/api/v1/helloNacos
+                .route(p -> p.path("/socketServer/**")
+                        .filters(f -> f
+                                .hystrix(config -> config   // 对path()指定的请求使用熔断器
+                                        .setName("mycmd1")   // 熔断器的名字
+                                        .setFallbackUri("forward:/fallback"))  // 熔断到 /fallback, 就是上面配制的那个
+                                .stripPrefix(1))  //路由会去除/api/v1
+                        .uri("lb:ws://dolphin-sonar"))
                 .route(r -> r.path("/user/**")
-                        .filters(f->f.stripPrefix(1))
+                        .filters(f -> f.stripPrefix(1))
                         .uri("lb://blade-consumer"))//http://localhost:9009/user/test
                 .build();
     }

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dp.ucenter.domain.CodeCustomerTypeEntity;
+import org.cs.dp.ucenter.domain.entity.CodeCustomerTypeEntity;
 import org.cs.dp.ucenter.mapper.CodeCustomerTypeMapper;
 import org.cs.dp.ucenter.service.ICodeService;
 import org.springframework.beans.factory.annotation.Autowired;

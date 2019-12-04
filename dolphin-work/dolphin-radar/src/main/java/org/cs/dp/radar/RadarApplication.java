@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+/**
+ * 调用外部接口
+ */
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients("org.cs.dp.*.api.feign")

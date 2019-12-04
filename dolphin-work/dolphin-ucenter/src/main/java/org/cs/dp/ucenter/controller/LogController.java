@@ -27,7 +27,7 @@ public class LogController {
     @Autowired
     private ILogService iLogService;
 
-   /* @PostMapping("add")
+    /*@PostMapping("add")
     @ApiOperation(value = "添加日志记录", notes = "日志记录")
     public ReturnInfo addLog(@RequestBody LogEntity param){
         return iLogService.addLog(param);

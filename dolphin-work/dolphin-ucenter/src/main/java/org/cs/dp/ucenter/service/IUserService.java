@@ -4,8 +4,9 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
+import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.UserEntity;
+import org.cs.dp.ucenter.domain.entity.UserEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -18,6 +19,8 @@ public interface IUserService {
     ReturnInfo getUserInfo();
 
     ReturnInfo loginOut(HttpServletRequest request);
+
+    ReturnInfo resetPwd(ResetPwdBean param);
 
     ReturnInfo add(UserEntity record);
 

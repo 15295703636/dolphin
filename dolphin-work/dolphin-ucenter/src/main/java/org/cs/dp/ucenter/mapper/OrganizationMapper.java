@@ -1,11 +1,10 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.cs.dp.ucenter.domain.OrganizationEntity;
+import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 
 import java.util.List;
 
-@Mapper
 public interface OrganizationMapper {
     int deleteByPrimaryKey(Integer org_id);
 

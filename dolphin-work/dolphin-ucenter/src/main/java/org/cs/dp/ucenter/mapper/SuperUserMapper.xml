@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.SuperUserMapper">
-    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -15,7 +15,7 @@
             <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
         </constructor>
     </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -56,7 +56,7 @@
     delete from super_user
     where user_id = #{user_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
     insert into super_user (user_id, user_name, user_qname, 
       user_pwd, user_email, role_id, 
       user_statu, user_number, user_tel, 
@@ -66,7 +66,7 @@
       #{user_statu,jdbcType=BIT}, #{user_number,jdbcType=VARCHAR}, #{user_tel,jdbcType=VARCHAR}, 
       #{user_code,jdbcType=VARCHAR})
   </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         insert into super_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="user_id != null">
@@ -133,7 +133,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         update super_user
         <set>
             <if test="user_name != null">
@@ -166,7 +166,7 @@
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
     update super_user
     set user_name = #{user_name,jdbcType=VARCHAR},
       user_qname = #{user_qname,jdbcType=VARCHAR},
@@ -179,7 +179,7 @@
       user_code = #{user_code,jdbcType=VARCHAR}
     where user_id = #{user_id,jdbcType=INTEGER}
   </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.SuperUserEntity">
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
     update super_user
     set user_name = #{user_name,jdbcType=VARCHAR},
       user_qname = #{user_qname,jdbcType=VARCHAR},

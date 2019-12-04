@@ -42,7 +42,7 @@ public class Filter implements GlobalFilter, Ordered {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
 
         //获取请求路径
-        final String requestUri = serverHttpRequest.getURI().getPath().substring(prefix.length());
+        final String requestUri = serverHttpRequest.getURI().getPath();
         //白名单过滤
         if (!isStartWith(requestUri)) {
             //token校验,先获取url路径上的token，获取不到，从请求头中获取
@@ -80,7 +80,7 @@ public class Filter implements GlobalFilter, Ordered {
         boolean flag = false;
         String whites[] = whiteList.split(",");
         for (String s : whites) {
-            if (requestUri.startsWith(s)) {
+            if (requestUri.contains(s)) {
                 return true;
             }
         }

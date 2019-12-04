@@ -4,8 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.*;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
+import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.UserEntity;
+import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -42,6 +43,13 @@ public class UserController {
     @ApiOperation(value = "退出接口", notes = "用户信息")
     public ReturnInfo loginOut(HttpServletRequest request) {
         return iUserService.loginOut(request);
+    }
+
+    @ParamValid
+    @PostMapping("resetPwd")
+    @ApiOperation(value = "重置密码", notes = "用户信息")
+    public ReturnInfo resetPwd(@Valid @RequestBody ResetPwdBean param, BindingResult result) {
+        return iUserService.resetPwd(param);
     }
 
     @ParamValid

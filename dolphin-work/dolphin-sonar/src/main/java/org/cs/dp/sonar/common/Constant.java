@@ -24,4 +24,6 @@ public class Constant {
      */
     public static final String PROJECT_BASE_PACKAGE = "org.cs.dp.sonar.controller";
 
+    public static final String WEBSOCKET_TOPIC = "groupSend";
+
 }

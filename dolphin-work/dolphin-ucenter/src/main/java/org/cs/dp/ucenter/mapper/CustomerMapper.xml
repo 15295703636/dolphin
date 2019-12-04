@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.CustomerMapper">
-    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.CustomerEntity">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         <constructor>
             <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -26,7 +26,7 @@
         where id = #{id,jdbcType=INTEGER}
     </select>
 
-    <select id="getList" parameterType="org.cs.dp.ucenter.domain.CustomerEntity" resultMap="BaseResultMap">
+    <select id="getList" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from customer
@@ -40,7 +40,7 @@
     delete from customer
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.CustomerEntity">
+    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
     insert into customer (id, customer_id, customer_name, 
       customer_end_time, out_name, out_pwd, 
       customer_address, remark, create_time, 
@@ -50,7 +50,7 @@
       #{customer_address,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, 
       #{update_time,jdbcType=TIMESTAMP})
   </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.CustomerEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         insert into customer
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -117,7 +117,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.CustomerEntity">
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         update customer
         <set>
             <if test="customer_id != null">
@@ -150,7 +150,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.CustomerEntity">
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
     update customer
     set customer_id = #{customer_id,jdbcType=VARCHAR},
       customer_name = #{customer_name,jdbcType=VARCHAR},

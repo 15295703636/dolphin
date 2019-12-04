@@ -65,4 +65,13 @@ public class ILogServiceImpl implements ILogService {
         List<LogEntity> logEntities = logMapper.selectByTerm(getLogBean);
         ExcelUtils.export("异常日志","异常记录", logEntities, response, LogEntity.class);
     }
+
+    @Override
+    public int delLogByDay(String day) {
+        Integer dayInt = 7;
+        if(!StringUtil.isNull(day)){
+            dayInt = Integer.parseInt(day.trim());
+        }
+        return logMapper.deleteByDay(dayInt);
+    }
 }

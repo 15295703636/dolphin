@@ -1,4 +1,4 @@
-package org.cs.dp.ucenter.domain;
+package org.cs.dp.ucenter.domain.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

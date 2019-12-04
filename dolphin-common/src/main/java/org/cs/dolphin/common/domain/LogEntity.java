@@ -54,6 +54,14 @@ public class LogEntity {
         this.log_content = log_content;
     }
 
+    public LogEntity(String log_module,String log_url, String log_content) {
+        this.log_module = log_module;
+        this.log_type = "error";
+        this.log_level = "error";
+        this.log_url = log_url;
+        this.log_content = log_content;
+    }
+
     public LogEntity() {
     }
 
