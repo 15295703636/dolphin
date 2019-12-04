@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @ClassName WebsocketController
- * @Description websocket 发布订阅模式(群发)服务入口;应用场景:平台管理员发布消息
+ * @Description websocket 发布订阅模式(群发)服务入口;应用场景:平台管理员发布消息(固定的topic)
  * @Author Liujt
  * @Date 2019/12/3 11:48
  **/

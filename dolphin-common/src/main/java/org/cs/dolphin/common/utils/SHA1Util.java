@@ -42,12 +42,12 @@ public class SHA1Util {
         //字符数组转为字符串
         return new String(chs);
     }
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    /*public static void main(String[] args) throws NoSuchAlgorithmException {
 
         String data = "api@bizconfedu";
         String result = sha1(data);
         System.out.println("加密后："+result);
 
-    }
+    }*/
 
 }

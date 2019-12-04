@@ -1,9 +1,8 @@
 package org.cs.dp.radar.feign;
 
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dp.radar.api.feign.IBaioClient;
 import org.cs.dp.radar.api.feign.IBrsClient;
-import org.cs.dp.radar.service.IBaioService;
 import org.cs.dp.radar.service.IBrsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 流媒体接口调用
  */
+@Slf4j
 @RestController
 public class BrsClient implements IBrsClient {
 
@@ -22,7 +22,7 @@ public class BrsClient implements IBrsClient {
     @Override
     @GetMapping(API_PREFIX+"/sendmsg")
     public ReturnInfo sendmsg(@RequestParam String msg,@RequestParam String method) {
-        System.out.println("brs="+msg);
+        log.info("brs="+msg);
         return iBrsService.sendmsg(msg,method);
     }
 

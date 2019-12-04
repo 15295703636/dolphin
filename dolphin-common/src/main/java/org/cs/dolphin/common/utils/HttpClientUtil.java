@@ -238,10 +238,10 @@ public class HttpClientUtil {
         return restult;
     }
 
-    public static void main(String[] args) throws Exception {
+   /* public static void main(String[] args) throws Exception {
         System.out.println(doPostJson(
                 "http://221.226.156.110/edu/httpResource/queryChannels",
                 "{'org_id':1}"));
 
-    }
+    }*/
 }

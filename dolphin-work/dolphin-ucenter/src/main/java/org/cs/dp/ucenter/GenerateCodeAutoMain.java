@@ -1,6 +1,7 @@
 package org.cs.dp.ucenter;
 
 import freemarker.template.Template;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.utils.StringUtil;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
@@ -20,6 +21,7 @@ import static org.cs.dp.ucenter.CreateADEG.modifyFileContent;
  * @Author Liujt
  * @Date 2019/11/30 9:22
  **/
+@Slf4j
 public class GenerateCodeAutoMain {
 
     //--------------------------------生成控制层，接口层，实现类配置--------------------------------
@@ -103,7 +105,7 @@ public class GenerateCodeAutoMain {
                 .concat(PACKAGE_PATH.replace(".", "/"))
                 .concat("mapper/");
 
-        System.out.println(basePath);
+        log.info(basePath);
 
         String mapper = "Mapper";
         String entityMapper = "EntityMapper";
@@ -120,6 +122,7 @@ public class GenerateCodeAutoMain {
     }
 }
 
+@Slf4j
 class CreateADEG {
     //生成的文件名称后缀
     private static final String SERVER_TYPE_C = "Controller.java";
@@ -179,7 +182,7 @@ class CreateADEG {
 
     //写文件
     private static void writerFile(String path, String content, String name) throws IOException {
-        System.out.println("path:" + path + "\n" + "name:" + name);
+        log.info("path:" + path + "\n" + "name:" + name);
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -199,7 +202,7 @@ class CreateADEG {
         for (File file : files) {
             if (!file.isDirectory()) {
                 if (file.getName().contains(name)) {
-                    System.out.println(file + ":" + file.delete());
+                    log.info(file + ":" + file.delete());
                 }
             }
         }
@@ -278,6 +281,7 @@ class CreateADEG {
     }
 }
 
+@Slf4j
 class FreeMarkUtil {
     /**
      * FreeMark模板配置
@@ -315,13 +319,13 @@ class FreeMarkUtil {
             out.flush();
             return out.getBuffer().toString();
         } catch (Exception e) {
-            System.out.println("FreeMarkUtil文件读取失败:" + e.getMessage());
+            log.info("FreeMarkUtil文件读取失败:" + e.getMessage());
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    System.out.println("FreeMarkUtil的out流关闭失败:" + e.getMessage());
+                    log.error("FreeMarkUtil的out流关闭失败:" + e.getMessage());
                 }
             }
         }

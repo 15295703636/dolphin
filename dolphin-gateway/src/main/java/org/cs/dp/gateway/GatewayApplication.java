@@ -36,12 +36,13 @@ public class GatewayApplication {
         return builder.routes()
                 // 配制一个路由,把 http://网关地址:网关端口/demo/ 下的请求路由到 demo-service 微服务中
                 .route(p -> p
-                        .path("/api/u/**")//http://localhost:9009/api/f/feign
+                        .path("/ucenter/**")//http://localhost:9009/api/f/feign
                         .filters(f -> f
                                 .hystrix(config -> config   // 对path()指定的请求使用熔断器
                                         .setName("mycmd")   // 熔断器的名字
-                                        .setFallbackUri("forward:/fallback"))// 熔断到 /fallback, 就是上面配制的那个
-                                .stripPrefix(2))  //路由会去除/api/v1
+                                        .setFallbackUri("forward:/fallback")
+                                )// 熔断到 /fallback, 就是上面配制的那个
+                                .stripPrefix(1))  //路由会去除/api/v1
                         .uri("lb://dolphin-ucenter"))// 将请求路由到指定目标, lb开头是注册中心中的服务, http/https 开头你懂的
                 .route(p -> p
                         .path("/sonar/**")
