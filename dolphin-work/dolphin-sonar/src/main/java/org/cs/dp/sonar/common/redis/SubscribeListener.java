@@ -11,7 +11,7 @@ import javax.websocket.Session;
 import java.io.IOException;
 
 /**
- * @author 七脉 描述：订阅监听类
+ * @author Liujt 描述：订阅监听类
  */
 @Slf4j
 @Component
