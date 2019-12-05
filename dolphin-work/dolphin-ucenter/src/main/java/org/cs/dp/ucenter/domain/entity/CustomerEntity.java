@@ -3,7 +3,9 @@ package org.cs.dp.ucenter.domain.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.cs.dp.ucenter.common.Constant;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
@@ -18,6 +20,7 @@ public class CustomerEntity {
     @ApiModelProperty(value = "客户代表ID")
     private Integer manage_id;
 
+    @NotBlank(message = Constant.CUSTOMER_NAME_ISEMPTY_MSG)
     @ApiModelProperty(value = "租户名称")
     private String customer_name;
 

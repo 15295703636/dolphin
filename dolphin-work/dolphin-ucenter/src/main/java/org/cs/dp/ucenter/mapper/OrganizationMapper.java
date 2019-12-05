@@ -12,6 +12,8 @@ public interface OrganizationMapper {
 
     int insertSelective(OrganizationEntity record);
 
+    int selectByCusIdCou(Integer customer_id);
+
     OrganizationEntity selectByPrimaryKey(Integer org_id);
 
     int updateByPrimaryKeySelective(OrganizationEntity record);

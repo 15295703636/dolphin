@@ -26,6 +26,9 @@ public class OrganizationEntity  {
 
     private List<OrganizationEntity> node;
 
+    public OrganizationEntity() {
+    }
+
     public OrganizationEntity(Integer org_id, String org_name, Integer org_type, Integer org_preid, Integer customer_id) {
         this.org_id = org_id;
         this.org_name = org_name;

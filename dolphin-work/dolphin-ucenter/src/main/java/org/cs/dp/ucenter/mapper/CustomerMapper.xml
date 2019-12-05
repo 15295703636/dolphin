@@ -44,7 +44,18 @@
         </if>
     </select>
 
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+
+    <select id="selectByManageId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer where and manage_id = #{manageId}
+    </select>
+
+    <select id="selectByUserNameCou" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from customer where customer_name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         insert into customer
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

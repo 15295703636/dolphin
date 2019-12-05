@@ -14,7 +14,11 @@ public interface CustomerMapper {
 
     CustomerEntity selectByPrimaryKey(Integer id);
 
+    int selectByUserNameCou(String name);
+
     List<CustomerEntity > selectByObj(@Param(value = "name") String name);
+
+    List<CustomerEntity > selectByManageId(@Param(value = "manageId") Integer manageId);
 
     int updateByPrimaryKeySelective(CustomerEntity record);
 

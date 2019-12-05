@@ -32,11 +32,11 @@ public class GenerateCodeAutoMain {
     //如果SAVE_PATH 为 null，默认保存在工程中
     public static final String SRC_PATH = "src/main/java/";
     //数据库表名
-    private static final String TABLE_NAME = "log";
+    private static final String TABLE_NAME = "user2org";
     //业务变量名
-    public static final String NAME = "Log";
+    public static final String NAME = "UserOrg";
     //业务注释
-    public static final String EXPLAIN = "日志信息";
+    public static final String EXPLAIN = "租户管理";
     //作者
     public static final String AUTHOR = "Liujt";
 

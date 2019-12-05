@@ -58,17 +58,8 @@
     delete from user
     where user_id = #{user_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
-    insert into user (user_id, user_name, user_qname, 
-      user_pwd, user_email, role_id, 
-      user_statu, user_number, user_tel, 
-      user_code, user_desc)
-    values (#{user_id,jdbcType=INTEGER}, #{user_name,jdbcType=VARCHAR}, #{user_qname,jdbcType=VARCHAR}, 
-      #{user_pwd,jdbcType=VARCHAR}, #{user_email,jdbcType=VARCHAR}, #{role_id,jdbcType=INTEGER}, 
-      #{user_statu,jdbcType=BIT}, #{user_number,jdbcType=VARCHAR}, #{user_tel,jdbcType=VARCHAR}, 
-      #{user_code,jdbcType=VARCHAR}, #{user_desc,jdbcType=LONGVARCHAR})
-  </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="user_id"
+            parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="user_id != null">
@@ -177,58 +168,33 @@
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
-    update user
-    set user_name = #{user_name,jdbcType=VARCHAR},
-      user_qname = #{user_qname,jdbcType=VARCHAR},
-      user_pwd = #{user_pwd,jdbcType=VARCHAR},
-      user_email = #{user_email,jdbcType=VARCHAR},
-      role_id = #{role_id,jdbcType=INTEGER},
-      user_statu = #{user_statu,jdbcType=BIT},
-      user_number = #{user_number,jdbcType=VARCHAR},
-      user_tel = #{user_tel,jdbcType=VARCHAR},
-      user_code = #{user_code,jdbcType=VARCHAR},
-      user_desc = #{user_desc,jdbcType=LONGVARCHAR}
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
-    update user
-    set user_name = #{user_name,jdbcType=VARCHAR},
-      user_qname = #{user_qname,jdbcType=VARCHAR},
-      user_pwd = #{user_pwd,jdbcType=VARCHAR},
-      user_email = #{user_email,jdbcType=VARCHAR},
-      role_id = #{role_id,jdbcType=INTEGER},
-      user_statu = #{user_statu,jdbcType=BIT},
-      user_number = #{user_number,jdbcType=VARCHAR},
-      user_tel = #{user_tel,jdbcType=VARCHAR},
-      user_code = #{user_code,jdbcType=VARCHAR}
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </update>
 
- <!--   <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
-        select u.user_id,
-               u.user_name,
-               u.user_qname,
-               u.user_pwd,
-               u.user_email,
-               u.role_id,
-               u.user_statu,
-               u.user_number,
-               u.user_tel,
-               u.user_code,
-               u.user_desc from user2org uo
-        LEFT JOIN USER u ON uo.user_id = u.user_id
-        WHERE
-        <![CDATA[
-            0<(SELECT uo.org_id FROM user2org uo WHERE uo.org_id = #{orgId} AND uo.user_id = #{userId} )
-        ]]>
-        and uo.org_id = #{orgId}
-    </select>-->
+
+    <!--   <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+           select u.user_id,
+                  u.user_name,
+                  u.user_qname,
+                  u.user_pwd,
+                  u.user_email,
+                  u.role_id,
+                  u.user_statu,
+                  u.user_number,
+                  u.user_tel,
+                  u.user_code,
+                  u.user_desc from user2org uo
+           LEFT JOIN USER u ON uo.user_id = u.user_id
+           WHERE
+           <![CDATA[
+               0<(SELECT uo.org_id FROM user2org uo WHERE uo.org_id = #{orgId} AND uo.user_id = #{userId} )
+           ]]>
+           and uo.org_id = #{orgId}
+       </select>-->
 
     <!--1.先根据当前的组织id查询到所有子节点的组织id，
     2.在关联组织用户关系表，查出用户id，
     3.在关联用户表查询用户信息-->
-    <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+    <select id="getListByOrgId" parameterType="java.lang.Integer"
+            resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
         SELECT
             u.user_id,
             u.user_name,

@@ -14,6 +14,7 @@ import org.cs.dolphin.common.constant.AspectConstant;
 import org.cs.dolphin.common.constant.ModuleConstant;
 import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.domain.LogEntity;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.ExceptionUtil;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
@@ -96,6 +97,8 @@ public class AspectConfig {
             } else {
                 returnObj = point.proceed();
             }
+        } catch (BaseException be) {
+            returnObj = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, be.getDetailMessage());
         } catch (Exception e) {
             log.error("Controller捕获未知异常，{}", e);
             try {

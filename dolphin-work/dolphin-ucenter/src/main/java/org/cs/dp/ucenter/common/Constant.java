@@ -25,6 +25,12 @@ public class Constant {
     public static final String PROJECT_BASE_PACKAGE = "org.cs.dp.ucenter.controller";
 
     /**
+     * 租户提示信息
+     */
+    public static final String CUSTOMER_NAME_ISEMPTY_MSG = "租户名称不能为空!";
+    public static final String CUSTOMER_NAME_EXIST_MSG = "租户已存在!";
+
+    /**
      * 用户登录提示信息
      */
     public static final String USER_LOGIN_MSG = "请输入登录名";

@@ -25,21 +25,20 @@
         <include refid="Base_Column_List"/>
         from organization where 1=1
         <if test="customer_id != null and customer_id != ''">
-           and customer_id = #{customer_id}
+            and customer_id = #{customer_id}
         </if>
+    </select>
+
+    <select id="selectByCusIdCou" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from organization where customer_id = #{customer_id,jdbcType=INTEGER} and org_preid = 0
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from organization
     where org_id = #{org_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
-    insert into organization (org_id, org_name, org_type, 
-      org_preid, customer_id)
-    values (#{org_id,jdbcType=INTEGER}, #{org_name,jdbcType=VARCHAR}, #{org_type,jdbcType=INTEGER}, 
-      #{org_preid,jdbcType=INTEGER}, #{customer_id,jdbcType=INTEGER})
-  </insert>
-    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="org_id" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         insert into organization
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="org_id != null">

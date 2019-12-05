@@ -45,6 +45,9 @@ public class UserEntity {
     @ApiModelProperty(value = "")
     private String user_desc;
 
+    public UserEntity() {
+    }
+
     public UserEntity(Integer user_id, String user_name, String user_qname, String user_pwd, String user_email, Integer role_id, Boolean user_statu, String user_number, String user_tel, String user_code, String user_desc) {
         this.user_id = user_id;
         this.user_name = user_name;
