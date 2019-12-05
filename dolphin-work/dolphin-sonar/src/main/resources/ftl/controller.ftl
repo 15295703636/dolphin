@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 * @Date ${date}
 **/
 @RestController
-@RequestMapping("${name?uncap_first}")
+@RequestMapping("【${name?uncap_first}】")
 @Api(tags = "${explain}")
 public class ${name}Controller {
     @Autowired

@@ -17,9 +17,6 @@ import java.io.IOException;
 @Component
 public class SubscribeListener implements MessageListener {
 
-	@Resource(name = "redisTemplate")
-	private RedisTemplate redisTemplate;
-	
     private Session session;
     
     /**
@@ -35,7 +32,9 @@ public class SubscribeListener implements MessageListener {
 			} catch (IOException e) {
 				log.error("消息发送失败：",e);
 			}
-        }
+        }else {
+			log.error("--------未发现客户端session--------");
+		}
 	}
 
 	public Session getSession() {

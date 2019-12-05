@@ -28,7 +28,7 @@
             <!-- 建立的Model对象是否 不可改变  即生成的Model对象不会有 setter方法，只有构造方法 -->
             <property name="immutable" value="true"/>
             <!-- 给Model添加一个父类 -->
-            <property name="rootClass" value="org.cs.dp.ucenter.domain"/>
+            <!--<property name="rootClass" value="org.cs.dp.ucenter.domain"/>-->
             <!-- 是否对类CHAR类型的列的数据进行trim操作 -->
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>

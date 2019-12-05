@@ -62,7 +62,7 @@ management:
 
 getWay:
   white:
-    list: /v1/login,/socketServer  #白名单放行
+    list: /v1/login,/socketServer,swagger,/v2  #白名单放行
   prefix: /api   #为网关设置一个公共的前缀
 
 hystrix:
