@@ -1,12 +1,13 @@
 package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 
 import java.util.List;
 
 public interface CustomerMapper {
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(List<Integer> id);
 
     int insert(CustomerEntity record);
 
@@ -22,5 +23,5 @@ public interface CustomerMapper {
 
     int updateByPrimaryKeySelective(CustomerEntity record);
 
-    int updateByPrimaryKey(CustomerEntity record);
+    int updateStatusByKey(@Param(value = "param") EditStatusBean param);
 }

@@ -21,31 +21,31 @@ import org.springframework.web.bind.annotation.RestController;
 **/
 @RestController
 @RequestMapping("userOrg")
-@Api(tags = "【租户管理】")
+@Api(tags = "【用户组织关系管理】")
 public class UserOrgController {
     @Autowired
     private IUserOrgService iUserOrgService;
 
     @PostMapping("add")
-    @ApiOperation(value = "添加租户管理", notes = "租户管理")
+    @ApiOperation(value = "添加用户组织关系管理", notes = "用户组织关系管理")
     public ReturnInfo addUserOrg(@RequestBody UserOrgEntity param){
         return iUserOrgService.addUserOrg(param);
     }
 
     @PostMapping("del")
-    @ApiOperation(value = "删除租户管理", notes = "租户管理")
+    @ApiOperation(value = "删除用户组织关系管理", notes = "用户组织关系管理")
     public ReturnInfo delUserOrg(@RequestBody Integer id){
         return iUserOrgService.delUserOrg(id);
     }
 
     @PostMapping("edit")
-    @ApiOperation(value = "修改租户管理", notes = "租户管理")
+    @ApiOperation(value = "修改用户组织关系管理", notes = "用户组织关系管理")
     public ReturnInfo editUserOrg(@RequestBody UserOrgEntity param){
         return iUserOrgService.editUserOrg(param);
     }
 
     @PostMapping("get")
-    @ApiOperation(value = "查询租户管理", notes = "租户管理")
+    @ApiOperation(value = "查询用户组织关系管理", notes = "用户组织关系管理")
     public ReturnInfo getUserOrg(@RequestBody RequestPage<SplitPageInfo, Object> param){
         return iUserOrgService.getUserOrg(param);
     }

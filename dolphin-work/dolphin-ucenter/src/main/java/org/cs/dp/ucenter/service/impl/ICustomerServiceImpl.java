@@ -2,6 +2,7 @@ package org.cs.dp.ucenter.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
@@ -9,6 +10,7 @@ import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.domain.AddCustomerBean;
+import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
@@ -32,19 +34,14 @@ import java.util.List;
  * @Author Liujt
  * @Date 2019-12-05 04:27:19
  **/
+@Slf4j
 @Service
 public class ICustomerServiceImpl implements ICustomerService {
     @Autowired
     private CustomerMapper customerMapper;
 
     @Autowired
-    private IOrganizationService iOrganizationService;
-
-    @Autowired
     private IUserService iUserService;
-
-    @Autowired
-    private IUserOrgService iUserOrgService;
 
     @Autowired
     private OrganizationMapper organizationMapper;
@@ -93,7 +90,7 @@ public class ICustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public ReturnInfo delCustomer(Integer param) {
+    public ReturnInfo delCustomer(List<Integer> param) {
         customerMapper.deleteByPrimaryKey(param);
         return new ReturnInfo();
     }
@@ -117,5 +114,15 @@ public class ICustomerServiceImpl implements ICustomerService {
     @Override
     public ReturnInfo getCustomerByManageId(Integer manageId) {
         return new ReturnInfo(customerMapper.selectByManageId(manageId));
+    }
+
+    @Override
+    public ReturnInfo editStatus(EditStatusBean param) {
+        if(1 !=param.getCustomer_status() && 2 != param.getCustomer_status() ){
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,"用户状态信息有误!");
+        }
+        int res = customerMapper.updateStatusByKey(param);
+        log.info("{}条用户状态更新为{}", res, param.getCustomer_status());
+        return new ReturnInfo();
     }
 }

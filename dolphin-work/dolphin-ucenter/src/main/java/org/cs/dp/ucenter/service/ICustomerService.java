@@ -5,7 +5,10 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.AddCustomerBean;
+import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
+
+import java.util.List;
 
 /**
 * @ClassName ICustomerService
@@ -17,11 +20,13 @@ public interface ICustomerService {
 
     ReturnInfo addCustomer(AddCustomerBean param) throws BaseException;
 
-    ReturnInfo delCustomer(Integer param);
+    ReturnInfo delCustomer(List<Integer> param);
 
     ReturnInfo editCustomer(CustomerEntity param);
 
     ReturnInfo getCustomer(RequestPage<SplitPageInfo, String> param);
 
     ReturnInfo getCustomerByManageId(Integer manageId);
+
+    ReturnInfo editStatus(EditStatusBean param);
 }

@@ -29,10 +29,14 @@
         from customer
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from customer
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.util.List">
+        delete from customer
+        where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
     <select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -55,7 +59,8 @@
         select count(1) from customer where customer_name = #{name,jdbcType=VARCHAR}
     </select>
 
-    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         insert into customer
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -190,5 +195,13 @@
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateStatusByKey" parameterType="org.cs.dp.ucenter.domain.EditStatusBean">
+        update customer set customer_status = #{param.customer_status,jdbcType=INTEGER}
+        where id in
+        <foreach collection="param.ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </update>
 </mapper>

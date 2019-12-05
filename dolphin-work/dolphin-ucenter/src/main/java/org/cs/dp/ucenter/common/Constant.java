@@ -29,6 +29,9 @@ public class Constant {
      */
     public static final String CUSTOMER_NAME_ISEMPTY_MSG = "租户名称不能为空!";
     public static final String CUSTOMER_NAME_EXIST_MSG = "租户已存在!";
+    public static final String CUSTOMER_STATUS_ISEMPTY_MSG = "租户状态不能为空!";
+    public static final String CUSTOMER_ID_ISEMPTY_MSG = "未选择租户!";
+
 
     /**
      * 用户登录提示信息

@@ -8,6 +8,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.AddCustomerBean;
+import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @ClassName CustomerController
@@ -41,8 +43,8 @@ public class CustomerController {
 
     @PostMapping("del")
     @ApiOperation(value = "删除租户管理", notes = "租户管理")
-    public ReturnInfo delCustomer(@RequestBody Integer id) {
-        return iCustomerService.delCustomer(id);
+    public ReturnInfo delCustomer(@RequestBody List<Integer> ids) {
+        return iCustomerService.delCustomer(ids);
     }
 
     @PostMapping("edit")
@@ -61,6 +63,12 @@ public class CustomerController {
     @ApiOperation(value = "客户代表Id查询租户管理", notes = "租户管理")
     public ReturnInfo getCustomerByManageId(@RequestBody Integer manageId) {
         return iCustomerService.getCustomerByManageId(manageId);
+    }
+
+    @PostMapping("editStatus")
+    @ApiOperation(value = "用户状态更改", notes = "租户管理")
+    public ReturnInfo editStatus(@RequestBody EditStatusBean param) {
+        return iCustomerService.editStatus(param);
     }
 
 }
