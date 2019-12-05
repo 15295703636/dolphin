@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.CustomerMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
+            <arg column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="effective_time" javaType="java.lang.String" jdbcType="CHAR"/>
+            <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, customer_id, manage_id, customer_name, customer_type, customer_end_time, customer_status, 
+    out_name, out_pwd, customer_address, effective_time, remark, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer
+        where 1=1
+        <if test="name != null and name !='' ">
+            and customer_name like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="customer_id != null">
+                customer_id,
+            </if>
+            <if test="manage_id != null">
+                manage_id,
+            </if>
+            <if test="customer_name != null">
+                customer_name,
+            </if>
+            <if test="customer_type != null">
+                customer_type,
+            </if>
+            <if test="customer_end_time != null">
+                customer_end_time,
+            </if>
+            <if test="customer_status != null">
+                customer_status,
+            </if>
+            <if test="out_name != null">
+                out_name,
+            </if>
+            <if test="out_pwd != null">
+                out_pwd,
+            </if>
+            <if test="customer_address != null">
+                customer_address,
+            </if>
+            <if test="effective_time != null">
+                effective_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="update_time != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="customer_id != null">
+                #{customer_id,jdbcType=VARCHAR},
+            </if>
+            <if test="manage_id != null">
+                #{manage_id,jdbcType=INTEGER},
+            </if>
+            <if test="customer_name != null">
+                #{customer_name,jdbcType=VARCHAR},
+            </if>
+            <if test="customer_type != null">
+                #{customer_type,jdbcType=INTEGER},
+            </if>
+            <if test="customer_end_time != null">
+                #{customer_end_time,jdbcType=DATE},
+            </if>
+            <if test="customer_status != null">
+                #{customer_status,jdbcType=INTEGER},
+            </if>
+            <if test="out_name != null">
+                #{out_name,jdbcType=VARCHAR},
+            </if>
+            <if test="out_pwd != null">
+                #{out_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="customer_address != null">
+                #{customer_address,jdbcType=VARCHAR},
+            </if>
+            <if test="effective_time != null">
+                #{effective_time,jdbcType=CHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="update_time != null">
+                #{update_time,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+        update customer
+        <set>
+            <if test="customer_id != null">
+                customer_id = #{customer_id,jdbcType=VARCHAR},
+            </if>
+            <if test="manage_id != null">
+                manage_id = #{manage_id,jdbcType=INTEGER},
+            </if>
+            <if test="customer_name != null">
+                customer_name = #{customer_name,jdbcType=VARCHAR},
+            </if>
+            <if test="customer_type != null">
+                customer_type = #{customer_type,jdbcType=INTEGER},
+            </if>
+            <if test="customer_end_time != null">
+                customer_end_time = #{customer_end_time,jdbcType=DATE},
+            </if>
+            <if test="customer_status != null">
+                customer_status = #{customer_status,jdbcType=INTEGER},
+            </if>
+            <if test="out_name != null">
+                out_name = #{out_name,jdbcType=VARCHAR},
+            </if>
+            <if test="out_pwd != null">
+                out_pwd = #{out_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="customer_address != null">
+                customer_address = #{customer_address,jdbcType=VARCHAR},
+            </if>
+            <if test="effective_time != null">
+                effective_time = #{effective_time,jdbcType=CHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
