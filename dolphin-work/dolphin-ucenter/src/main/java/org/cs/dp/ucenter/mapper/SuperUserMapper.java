@@ -1,9 +1,13 @@
 package org.cs.dp.ucenter.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 
+import java.util.List;
+
 public interface SuperUserMapper {
+
+    List<SuperUserEntity> selectManage();
+
     int deleteByPrimaryKey(Integer user_id);
 
     int insertSelective(SuperUserEntity record);
