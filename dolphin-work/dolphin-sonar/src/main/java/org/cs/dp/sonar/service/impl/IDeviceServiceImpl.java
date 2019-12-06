@@ -6,6 +6,8 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.service.IDeviceService;
@@ -16,11 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @ClassName IDeviceServiceImpl
- * @Description 设备管理实现类
- * @Author Liujt
- * @Date 2019-11-29 02:28:34
- **/
+* @ClassName IDeviceServiceImpl
+* @Description 设备/端管理实现类
+* @Author LiuJT
+* @Date 2019-12-06 05:11:20
+**/
 @Service
 public class IDeviceServiceImpl implements IDeviceService {
     @Autowired
@@ -33,8 +35,11 @@ public class IDeviceServiceImpl implements IDeviceService {
     }
 
     @Override
-    public ReturnInfo delDevice(Integer param) {
-        deviceMapper.deleteByPrimaryKey(param);
+    public ReturnInfo delDevice(List<Integer> ids) {
+        if(ids.size() == 0){
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,"请选择设备!");
+        }
+        deviceMapper.deleteByPrimaryKey(ids);
         return new ReturnInfo();
     }
 
@@ -45,10 +50,10 @@ public class IDeviceServiceImpl implements IDeviceService {
     }
 
     @Override
-    public ReturnInfo getDevice(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getDevice(RequestPage<SplitPageInfo, GetDeviceBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<DeviceEntity> resList = deviceMapper.selectByObj(new HashMap());
+        List<DeviceEntity> resList = deviceMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

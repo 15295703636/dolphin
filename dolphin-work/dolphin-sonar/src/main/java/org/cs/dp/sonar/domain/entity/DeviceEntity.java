@@ -1,42 +1,64 @@
 package org.cs.dp.sonar.domain.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.util.Date;
 
-@Data
-@ApiModel(value = "设备实体")
 public class DeviceEntity {
-
-    @ApiModelProperty(value = "ID")
     private Integer device_id;
 
-    @ApiModelProperty(value = "设备名称")
+    private Integer org_id;
+
     private String device_name;
 
-    @ApiModelProperty(value = "设备昵称")
     private String device_nickName;
 
-    @ApiModelProperty(value = "设备类型")
     private String device_type;
 
-    @ApiModelProperty(value = "设备状态")
     private String device_state;
 
-    @ApiModelProperty(value = "设备mac")
-    private String device_mac;
+    private String device_serial_number;
 
-    @ApiModelProperty(value = "设备uri")
-    private String device_uri;
+    private Date create_time;
 
-    public DeviceEntity(Integer device_id, String device_name, String device_nickName, String device_type, String device_state, String device_mac, String device_uri) {
+    public DeviceEntity(Integer device_id, Integer org_id, String device_name, String device_nickName, String device_type, String device_state, String device_serial_number, Date create_time) {
         this.device_id = device_id;
+        this.org_id = org_id;
         this.device_name = device_name;
         this.device_nickName = device_nickName;
         this.device_type = device_type;
         this.device_state = device_state;
-        this.device_mac = device_mac;
-        this.device_uri = device_uri;
+        this.device_serial_number = device_serial_number;
+        this.create_time = create_time;
     }
 
+    public Integer getDevice_id() {
+        return device_id;
+    }
+
+    public Integer getOrg_id() {
+        return org_id;
+    }
+
+    public String getDevice_name() {
+        return device_name;
+    }
+
+    public String getDevice_nickName() {
+        return device_nickName;
+    }
+
+    public String getDevice_type() {
+        return device_type;
+    }
+
+    public String getDevice_state() {
+        return device_state;
+    }
+
+    public String getdevice_serial_number() {
+        return device_serial_number;
+    }
+
+    public Date getCreate_time() {
+        return create_time;
+    }
 }
