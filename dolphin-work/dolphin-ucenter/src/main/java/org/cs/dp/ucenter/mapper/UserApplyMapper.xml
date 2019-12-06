@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.UserApplyMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
+        <constructor>
+            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="apply_result" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
+        <constructor>
+            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="apply_result" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
+    user_tel, user_code, apply_result, create_time, apply_time
+  </sql>
+    <sql id="Blob_Column_List">
+    user_desc
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from user_apply
+        where user_id = #{user_id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="ResultMapWithBLOBs"  parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from user_apply where 1=1
+        <if test="apply_result != null">
+            and apply_result = #{apply_result,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_apply
+    where user_id = #{user_id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
+        insert into user_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="user_name != null">
+                user_name,
+            </if>
+            <if test="user_qname != null">
+                user_qname,
+            </if>
+            <if test="user_pwd != null">
+                user_pwd,
+            </if>
+            <if test="user_email != null">
+                user_email,
+            </if>
+            <if test="role_id != null">
+                role_id,
+            </if>
+            <if test="user_statu != null">
+                user_statu,
+            </if>
+            <if test="user_number != null">
+                user_number,
+            </if>
+            <if test="user_tel != null">
+                user_tel,
+            </if>
+            <if test="user_code != null">
+                user_code,
+            </if>
+            <if test="apply_result != null">
+                apply_result,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="apply_time != null">
+                apply_time,
+            </if>
+            <if test="user_desc != null">
+                user_desc,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_name != null">
+                #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                #{user_code,jdbcType=VARCHAR},
+            </if>
+            <if test="apply_result != null">
+                #{apply_result,jdbcType=INTEGER},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="apply_time != null">
+                #{apply_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="user_desc != null">
+                #{user_desc,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
+        update user_apply
+        <set>
+            <if test="user_name != null">
+                user_name = #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                user_qname = #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                user_pwd = #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                user_email = #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                role_id = #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                user_statu = #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                user_number = #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                user_tel = #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                user_code = #{user_code,jdbcType=VARCHAR},
+            </if>
+            <if test="apply_result != null">
+                apply_result = #{apply_result,jdbcType=INTEGER},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="apply_time != null">
+                apply_time = #{apply_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="user_desc != null">
+                user_desc = #{user_desc,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where user_id = #{user_id,jdbcType=INTEGER}
+    </update>
+
+</mapper>
