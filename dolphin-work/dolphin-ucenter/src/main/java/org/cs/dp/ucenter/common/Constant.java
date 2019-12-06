@@ -24,6 +24,10 @@ public class Constant {
      */
     public static final String PROJECT_BASE_PACKAGE = "org.cs.dp.ucenter.controller";
 
+
+    //组织提示信息
+    public static final String COMMON_ID_CARD = "未选择组织!";
+
     /**
      * 租户提示信息
      */

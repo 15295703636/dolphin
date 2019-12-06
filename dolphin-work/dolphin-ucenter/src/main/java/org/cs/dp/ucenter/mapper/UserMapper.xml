@@ -62,6 +62,32 @@
         </foreach>
     </delete>
 
+    <insert id="insertSelectApply" >
+        INSERT INTO user
+        (user_name,
+            user_qname,
+            user_pwd,
+            user_email,
+            role_id,
+            user_desc,
+            user_statu,
+            user_number,
+            user_tel,
+            user_code)
+            SELECT
+            user_name,
+            user_qname,
+            user_pwd,
+            user_email,
+            role_id,
+            user_desc,
+            user_statu,
+            user_number,
+            user_tel,
+            user_code
+         FROM user_apply ua where ua.user_id = #{user_id,jdbcType=INTEGER} and ua.user_name = #{user_name,jdbcType=VARCHAR}
+    </insert>
+
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="user_id"
             parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
         insert into user

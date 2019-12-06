@@ -1,5 +1,6 @@
 package org.cs.dp.ucenter.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +18,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel(value = "添加用户入参实体")
 public class AddUserBean extends UserEntity {
+
+    @ExcelProperty(index = 3)
     @NotNull(message = Constant.ORG_ID_ISEMPTY_MSG)
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;

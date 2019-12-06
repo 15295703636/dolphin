@@ -11,6 +11,8 @@ public interface UserMapper {
 
     int insert(UserEntity record);
 
+    int insertSelectApply(@Param(value = "user_id") Integer user_id, @Param(value = "user_name")String user_name);
+
     int insertSelective(UserEntity record);
 
     UserEntity selectByPrimaryKey(Integer user_id);
@@ -19,9 +21,5 @@ public interface UserMapper {
 
     int updateByPrimaryKeySelective(UserEntity record);
 
-    int updateByPrimaryKeyWithBLOBs(UserEntity record);
-
-    int updateByPrimaryKey(UserEntity record);
-
-    List<UserEntity> getListByOrgId(@Param(value = "orgId") int orgId,@Param(value = "userId")int userId);
+    List<UserEntity> getListByOrgId(@Param(value = "orgId") int orgId, @Param(value = "userId") int userId);
 }

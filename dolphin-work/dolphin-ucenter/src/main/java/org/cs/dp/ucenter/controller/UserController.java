@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -59,7 +61,7 @@ public class UserController {
     @PostMapping("add")
     @ApiOperation(value = "添加用户信息", notes = "用户信息")
     public ReturnInfo add(@Validated @RequestBody AddUserBean param, BindingResult result) {
-        return iUserService.add(param,false);
+        return iUserService.add(param, false);
     }
 
     @PostMapping("delUserById")
@@ -78,6 +80,12 @@ public class UserController {
     @ApiOperation(value = "组织Id查询用户列表", notes = "用户信息")
     public ReturnInfo getUsersByOrgId(@RequestBody RequestPage<SplitPageInfo, OrgIdAndTokenBean> param) {
         return iUserService.getUsersByOrgId(param);
+    }
+
+    @PostMapping("upload")
+    @ApiOperation(value = "导入用户列表", notes = "用户信息")
+    public ReturnInfo upload(MultipartFile file) throws IOException {
+        return iUserService.upload(file);
     }
 
 }
