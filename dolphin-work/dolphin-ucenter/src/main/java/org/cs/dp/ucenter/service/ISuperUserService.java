@@ -19,7 +19,7 @@ public interface ISuperUserService {
 
     ReturnInfo edit(SuperUserEntity record);
 
-    ReturnInfo getManage();
+    ReturnInfo getManage(Integer manageId);
 
     ReturnInfo upload(MultipartFile file) throws IOException;
 }

@@ -92,8 +92,8 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     }
 
     @Override
-    public ReturnInfo getManage() {
-        return new ReturnInfo(superUserMapper.selectManage());
+    public ReturnInfo getManage(Integer manageId) {
+        return new ReturnInfo(superUserMapper.selectManage(manageId));
     }
 
     @Override

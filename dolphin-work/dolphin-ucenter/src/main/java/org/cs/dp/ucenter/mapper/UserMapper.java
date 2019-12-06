@@ -1,6 +1,5 @@
 package org.cs.dp.ucenter.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
@@ -8,7 +7,7 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 import java.util.List;
 
 public interface UserMapper {
-    int deleteByPrimaryKey(Integer user_id);
+    int deleteByPrimaryKey(List<Integer> userIds);
 
     int insert(UserEntity record);
 

@@ -32,6 +32,8 @@ public class Constant {
     public static final String CUSTOMER_STATUS_ISEMPTY_MSG = "租户状态不能为空!";
     public static final String CUSTOMER_ID_ISEMPTY_MSG = "未选择租户!";
 
+    //组织提示信息
+    public static final String ORG_ID_ISEMPTY_MSG = "未选择组织!";
 
     /**
      * 用户登录提示信息

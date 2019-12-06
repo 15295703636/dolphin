@@ -55,9 +55,13 @@
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from user
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </delete>
+        delete from user
+        where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="user_id"
             parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
         insert into user

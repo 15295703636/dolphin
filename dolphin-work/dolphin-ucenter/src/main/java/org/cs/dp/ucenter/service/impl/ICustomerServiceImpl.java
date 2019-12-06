@@ -10,17 +10,15 @@ import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.domain.AddCustomerBean;
+import org.cs.dp.ucenter.domain.AddUserBean;
 import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
-import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.CustomerMapper;
 import org.cs.dp.ucenter.mapper.OrganizationMapper;
 import org.cs.dp.ucenter.mapper.UserOrgMapper;
 import org.cs.dp.ucenter.service.ICustomerService;
-import org.cs.dp.ucenter.service.IOrganizationService;
-import org.cs.dp.ucenter.service.IUserOrgService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +43,7 @@ public class ICustomerServiceImpl implements ICustomerService {
 
     @Autowired
     private OrganizationMapper organizationMapper;
+
     @Autowired
     private UserOrgMapper userOrgMapper;
 
@@ -76,9 +75,9 @@ public class ICustomerServiceImpl implements ICustomerService {
         }
 
         //添加用户
-        UserEntity user = param.getUser();
+        AddUserBean user = (AddUserBean) param.getUser();
         user.setRole_id(1);
-        ReturnInfo returnInfo = iUserService.add(user);
+        ReturnInfo returnInfo = iUserService.add(user, true);
         if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
             throw new BaseException(null, returnInfo.getMsg());
         }
@@ -118,8 +117,8 @@ public class ICustomerServiceImpl implements ICustomerService {
 
     @Override
     public ReturnInfo editStatus(EditStatusBean param) {
-        if(1 !=param.getCustomer_status() && 2 != param.getCustomer_status() ){
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,"用户状态信息有误!");
+        if (1 != param.getCustomer_status() && 2 != param.getCustomer_status()) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "用户状态信息有误!");
         }
         int res = customerMapper.updateStatusByKey(param);
         log.info("{}条用户状态更新为{}", res, param.getCustomer_status());

@@ -40,6 +40,9 @@
         <include refid="Base_Column_List"/>
         from super_user
         where user_type = 1
+        <if test="manageId != null">
+            and user_id = #{manageId,jdbcType=INTEGER}
+        </if>
     </select>
 
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SuperUserMapper {
 
-    List<SuperUserEntity> selectManage();
+    List<SuperUserEntity> selectManage(Integer manageId);
 
     int deleteByPrimaryKey(Integer user_id);
 

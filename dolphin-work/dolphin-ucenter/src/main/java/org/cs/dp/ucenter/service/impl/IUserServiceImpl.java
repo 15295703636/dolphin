@@ -1,5 +1,6 @@
 package org.cs.dp.ucenter.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -11,18 +12,24 @@ import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
-import org.cs.dp.ucenter.common.Constant;
-import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.common.*;
+import org.cs.dp.ucenter.domain.AddUserBean;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
+import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
+import org.cs.dp.ucenter.mapper.UserOrgMapper;
+import org.cs.dp.ucenter.service.ISuperUserService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -31,7 +38,10 @@ import java.util.List;
 public class IUserServiceImpl implements IUserService {
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
+    @Autowired
+    private UserOrgMapper userOrgMapper;
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -102,20 +112,29 @@ public class IUserServiceImpl implements IUserService {
      * 添加用户的同时，需不需要添加组织和用户的关系
      *
      * @param record
+     * @param isAuto 是添加租户自动添加，还是租户手动添加标志
      * @return
      */
     @Override
-    public ReturnInfo add(UserEntity record) {
+    public ReturnInfo add(AddUserBean record, boolean isAuto) {
         if (null != userMapper.selectByUserName(record.getUser_name())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }
+        //添加用户
         userMapper.insertSelective(record);
+        if (!isAuto) {
+            //用户组织关系维护
+            userOrgMapper.insertSelective(new UserOrgEntity(null, record.getOrg_id(), record.getUser_id()));
+        }
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo del(Integer user_id) {
-        userMapper.deleteByPrimaryKey(user_id);
+    public ReturnInfo del(List<Integer> userIds) {
+        if (0 == userIds.size()) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "请选择用户!");
+        }
+        userMapper.deleteByPrimaryKey(userIds);
         return new ReturnInfo();
     }
 
@@ -138,6 +157,13 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public List getList() {
         return null;
+    }
+
+    @Override
+    public ReturnInfo upload(MultipartFile file) throws IOException {
+        EasyExcel.read(file.getInputStream(), AddUserBean.class,
+                new UploadUserListener(SpringUtils.getBean(IUserServiceImpl.class))).sheet().doRead();
+        return new ReturnInfo();
     }
 
 }
