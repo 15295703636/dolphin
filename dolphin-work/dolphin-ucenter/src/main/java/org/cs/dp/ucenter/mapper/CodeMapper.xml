@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.CodeMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CodeEntity">
+        <constructor>
+            <idArg column="code_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="code_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="table_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="enable_sign" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    code_id, code_name, table_name, remark, enable_sign
+  </sql>
+
+    <select id="select" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from code
+        where table_name = #{tableName}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from code
+    where code_id = #{code_id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.CodeEntity">
+        insert into code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code_id != null">
+                code_id,
+            </if>
+            <if test="code_name != null">
+                code_name,
+            </if>
+            <if test="table_name != null">
+                table_name,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="enable_sign != null">
+                enable_sign,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code_id != null">
+                #{code_id,jdbcType=INTEGER},
+            </if>
+            <if test="code_name != null">
+                #{code_name,jdbcType=VARCHAR},
+            </if>
+            <if test="table_name != null">
+                #{table_name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="enable_sign != null">
+                #{enable_sign,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.CodeEntity">
+        update code
+        <set>
+            <if test="code_name != null">
+                code_name = #{code_name,jdbcType=VARCHAR},
+            </if>
+            <if test="table_name != null">
+                table_name = #{table_name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="enable_sign != null">
+                enable_sign = #{enable_sign,jdbcType=INTEGER},
+            </if>
+        </set>
+        where code_id = #{code_id,jdbcType=INTEGER}
+    </update>
+</mapper>

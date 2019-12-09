@@ -8,6 +8,7 @@
             <arg column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="customer_start_time" javaType="java.util.Date" jdbcType="DATE"/>
             <arg column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
             <arg column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -20,7 +21,7 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    id, customer_id, manage_id, customer_name, customer_type, customer_end_time, customer_status, 
+    id, customer_id, manage_id, customer_name, customer_type,customer_start_time, customer_end_time, customer_status,
     out_name, out_pwd, customer_address, effective_time, remark, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -78,6 +79,9 @@
             <if test="customer_type != null">
                 customer_type,
             </if>
+            <if test="customer_start_time != null">
+                customer_start_time,
+            </if>
             <if test="customer_end_time != null">
                 customer_end_time,
             </if>
@@ -122,6 +126,9 @@
             <if test="customer_type != null">
                 #{customer_type,jdbcType=INTEGER},
             </if>
+            <if test="customer_start_time != null">
+                #{customer_start_time,jdbcType=DATE}
+            </if>
             <if test="customer_end_time != null">
                 #{customer_end_time,jdbcType=DATE},
             </if>
@@ -165,6 +172,9 @@
             </if>
             <if test="customer_type != null">
                 customer_type = #{customer_type,jdbcType=INTEGER},
+            </if>
+            <if test="customer_start_time != null">
+                customer_start_time = #{customer_start_time,jdbcType=DATE},
             </if>
             <if test="customer_end_time != null">
                 customer_end_time = #{customer_end_time,jdbcType=DATE},

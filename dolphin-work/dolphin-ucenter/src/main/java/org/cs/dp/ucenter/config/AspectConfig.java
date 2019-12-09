@@ -70,7 +70,7 @@ public class AspectConfig {
             log.info("统一日志记录IP: {} ", request.getRemoteAddr());
             log.info("统一日志记录CLASS_METHOD : {} ", point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName());
             Object obj[] = point.getArgs();
-            if (!request.getHeader("content-type").contains("multipart") && obj.length > 0) {
+            if (!"GET".equals(request.getMethod()) && !request.getHeader("content-type").contains("multipart") && obj.length > 0) {
                 log.info("统一日志记录PARAM : {} ", JSON.toJSONString(obj[0]));
             }
 

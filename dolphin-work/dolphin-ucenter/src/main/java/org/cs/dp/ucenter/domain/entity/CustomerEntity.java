@@ -27,6 +27,9 @@ public class CustomerEntity {
     @ApiModelProperty(value = "租户类型")
     private Integer customer_type;
 
+    @ApiModelProperty(value = "租户开始时间")
+    private Date customer_start_time;
+
     @ApiModelProperty(value = "租户结束时间")
     private Date customer_end_time;
 
@@ -53,6 +56,9 @@ public class CustomerEntity {
 
     @ApiModelProperty(value = "更新时间")
     private Date update_time;
+
+    public CustomerEntity() {
+    }
 
     public CustomerEntity(Integer id, String customer_id, Integer manage_id, String customer_name, Integer customer_type, Date customer_end_time, Integer customer_status, String out_name, String out_pwd, String customer_address, String effective_time, String remark, Date create_time, Date update_time) {
         this.id = id;

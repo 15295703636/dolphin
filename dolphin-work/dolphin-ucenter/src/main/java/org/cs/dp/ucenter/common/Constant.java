@@ -32,6 +32,8 @@ public class Constant {
      * 租户提示信息
      */
     public static final String CUSTOMER_NAME_ISEMPTY_MSG = "租户名称不能为空!";
+    public static final String CUSTOMER_OUT_NAME = "云视讯账号不能为空!";
+    public static final String CUSTOMER_OUT_PWD = "云视讯密码不能为空!";
     public static final String CUSTOMER_NAME_EXIST_MSG = "租户已存在!";
     public static final String CUSTOMER_STATUS_ISEMPTY_MSG = "租户状态不能为空!";
     public static final String CUSTOMER_ID_ISEMPTY_MSG = "未选择租户!";

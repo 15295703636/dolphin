@@ -29,6 +29,10 @@ public class OrganizationEntity  {
     public OrganizationEntity() {
     }
 
+    public OrganizationEntity(Integer customer_id) {
+        this.customer_id = customer_id;
+    }
+
     public OrganizationEntity(Integer org_id, String org_name, Integer org_type, Integer org_preid, Integer customer_id) {
         this.org_id = org_id;
         this.org_name = org_name;

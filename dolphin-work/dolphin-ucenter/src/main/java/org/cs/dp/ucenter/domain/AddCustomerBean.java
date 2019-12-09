@@ -3,8 +3,9 @@ package org.cs.dp.ucenter.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.cs.dp.ucenter.domain.entity.CustomerEntity;
-import org.cs.dp.ucenter.domain.entity.UserEntity;
+import org.cs.dp.ucenter.common.Constant;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @ClassName AddCustomerBean
@@ -16,10 +17,19 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 @ApiModel(value = "租户信息入参")
 public class AddCustomerBean {
 
-    @ApiModelProperty(value = "租户信息")
-    private CustomerEntity customer;
+    @ApiModelProperty(value = "ID",hidden = true)
+    private Integer id;
 
-    @ApiModelProperty(value = "租户Admin账号信息")
-    private UserEntity user;
+    @NotBlank(message = Constant.CUSTOMER_NAME_ISEMPTY_MSG)
+    @ApiModelProperty(value = "租户名称")
+    private String customer_name;
+
+    @NotBlank(message = Constant.CUSTOMER_OUT_NAME)
+    @ApiModelProperty(value = "云视讯登录名")
+    private String out_name;
+
+    @NotBlank(message = Constant.CUSTOMER_OUT_PWD)
+    @ApiModelProperty(value = "云视讯密码")
+    private String out_pwd;
 
 }

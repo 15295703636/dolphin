@@ -8,6 +8,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.AddCustomerBean;
+import org.cs.dp.ucenter.domain.AddCustomerUserBean;
 import org.cs.dp.ucenter.domain.EditStatusBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.service.ICustomerService;
@@ -39,6 +40,13 @@ public class CustomerController {
     @ApiOperation(value = "添加租户管理", notes = "租户管理")
     public ReturnInfo addCustomer(@Valid @RequestBody AddCustomerBean param, BindingResult result) throws BaseException {
         return iCustomerService.addCustomer(param);
+    }
+
+    @ParamValid
+    @PostMapping("addCustomerUser")
+    @ApiOperation(value = "添加租户管理员用户", notes = "租户管理")
+    public ReturnInfo addCustomerUser(@Valid @RequestBody AddCustomerUserBean param, BindingResult result) throws BaseException {
+        return iCustomerService.addAdminUser(param);
     }
 
     @PostMapping("del")
