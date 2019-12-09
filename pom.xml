@@ -12,6 +12,7 @@
         <module>dolphin-gateway</module>
         <module>dolphin-work</module>
         <module>dolphin-work-api</module>
+        <module>dolphin-oss</module>
     </modules>
     <packaging>pom</packaging>
 
