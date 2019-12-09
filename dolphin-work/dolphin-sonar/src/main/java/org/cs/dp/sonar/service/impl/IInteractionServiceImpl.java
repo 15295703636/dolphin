@@ -8,6 +8,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.AddInteractionBean;
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.InteractionDeviceEntity;
 import org.cs.dp.sonar.domain.entity.InteractionEntity;
 import org.cs.dp.sonar.mapper.InteractionDeviceMapper;
@@ -61,22 +62,25 @@ public class IInteractionServiceImpl implements IInteractionService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo delInteraction(Integer param) {
         interactionMapper.deleteByPrimaryKey(param);
+        interactionDeviceMapper.deleteByInteractionId(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo editInteraction(InteractionEntity param) {
-        interactionMapper.updateByPrimaryKeySelective(param);
+    public ReturnInfo editInteraction(AddInteractionBean param) {
+        interactionMapper.updateByPrimaryKeySelective(param.getInteraction());
+        dealDevices(param.getInteraction().getInteraction_id(), param.getDevice_ids());
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo getInteraction(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getInteraction(RequestPage<SplitPageInfo, GetAppSchReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<InteractionEntity> resList = interactionMapper.selectAll();
+        List<InteractionEntity> resList = interactionMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

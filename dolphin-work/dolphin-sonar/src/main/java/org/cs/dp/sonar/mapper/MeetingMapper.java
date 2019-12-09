@@ -1,5 +1,6 @@
 package org.cs.dp.sonar.mapper;
 
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.MeetingEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface MeetingMapper {
 
     int insertSelective(MeetingEntity record);
 
-    List<MeetingEntity> selectAll();
+    List<MeetingEntity> selectByCondition(GetAppSchReqBean param);
 
     int updateByPrimaryKeySelective(MeetingEntity record);
 

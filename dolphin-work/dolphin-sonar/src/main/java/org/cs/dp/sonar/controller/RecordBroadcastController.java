@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.RecordBroadcastEntity;
 import org.cs.dp.sonar.service.IRecordBroadcastService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class RecordBroadcastController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询录播管理", notes = "录播管理")
-    public ReturnInfo getRecordBroadcast(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getRecordBroadcast(@RequestBody RequestPage<SplitPageInfo, GetAppSchReqBean> param){
         return iRecordBroadcastService.getRecordBroadcast(param);
     }
 }

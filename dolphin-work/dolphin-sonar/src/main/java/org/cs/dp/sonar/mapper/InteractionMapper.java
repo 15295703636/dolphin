@@ -1,5 +1,6 @@
 package org.cs.dp.sonar.mapper;
 
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.InteractionEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface InteractionMapper {
 
     int insertSelective(InteractionEntity record);
 
-    List<InteractionEntity> selectAll();
+    List<InteractionEntity> selectByCondition(GetAppSchReqBean param);
 
     int updateByPrimaryKeySelective(InteractionEntity record);
 

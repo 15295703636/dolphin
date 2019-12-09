@@ -1,5 +1,6 @@
 package org.cs.dp.sonar.mapper;
 
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.RecordBroadcastEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface RecordBroadcastMapper {
 
     int insertSelective(RecordBroadcastEntity record);
 
-    List<RecordBroadcastEntity> selectAll();
+    List<RecordBroadcastEntity> selectByCondition(GetAppSchReqBean param);
 
     int updateByPrimaryKeySelective(RecordBroadcastEntity record);
 

@@ -6,7 +6,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.AddMeetingBean;
-import org.cs.dp.sonar.domain.entity.MeetingEntity;
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.service.IMeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,13 +41,13 @@ public class MeetingController {
 
     @PostMapping("edit")
     @ApiOperation(value = "修改会议管理", notes = "会议管理")
-    public ReturnInfo editMeeting(@RequestBody MeetingEntity param){
+    public ReturnInfo editMeeting(@RequestBody AddMeetingBean param){
         return iMeetingService.editMeeting(param);
     }
 
     @PostMapping("get")
     @ApiOperation(value = "查询会议管理", notes = "会议管理")
-    public ReturnInfo getMeeting(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getMeeting(@RequestBody RequestPage<SplitPageInfo, GetAppSchReqBean> param){
         return iMeetingService.getMeeting(param);
     }
 }

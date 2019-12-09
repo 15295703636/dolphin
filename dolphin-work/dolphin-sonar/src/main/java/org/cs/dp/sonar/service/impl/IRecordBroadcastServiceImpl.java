@@ -6,6 +6,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.RecordBroadcastEntity;
 import org.cs.dp.sonar.mapper.RecordBroadcastMapper;
 import org.cs.dp.sonar.service.IRecordBroadcastService;
@@ -45,10 +46,10 @@ public class IRecordBroadcastServiceImpl implements IRecordBroadcastService {
     }
 
     @Override
-    public ReturnInfo getRecordBroadcast(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getRecordBroadcast(RequestPage<SplitPageInfo, GetAppSchReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<RecordBroadcastEntity> resList = recordBroadcastMapper.selectAll();
+        List<RecordBroadcastEntity> resList = recordBroadcastMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

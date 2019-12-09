@@ -9,6 +9,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.AddMeetingBean;
+import org.cs.dp.sonar.domain.GetAppSchReqBean;
 import org.cs.dp.sonar.domain.entity.MeetingDeviceEntity;
 import org.cs.dp.sonar.domain.entity.MeetingEntity;
 import org.cs.dp.sonar.domain.entity.MeetingUserEntity;
@@ -80,22 +81,27 @@ public class IMeetingServiceImpl implements IMeetingService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo delMeeting(Integer param) {
         meetingMapper.deleteByPrimaryKey(param);
+        meetingDeviceMapper.deleteByMeetingId(param);
+        meetingUserMapper.deleteByMeetingId(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo editMeeting(MeetingEntity param) {
-        meetingMapper.updateByPrimaryKeySelective(param);
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
+    public ReturnInfo editMeeting(AddMeetingBean param) {
+        meetingMapper.updateByPrimaryKeySelective(param.getMeetingEntity());
+        dealUserAndDevices(param.getMeetingEntity().getMeeting_id(), param.getUser_ids(), param.getDevice_ids());
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo getMeeting(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getMeeting(RequestPage<SplitPageInfo, GetAppSchReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<MeetingEntity> resList = meetingMapper.selectAll();
+        List<MeetingEntity> resList = meetingMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
