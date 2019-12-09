@@ -6,9 +6,10 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dp.sonar.domain.entity.MeetingUserEntity;
-import org.cs.dp.sonar.mapper.MeetingUserMapper;
-import org.cs.dp.sonar.service.IMeetingUserService;
+import org.cs.dp.sonar.domain.GetScheduleBean;
+import org.cs.dp.sonar.domain.entity.ScheduleEntity;
+import org.cs.dp.sonar.mapper.ScheduleMapper;
+import org.cs.dp.sonar.service.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,39 +17,39 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
-* @ClassName IMeetingUserServiceImpl
-* @Description 会议用户管理实现类
-* @Author LiuJT
-* @Date 2019-12-09 01:47:08
-**/
+ * @ClassName IScheduleServiceImpl
+ * @Description 日程管理实现类
+ * @Author LiuJT
+ * @Date 2019-12-09 05:55:10
+ **/
 @Service
-public class IMeetingUserServiceImpl implements IMeetingUserService {
+public class IScheduleServiceImpl implements IScheduleService {
     @Autowired
-    private MeetingUserMapper meetingUserMapper;
+    private ScheduleMapper scheduleMapper;
 
     @Override
-    public ReturnInfo addMeetingUser(MeetingUserEntity param) {
-        meetingUserMapper.insertSelective(param);
+    public ReturnInfo addSchedule(ScheduleEntity param) {
+        scheduleMapper.insertSelective(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo delMeetingUser(Integer param) {
-        meetingUserMapper.deleteByMeetingId(param);
+    public ReturnInfo delSchedule(Integer param) {
+        scheduleMapper.deleteByPrimaryKey(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo editMeetingUser(MeetingUserEntity param) {
-        meetingUserMapper.updateByPrimaryKeySelective(param);
+    public ReturnInfo editSchedule(ScheduleEntity param) {
+        scheduleMapper.updateByPrimaryKeySelective(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo getMeetingUser(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getSchedule(RequestPage<SplitPageInfo, GetScheduleBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<MeetingUserEntity> resList = null;//TODO 分页sql要自己实现 meetingUserMapper.selectByObj(new HashMap());
+        List<ScheduleEntity> resList = scheduleMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
