@@ -8,7 +8,7 @@ public class MeetingEntity {
 
     private String meeting_name;
 
-    private String meeting_state;
+    private Integer meeting_state;
 
     private String meeting_date;
 
@@ -35,7 +35,7 @@ public class MeetingEntity {
     public MeetingEntity() {
     }
 
-    public MeetingEntity(Integer meeting_id, String meeting_name, String meeting_state, String meeting_date, String meeting_duration, String meeting_number, String device_id, String isLive, String isRecord, String resolving_power, String bandwidth, Integer org_id, String create_time, Integer create_user_id) {
+    public MeetingEntity(Integer meeting_id, String meeting_name, Integer meeting_state, String meeting_date, String meeting_duration, String meeting_number, String device_id, String isLive, String isRecord, String resolving_power, String bandwidth, Integer org_id, String create_time, Integer create_user_id) {
         this.meeting_id = meeting_id;
         this.meeting_name = meeting_name;
         this.meeting_state = meeting_state;

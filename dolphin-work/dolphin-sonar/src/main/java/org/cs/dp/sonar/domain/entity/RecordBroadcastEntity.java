@@ -10,7 +10,7 @@ public class RecordBroadcastEntity {
 
     private String teacher;
 
-    private String rb_state;
+    private Integer rb_state;
 
     private String rb_date;
 
@@ -28,7 +28,7 @@ public class RecordBroadcastEntity {
 
     private Integer create_user_id;
 
-    public RecordBroadcastEntity(Integer rb_id, String rb_name, String teacher, String rb_state, String rb_date, String rb_duration, String device_id, String isLive, String isRecord, Integer org_id, String create_time, Integer create_user_id) {
+    public RecordBroadcastEntity(Integer rb_id, String rb_name, String teacher, Integer rb_state, String rb_date, String rb_duration, String device_id, String isLive, String isRecord, Integer org_id, String create_time, Integer create_user_id) {
         this.rb_id = rb_id;
         this.rb_name = rb_name;
         this.teacher = teacher;

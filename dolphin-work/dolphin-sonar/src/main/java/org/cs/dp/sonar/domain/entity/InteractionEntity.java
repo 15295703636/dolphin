@@ -10,7 +10,7 @@ public class InteractionEntity {
 
     private String teacher;
 
-    private String interaction_state;
+    private Integer interaction_state;
 
     private String interaction_date;
 
@@ -35,7 +35,7 @@ public class InteractionEntity {
     public InteractionEntity() {
     }
 
-    public InteractionEntity(Integer interaction_id, String interaction_name, String teacher, String interaction_state, String interaction_date, String interaction_duration, String device_id, String isLive, String isRecord, String resolving_power, String bandwidth, Integer org_id, String create_time, Integer create_user_id) {
+    public InteractionEntity(Integer interaction_id, String interaction_name, String teacher, Integer interaction_state, String interaction_date, String interaction_duration, String device_id, String isLive, String isRecord, String resolving_power, String bandwidth, Integer org_id, String create_time, Integer create_user_id) {
         this.interaction_id = interaction_id;
         this.interaction_name = interaction_name;
         this.teacher = teacher;
