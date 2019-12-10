@@ -1,0 +1,981 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.CourseMapper">
+  <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseEntity">
+    <constructor>
+      <idArg column="course_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="course_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="course_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isRecord" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isLive" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="record_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="live_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isSubtitle" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isAutoSubmit" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isPublish" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isComment" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isRate" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="start_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="end_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="createTime" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="resolving_power" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="encode_quality" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="otherParamStr" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="epilogue_img" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="prologue_img" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="createrId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="provenance" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="local_classroomId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="remote_classroomIds" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isDual" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="course_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="forward_state" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="live_password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="bandwidth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
+    record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate, 
+    start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor, 
+    teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img, 
+    createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType, 
+    teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state, 
+    live_password, bandwidth
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from course
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    insert into course (course_id, course_name, course_type, 
+      course_state, teacher_name, isRecord, 
+      isLive, record_state, live_state, 
+      isSubtitle, isAutoSubmit, isPublish, 
+      isComment, isRate, start_time, 
+      end_time, createTime, course_fontColor, 
+      course_wordSize, teacher_fontColor, teacher_wordSize, 
+      resolving_power, encode_quality, otherParamStr, 
+      epilogue_img, prologue_img, createrId, 
+      provenance, local_classroomId, remote_classroomIds, 
+      isDual, course_fontType, teacher_fontType, 
+      label_fontType, label_fontColor, label_wordSize, 
+      forward_state, live_password, bandwidth
+      )
+    values (#{course_id,jdbcType=INTEGER}, #{course_name,jdbcType=VARCHAR}, #{course_type,jdbcType=INTEGER}, 
+      #{course_state,jdbcType=VARCHAR}, #{teacher_name,jdbcType=VARCHAR}, #{isRecord,jdbcType=CHAR}, 
+      #{isLive,jdbcType=CHAR}, #{record_state,jdbcType=VARCHAR}, #{live_state,jdbcType=VARCHAR}, 
+      #{isSubtitle,jdbcType=CHAR}, #{isAutoSubmit,jdbcType=CHAR}, #{isPublish,jdbcType=CHAR}, 
+      #{isComment,jdbcType=CHAR}, #{isRate,jdbcType=CHAR}, #{start_time,jdbcType=VARCHAR}, 
+      #{end_time,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{course_fontColor,jdbcType=VARCHAR}, 
+      #{course_wordSize,jdbcType=VARCHAR}, #{teacher_fontColor,jdbcType=VARCHAR}, #{teacher_wordSize,jdbcType=VARCHAR}, 
+      #{resolving_power,jdbcType=INTEGER}, #{encode_quality,jdbcType=VARCHAR}, #{otherParamStr,jdbcType=VARCHAR}, 
+      #{epilogue_img,jdbcType=VARCHAR}, #{prologue_img,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER}, 
+      #{provenance,jdbcType=VARCHAR}, #{local_classroomId,jdbcType=INTEGER}, #{remote_classroomIds,jdbcType=VARCHAR}, 
+      #{isDual,jdbcType=CHAR}, #{course_fontType,jdbcType=VARCHAR}, #{teacher_fontType,jdbcType=VARCHAR}, 
+      #{label_fontType,jdbcType=VARCHAR}, #{label_fontColor,jdbcType=VARCHAR}, #{label_wordSize,jdbcType=VARCHAR}, 
+      #{forward_state,jdbcType=CHAR}, #{live_password,jdbcType=VARCHAR}, #{bandwidth,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="course_id != null">
+        course_id,
+      </if>
+      <if test="course_name != null">
+        course_name,
+      </if>
+      <if test="course_type != null">
+        course_type,
+      </if>
+      <if test="course_state != null">
+        course_state,
+      </if>
+      <if test="teacher_name != null">
+        teacher_name,
+      </if>
+      <if test="isRecord != null">
+        isRecord,
+      </if>
+      <if test="isLive != null">
+        isLive,
+      </if>
+      <if test="record_state != null">
+        record_state,
+      </if>
+      <if test="live_state != null">
+        live_state,
+      </if>
+      <if test="isSubtitle != null">
+        isSubtitle,
+      </if>
+      <if test="isAutoSubmit != null">
+        isAutoSubmit,
+      </if>
+      <if test="isPublish != null">
+        isPublish,
+      </if>
+      <if test="isComment != null">
+        isComment,
+      </if>
+      <if test="isRate != null">
+        isRate,
+      </if>
+      <if test="start_time != null">
+        start_time,
+      </if>
+      <if test="end_time != null">
+        end_time,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="course_fontColor != null">
+        course_fontColor,
+      </if>
+      <if test="course_wordSize != null">
+        course_wordSize,
+      </if>
+      <if test="teacher_fontColor != null">
+        teacher_fontColor,
+      </if>
+      <if test="teacher_wordSize != null">
+        teacher_wordSize,
+      </if>
+      <if test="resolving_power != null">
+        resolving_power,
+      </if>
+      <if test="encode_quality != null">
+        encode_quality,
+      </if>
+      <if test="otherParamStr != null">
+        otherParamStr,
+      </if>
+      <if test="epilogue_img != null">
+        epilogue_img,
+      </if>
+      <if test="prologue_img != null">
+        prologue_img,
+      </if>
+      <if test="createrId != null">
+        createrId,
+      </if>
+      <if test="provenance != null">
+        provenance,
+      </if>
+      <if test="local_classroomId != null">
+        local_classroomId,
+      </if>
+      <if test="remote_classroomIds != null">
+        remote_classroomIds,
+      </if>
+      <if test="isDual != null">
+        isDual,
+      </if>
+      <if test="course_fontType != null">
+        course_fontType,
+      </if>
+      <if test="teacher_fontType != null">
+        teacher_fontType,
+      </if>
+      <if test="label_fontType != null">
+        label_fontType,
+      </if>
+      <if test="label_fontColor != null">
+        label_fontColor,
+      </if>
+      <if test="label_wordSize != null">
+        label_wordSize,
+      </if>
+      <if test="forward_state != null">
+        forward_state,
+      </if>
+      <if test="live_password != null">
+        live_password,
+      </if>
+      <if test="bandwidth != null">
+        bandwidth,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="course_id != null">
+        #{course_id,jdbcType=INTEGER},
+      </if>
+      <if test="course_name != null">
+        #{course_name,jdbcType=VARCHAR},
+      </if>
+      <if test="course_type != null">
+        #{course_type,jdbcType=INTEGER},
+      </if>
+      <if test="course_state != null">
+        #{course_state,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null">
+        #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="isRecord != null">
+        #{isRecord,jdbcType=CHAR},
+      </if>
+      <if test="isLive != null">
+        #{isLive,jdbcType=CHAR},
+      </if>
+      <if test="record_state != null">
+        #{record_state,jdbcType=VARCHAR},
+      </if>
+      <if test="live_state != null">
+        #{live_state,jdbcType=VARCHAR},
+      </if>
+      <if test="isSubtitle != null">
+        #{isSubtitle,jdbcType=CHAR},
+      </if>
+      <if test="isAutoSubmit != null">
+        #{isAutoSubmit,jdbcType=CHAR},
+      </if>
+      <if test="isPublish != null">
+        #{isPublish,jdbcType=CHAR},
+      </if>
+      <if test="isComment != null">
+        #{isComment,jdbcType=CHAR},
+      </if>
+      <if test="isRate != null">
+        #{isRate,jdbcType=CHAR},
+      </if>
+      <if test="start_time != null">
+        #{start_time,jdbcType=VARCHAR},
+      </if>
+      <if test="end_time != null">
+        #{end_time,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="course_fontColor != null">
+        #{course_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="course_wordSize != null">
+        #{course_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontColor != null">
+        #{teacher_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_wordSize != null">
+        #{teacher_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="resolving_power != null">
+        #{resolving_power,jdbcType=INTEGER},
+      </if>
+      <if test="encode_quality != null">
+        #{encode_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="otherParamStr != null">
+        #{otherParamStr,jdbcType=VARCHAR},
+      </if>
+      <if test="epilogue_img != null">
+        #{epilogue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="prologue_img != null">
+        #{prologue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="provenance != null">
+        #{provenance,jdbcType=VARCHAR},
+      </if>
+      <if test="local_classroomId != null">
+        #{local_classroomId,jdbcType=INTEGER},
+      </if>
+      <if test="remote_classroomIds != null">
+        #{remote_classroomIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isDual != null">
+        #{isDual,jdbcType=CHAR},
+      </if>
+      <if test="course_fontType != null">
+        #{course_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontType != null">
+        #{teacher_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontType != null">
+        #{label_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontColor != null">
+        #{label_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="label_wordSize != null">
+        #{label_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="forward_state != null">
+        #{forward_state,jdbcType=CHAR},
+      </if>
+      <if test="live_password != null">
+        #{live_password,jdbcType=VARCHAR},
+      </if>
+      <if test="bandwidth != null">
+        #{bandwidth,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    update course
+    <set>
+      <if test="course_name != null">
+        course_name = #{course_name,jdbcType=VARCHAR},
+      </if>
+      <if test="course_type != null">
+        course_type = #{course_type,jdbcType=INTEGER},
+      </if>
+      <if test="course_state != null">
+        course_state = #{course_state,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null">
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="isRecord != null">
+        isRecord = #{isRecord,jdbcType=CHAR},
+      </if>
+      <if test="isLive != null">
+        isLive = #{isLive,jdbcType=CHAR},
+      </if>
+      <if test="record_state != null">
+        record_state = #{record_state,jdbcType=VARCHAR},
+      </if>
+      <if test="live_state != null">
+        live_state = #{live_state,jdbcType=VARCHAR},
+      </if>
+      <if test="isSubtitle != null">
+        isSubtitle = #{isSubtitle,jdbcType=CHAR},
+      </if>
+      <if test="isAutoSubmit != null">
+        isAutoSubmit = #{isAutoSubmit,jdbcType=CHAR},
+      </if>
+      <if test="isPublish != null">
+        isPublish = #{isPublish,jdbcType=CHAR},
+      </if>
+      <if test="isComment != null">
+        isComment = #{isComment,jdbcType=CHAR},
+      </if>
+      <if test="isRate != null">
+        isRate = #{isRate,jdbcType=CHAR},
+      </if>
+      <if test="start_time != null">
+        start_time = #{start_time,jdbcType=VARCHAR},
+      </if>
+      <if test="end_time != null">
+        end_time = #{end_time,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="course_fontColor != null">
+        course_fontColor = #{course_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="course_wordSize != null">
+        course_wordSize = #{course_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontColor != null">
+        teacher_fontColor = #{teacher_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_wordSize != null">
+        teacher_wordSize = #{teacher_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="resolving_power != null">
+        resolving_power = #{resolving_power,jdbcType=INTEGER},
+      </if>
+      <if test="encode_quality != null">
+        encode_quality = #{encode_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="otherParamStr != null">
+        otherParamStr = #{otherParamStr,jdbcType=VARCHAR},
+      </if>
+      <if test="epilogue_img != null">
+        epilogue_img = #{epilogue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="prologue_img != null">
+        prologue_img = #{prologue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        createrId = #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="provenance != null">
+        provenance = #{provenance,jdbcType=VARCHAR},
+      </if>
+      <if test="local_classroomId != null">
+        local_classroomId = #{local_classroomId,jdbcType=INTEGER},
+      </if>
+      <if test="remote_classroomIds != null">
+        remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isDual != null">
+        isDual = #{isDual,jdbcType=CHAR},
+      </if>
+      <if test="course_fontType != null">
+        course_fontType = #{course_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontType != null">
+        teacher_fontType = #{teacher_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontType != null">
+        label_fontType = #{label_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontColor != null">
+        label_fontColor = #{label_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="label_wordSize != null">
+        label_wordSize = #{label_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="forward_state != null">
+        forward_state = #{forward_state,jdbcType=CHAR},
+      </if>
+      <if test="live_password != null">
+        live_password = #{live_password,jdbcType=VARCHAR},
+      </if>
+      <if test="bandwidth != null">
+        bandwidth = #{bandwidth,jdbcType=INTEGER},
+      </if>
+    </set>
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    update course
+    set course_name = #{course_name,jdbcType=VARCHAR},
+      course_type = #{course_type,jdbcType=INTEGER},
+      course_state = #{course_state,jdbcType=VARCHAR},
+      teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      isRecord = #{isRecord,jdbcType=CHAR},
+      isLive = #{isLive,jdbcType=CHAR},
+      record_state = #{record_state,jdbcType=VARCHAR},
+      live_state = #{live_state,jdbcType=VARCHAR},
+      isSubtitle = #{isSubtitle,jdbcType=CHAR},
+      isAutoSubmit = #{isAutoSubmit,jdbcType=CHAR},
+      isPublish = #{isPublish,jdbcType=CHAR},
+      isComment = #{isComment,jdbcType=CHAR},
+      isRate = #{isRate,jdbcType=CHAR},
+      start_time = #{start_time,jdbcType=VARCHAR},
+      end_time = #{end_time,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      course_fontColor = #{course_fontColor,jdbcType=VARCHAR},
+      course_wordSize = #{course_wordSize,jdbcType=VARCHAR},
+      teacher_fontColor = #{teacher_fontColor,jdbcType=VARCHAR},
+      teacher_wordSize = #{teacher_wordSize,jdbcType=VARCHAR},
+      resolving_power = #{resolving_power,jdbcType=INTEGER},
+      encode_quality = #{encode_quality,jdbcType=VARCHAR},
+      otherParamStr = #{otherParamStr,jdbcType=VARCHAR},
+      epilogue_img = #{epilogue_img,jdbcType=VARCHAR},
+      prologue_img = #{prologue_img,jdbcType=VARCHAR},
+      createrId = #{createrId,jdbcType=INTEGER},
+      provenance = #{provenance,jdbcType=VARCHAR},
+      local_classroomId = #{local_classroomId,jdbcType=INTEGER},
+      remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
+      isDual = #{isDual,jdbcType=CHAR},
+      course_fontType = #{course_fontType,jdbcType=VARCHAR},
+      teacher_fontType = #{teacher_fontType,jdbcType=VARCHAR},
+      label_fontType = #{label_fontType,jdbcType=VARCHAR},
+      label_fontColor = #{label_fontColor,jdbcType=VARCHAR},
+      label_wordSize = #{label_wordSize,jdbcType=VARCHAR},
+      forward_state = #{forward_state,jdbcType=CHAR},
+      live_password = #{live_password,jdbcType=VARCHAR},
+      bandwidth = #{bandwidth,jdbcType=INTEGER}
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseEntity">
+    <constructor>
+      <idArg column="course_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="course_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_type" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="course_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isRecord" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isLive" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="record_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="live_state" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isSubtitle" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isAutoSubmit" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isPublish" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isComment" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="isRate" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="start_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="end_time" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="createTime" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="course_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="record_quality" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="encode_quality" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="otherParamStr" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="epilogue_img" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="prologue_img" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="createrId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="provenance" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="local_classroomId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="remote_classroomIds" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="isDual" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="course_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="teacher_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_fontType" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_fontColor" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="label_wordSize" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="forward_state" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="live_password" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
+    record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate, 
+    start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor, 
+    teacher_wordSize, record_quality, encode_quality, otherParamStr, epilogue_img, prologue_img, 
+    createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType, 
+    teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state, 
+    live_password
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from course
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    insert into course (course_id, course_name, course_type, 
+      course_state, teacher_name, isRecord, 
+      isLive, record_state, live_state, 
+      isSubtitle, isAutoSubmit, isPublish, 
+      isComment, isRate, start_time, 
+      end_time, createTime, course_fontColor, 
+      course_wordSize, teacher_fontColor, teacher_wordSize, 
+      record_quality, encode_quality, otherParamStr, 
+      epilogue_img, prologue_img, createrId, 
+      provenance, local_classroomId, remote_classroomIds, 
+      isDual, course_fontType, teacher_fontType, 
+      label_fontType, label_fontColor, label_wordSize, 
+      forward_state, live_password)
+    values (#{course_id,jdbcType=INTEGER}, #{course_name,jdbcType=VARCHAR}, #{course_type,jdbcType=CHAR}, 
+      #{course_state,jdbcType=VARCHAR}, #{teacher_name,jdbcType=VARCHAR}, #{isRecord,jdbcType=CHAR}, 
+      #{isLive,jdbcType=CHAR}, #{record_state,jdbcType=VARCHAR}, #{live_state,jdbcType=VARCHAR}, 
+      #{isSubtitle,jdbcType=CHAR}, #{isAutoSubmit,jdbcType=CHAR}, #{isPublish,jdbcType=CHAR}, 
+      #{isComment,jdbcType=CHAR}, #{isRate,jdbcType=CHAR}, #{start_time,jdbcType=VARCHAR}, 
+      #{end_time,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{course_fontColor,jdbcType=VARCHAR}, 
+      #{course_wordSize,jdbcType=VARCHAR}, #{teacher_fontColor,jdbcType=VARCHAR}, #{teacher_wordSize,jdbcType=VARCHAR}, 
+      #{record_quality,jdbcType=VARCHAR}, #{encode_quality,jdbcType=VARCHAR}, #{otherParamStr,jdbcType=VARCHAR}, 
+      #{epilogue_img,jdbcType=VARCHAR}, #{prologue_img,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER}, 
+      #{provenance,jdbcType=VARCHAR}, #{local_classroomId,jdbcType=INTEGER}, #{remote_classroomIds,jdbcType=VARCHAR}, 
+      #{isDual,jdbcType=CHAR}, #{course_fontType,jdbcType=VARCHAR}, #{teacher_fontType,jdbcType=VARCHAR}, 
+      #{label_fontType,jdbcType=VARCHAR}, #{label_fontColor,jdbcType=VARCHAR}, #{label_wordSize,jdbcType=VARCHAR}, 
+      #{forward_state,jdbcType=CHAR}, #{live_password,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="course_id != null">
+        course_id,
+      </if>
+      <if test="course_name != null">
+        course_name,
+      </if>
+      <if test="course_type != null">
+        course_type,
+      </if>
+      <if test="course_state != null">
+        course_state,
+      </if>
+      <if test="teacher_name != null">
+        teacher_name,
+      </if>
+      <if test="isRecord != null">
+        isRecord,
+      </if>
+      <if test="isLive != null">
+        isLive,
+      </if>
+      <if test="record_state != null">
+        record_state,
+      </if>
+      <if test="live_state != null">
+        live_state,
+      </if>
+      <if test="isSubtitle != null">
+        isSubtitle,
+      </if>
+      <if test="isAutoSubmit != null">
+        isAutoSubmit,
+      </if>
+      <if test="isPublish != null">
+        isPublish,
+      </if>
+      <if test="isComment != null">
+        isComment,
+      </if>
+      <if test="isRate != null">
+        isRate,
+      </if>
+      <if test="start_time != null">
+        start_time,
+      </if>
+      <if test="end_time != null">
+        end_time,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="course_fontColor != null">
+        course_fontColor,
+      </if>
+      <if test="course_wordSize != null">
+        course_wordSize,
+      </if>
+      <if test="teacher_fontColor != null">
+        teacher_fontColor,
+      </if>
+      <if test="teacher_wordSize != null">
+        teacher_wordSize,
+      </if>
+      <if test="record_quality != null">
+        record_quality,
+      </if>
+      <if test="encode_quality != null">
+        encode_quality,
+      </if>
+      <if test="otherParamStr != null">
+        otherParamStr,
+      </if>
+      <if test="epilogue_img != null">
+        epilogue_img,
+      </if>
+      <if test="prologue_img != null">
+        prologue_img,
+      </if>
+      <if test="createrId != null">
+        createrId,
+      </if>
+      <if test="provenance != null">
+        provenance,
+      </if>
+      <if test="local_classroomId != null">
+        local_classroomId,
+      </if>
+      <if test="remote_classroomIds != null">
+        remote_classroomIds,
+      </if>
+      <if test="isDual != null">
+        isDual,
+      </if>
+      <if test="course_fontType != null">
+        course_fontType,
+      </if>
+      <if test="teacher_fontType != null">
+        teacher_fontType,
+      </if>
+      <if test="label_fontType != null">
+        label_fontType,
+      </if>
+      <if test="label_fontColor != null">
+        label_fontColor,
+      </if>
+      <if test="label_wordSize != null">
+        label_wordSize,
+      </if>
+      <if test="forward_state != null">
+        forward_state,
+      </if>
+      <if test="live_password != null">
+        live_password,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="course_id != null">
+        #{course_id,jdbcType=INTEGER},
+      </if>
+      <if test="course_name != null">
+        #{course_name,jdbcType=VARCHAR},
+      </if>
+      <if test="course_type != null">
+        #{course_type,jdbcType=CHAR},
+      </if>
+      <if test="course_state != null">
+        #{course_state,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null">
+        #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="isRecord != null">
+        #{isRecord,jdbcType=CHAR},
+      </if>
+      <if test="isLive != null">
+        #{isLive,jdbcType=CHAR},
+      </if>
+      <if test="record_state != null">
+        #{record_state,jdbcType=VARCHAR},
+      </if>
+      <if test="live_state != null">
+        #{live_state,jdbcType=VARCHAR},
+      </if>
+      <if test="isSubtitle != null">
+        #{isSubtitle,jdbcType=CHAR},
+      </if>
+      <if test="isAutoSubmit != null">
+        #{isAutoSubmit,jdbcType=CHAR},
+      </if>
+      <if test="isPublish != null">
+        #{isPublish,jdbcType=CHAR},
+      </if>
+      <if test="isComment != null">
+        #{isComment,jdbcType=CHAR},
+      </if>
+      <if test="isRate != null">
+        #{isRate,jdbcType=CHAR},
+      </if>
+      <if test="start_time != null">
+        #{start_time,jdbcType=VARCHAR},
+      </if>
+      <if test="end_time != null">
+        #{end_time,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="course_fontColor != null">
+        #{course_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="course_wordSize != null">
+        #{course_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontColor != null">
+        #{teacher_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_wordSize != null">
+        #{teacher_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="record_quality != null">
+        #{record_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="encode_quality != null">
+        #{encode_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="otherParamStr != null">
+        #{otherParamStr,jdbcType=VARCHAR},
+      </if>
+      <if test="epilogue_img != null">
+        #{epilogue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="prologue_img != null">
+        #{prologue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="provenance != null">
+        #{provenance,jdbcType=VARCHAR},
+      </if>
+      <if test="local_classroomId != null">
+        #{local_classroomId,jdbcType=INTEGER},
+      </if>
+      <if test="remote_classroomIds != null">
+        #{remote_classroomIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isDual != null">
+        #{isDual,jdbcType=CHAR},
+      </if>
+      <if test="course_fontType != null">
+        #{course_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontType != null">
+        #{teacher_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontType != null">
+        #{label_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontColor != null">
+        #{label_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="label_wordSize != null">
+        #{label_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="forward_state != null">
+        #{forward_state,jdbcType=CHAR},
+      </if>
+      <if test="live_password != null">
+        #{live_password,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    update course
+    <set>
+      <if test="course_name != null">
+        course_name = #{course_name,jdbcType=VARCHAR},
+      </if>
+      <if test="course_type != null">
+        course_type = #{course_type,jdbcType=CHAR},
+      </if>
+      <if test="course_state != null">
+        course_state = #{course_state,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_name != null">
+        teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      </if>
+      <if test="isRecord != null">
+        isRecord = #{isRecord,jdbcType=CHAR},
+      </if>
+      <if test="isLive != null">
+        isLive = #{isLive,jdbcType=CHAR},
+      </if>
+      <if test="record_state != null">
+        record_state = #{record_state,jdbcType=VARCHAR},
+      </if>
+      <if test="live_state != null">
+        live_state = #{live_state,jdbcType=VARCHAR},
+      </if>
+      <if test="isSubtitle != null">
+        isSubtitle = #{isSubtitle,jdbcType=CHAR},
+      </if>
+      <if test="isAutoSubmit != null">
+        isAutoSubmit = #{isAutoSubmit,jdbcType=CHAR},
+      </if>
+      <if test="isPublish != null">
+        isPublish = #{isPublish,jdbcType=CHAR},
+      </if>
+      <if test="isComment != null">
+        isComment = #{isComment,jdbcType=CHAR},
+      </if>
+      <if test="isRate != null">
+        isRate = #{isRate,jdbcType=CHAR},
+      </if>
+      <if test="start_time != null">
+        start_time = #{start_time,jdbcType=VARCHAR},
+      </if>
+      <if test="end_time != null">
+        end_time = #{end_time,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="course_fontColor != null">
+        course_fontColor = #{course_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="course_wordSize != null">
+        course_wordSize = #{course_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontColor != null">
+        teacher_fontColor = #{teacher_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_wordSize != null">
+        teacher_wordSize = #{teacher_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="record_quality != null">
+        record_quality = #{record_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="encode_quality != null">
+        encode_quality = #{encode_quality,jdbcType=VARCHAR},
+      </if>
+      <if test="otherParamStr != null">
+        otherParamStr = #{otherParamStr,jdbcType=VARCHAR},
+      </if>
+      <if test="epilogue_img != null">
+        epilogue_img = #{epilogue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="prologue_img != null">
+        prologue_img = #{prologue_img,jdbcType=VARCHAR},
+      </if>
+      <if test="createrId != null">
+        createrId = #{createrId,jdbcType=INTEGER},
+      </if>
+      <if test="provenance != null">
+        provenance = #{provenance,jdbcType=VARCHAR},
+      </if>
+      <if test="local_classroomId != null">
+        local_classroomId = #{local_classroomId,jdbcType=INTEGER},
+      </if>
+      <if test="remote_classroomIds != null">
+        remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isDual != null">
+        isDual = #{isDual,jdbcType=CHAR},
+      </if>
+      <if test="course_fontType != null">
+        course_fontType = #{course_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="teacher_fontType != null">
+        teacher_fontType = #{teacher_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontType != null">
+        label_fontType = #{label_fontType,jdbcType=VARCHAR},
+      </if>
+      <if test="label_fontColor != null">
+        label_fontColor = #{label_fontColor,jdbcType=VARCHAR},
+      </if>
+      <if test="label_wordSize != null">
+        label_wordSize = #{label_wordSize,jdbcType=VARCHAR},
+      </if>
+      <if test="forward_state != null">
+        forward_state = #{forward_state,jdbcType=CHAR},
+      </if>
+      <if test="live_password != null">
+        live_password = #{live_password,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    update course
+    set course_name = #{course_name,jdbcType=VARCHAR},
+      course_type = #{course_type,jdbcType=CHAR},
+      course_state = #{course_state,jdbcType=VARCHAR},
+      teacher_name = #{teacher_name,jdbcType=VARCHAR},
+      isRecord = #{isRecord,jdbcType=CHAR},
+      isLive = #{isLive,jdbcType=CHAR},
+      record_state = #{record_state,jdbcType=VARCHAR},
+      live_state = #{live_state,jdbcType=VARCHAR},
+      isSubtitle = #{isSubtitle,jdbcType=CHAR},
+      isAutoSubmit = #{isAutoSubmit,jdbcType=CHAR},
+      isPublish = #{isPublish,jdbcType=CHAR},
+      isComment = #{isComment,jdbcType=CHAR},
+      isRate = #{isRate,jdbcType=CHAR},
+      start_time = #{start_time,jdbcType=VARCHAR},
+      end_time = #{end_time,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=VARCHAR},
+      course_fontColor = #{course_fontColor,jdbcType=VARCHAR},
+      course_wordSize = #{course_wordSize,jdbcType=VARCHAR},
+      teacher_fontColor = #{teacher_fontColor,jdbcType=VARCHAR},
+      teacher_wordSize = #{teacher_wordSize,jdbcType=VARCHAR},
+      record_quality = #{record_quality,jdbcType=VARCHAR},
+      encode_quality = #{encode_quality,jdbcType=VARCHAR},
+      otherParamStr = #{otherParamStr,jdbcType=VARCHAR},
+      epilogue_img = #{epilogue_img,jdbcType=VARCHAR},
+      prologue_img = #{prologue_img,jdbcType=VARCHAR},
+      createrId = #{createrId,jdbcType=INTEGER},
+      provenance = #{provenance,jdbcType=VARCHAR},
+      local_classroomId = #{local_classroomId,jdbcType=INTEGER},
+      remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
+      isDual = #{isDual,jdbcType=CHAR},
+      course_fontType = #{course_fontType,jdbcType=VARCHAR},
+      teacher_fontType = #{teacher_fontType,jdbcType=VARCHAR},
+      label_fontType = #{label_fontType,jdbcType=VARCHAR},
+      label_fontColor = #{label_fontColor,jdbcType=VARCHAR},
+      label_wordSize = #{label_wordSize,jdbcType=VARCHAR},
+      forward_state = #{forward_state,jdbcType=CHAR},
+      live_password = #{live_password,jdbcType=VARCHAR}
+    where course_id = #{course_id,jdbcType=INTEGER}
+  </update>
+</mapper>
