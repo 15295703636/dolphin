@@ -9,14 +9,18 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dp.sonar.domain.GetScheduleBean;
+import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.domain.entity.ScheduleEntity;
+import org.cs.dp.sonar.mapper.CourseDeviceMapper;
 import org.cs.dp.sonar.mapper.CourseMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +36,8 @@ public class ICourseServiceImpl implements ICourseService {
     private CourseMapper courseMapper;
     @Autowired
     private ScheduleMapper scheduleMapper;
+    @Autowired
+    private CourseDeviceMapper courseDeviceMapper;
 
     @Override
     public ReturnInfo delCourse(Integer param) {
@@ -71,7 +77,6 @@ public class ICourseServiceImpl implements ICourseService {
         ScheduleEntity schedule = resList.get(0);
 
         String currentDateStr = DateUtil.getCurrentDate(DateUtil.YMDHMS);
-
         CourseEntity course = new CourseEntity(
                 null, schedule.getName(), schedule.getType(), schedule.getState(), schedule.getTeacher_name(),
                 schedule.getIsRecord(), schedule.getIsLive(), null, null, null, null,
@@ -80,8 +85,13 @@ public class ICourseServiceImpl implements ICourseService {
                 null, schedule.getDevice_id(), schedule.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
                 schedule.getBandwidth());
-
         courseMapper.insert(course);
+
+        //端控制
+        List<String> devices = Arrays.asList(schedule.getDevice_ids().split("，"));
+        List<CourseDeviceEntity> courseDevices = new ArrayList<>();
+        devices.forEach(o -> courseDevices.add(new CourseDeviceEntity(id, Integer.valueOf(o))));
+        courseDeviceMapper.insertBatch(courseDevices);
 
         return new ReturnInfo();
     }

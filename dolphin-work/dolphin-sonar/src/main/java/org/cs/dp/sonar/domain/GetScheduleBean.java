@@ -12,7 +12,10 @@ import lombok.Data;
  **/
 @Data
 @ApiModel(value = "查看预约日程入参")
-public class GetAppSchReqBean {
+public class GetScheduleBean {
+
+    @ApiModelProperty(value = "ID")
+    private Integer id;
 
     @ApiModelProperty(value = "时间")
     private String date;
@@ -20,4 +23,10 @@ public class GetAppSchReqBean {
     @ApiModelProperty(value = "类型 1会议 2互动 3录播")
     private String type;
 
+    public GetScheduleBean() {
+    }
+
+    public GetScheduleBean(Integer id) {
+        this.id = id;
+    }
 }

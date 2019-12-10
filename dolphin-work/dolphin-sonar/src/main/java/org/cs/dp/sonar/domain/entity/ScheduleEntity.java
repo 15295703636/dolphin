@@ -20,7 +20,7 @@ public class ScheduleEntity {
 
     private String user_ids;
 
-    private String device_id;
+    private Integer device_id;
 
     private String device_ids;
 
@@ -32,9 +32,9 @@ public class ScheduleEntity {
 
     private String isRecord;
 
-    private String resolving_power;
+    private Integer resolving_power;
 
-    private String bandwidth;
+    private Integer bandwidth;
 
     private Integer org_id;
 
@@ -44,10 +44,13 @@ public class ScheduleEntity {
 
     private Integer create_user_id;
 
+    private String teacher_name;
+
     public ScheduleEntity() {
     }
 
-    public ScheduleEntity(Integer id, String name, Integer state, String date, String duration, Integer user_number, String user_ids, String device_id, String device_ids, Integer device_number, Integer type, String isLive, String isRecord, String resolving_power, String bandwidth, Integer org_id, Date create_time, Date update_time, Integer create_user_id) {
+    public ScheduleEntity(String teacher_name, Integer id, String name, Integer state, String date, String duration, Integer user_number, String user_ids, Integer device_id, String device_ids, Integer device_number, Integer type, String isLive, String isRecord, Integer resolving_power, Integer bandwidth, Integer org_id, Date create_time, Date update_time, Integer create_user_id) {
+        this.teacher_name = teacher_name;
         this.id = id;
         this.name = name;
         this.state = state;

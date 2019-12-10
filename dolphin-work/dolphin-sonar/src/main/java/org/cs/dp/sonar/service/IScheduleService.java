@@ -22,4 +22,9 @@ public interface IScheduleService {
 
     ReturnInfo getSchedule(RequestPage<SplitPageInfo, GetScheduleBean> param);
 
+    ReturnInfo liveBroadcast(Integer id);
+
+    ReturnInfo share(Integer id);
+
+    ReturnInfo end(Integer id);
 }

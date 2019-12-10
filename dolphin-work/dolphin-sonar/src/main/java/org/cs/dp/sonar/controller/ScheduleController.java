@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
-* @ClassName ScheduleController
-* @Description 日程管理
-* @Author LiuJT
-* @Date 2019-12-09 05:55:10
-**/
+ * @ClassName ScheduleController
+ * @Description 日程管理
+ * @Author LiuJT
+ * @Date 2019-12-09 05:55:10
+ **/
 @RestController
 @RequestMapping("schedule")
 @Api(tags = "【日程管理】")
@@ -29,25 +29,44 @@ public class ScheduleController {
 
     @PostMapping("add")
     @ApiOperation(value = "添加日程管理", notes = "日程管理")
-    public ReturnInfo addSchedule(@RequestBody ScheduleEntity param){
+    public ReturnInfo addSchedule(@RequestBody ScheduleEntity param) {
         return iScheduleService.addSchedule(param);
     }
 
     @PostMapping("del")
     @ApiOperation(value = "删除日程管理", notes = "日程管理")
-    public ReturnInfo delSchedule(@RequestBody Integer id){
+    public ReturnInfo delSchedule(@RequestBody Integer id) {
         return iScheduleService.delSchedule(id);
     }
 
     @PostMapping("edit")
     @ApiOperation(value = "修改日程管理", notes = "日程管理")
-    public ReturnInfo editSchedule(@RequestBody ScheduleEntity param){
+    public ReturnInfo editSchedule(@RequestBody ScheduleEntity param) {
         return iScheduleService.editSchedule(param);
     }
 
     @PostMapping("get")
     @ApiOperation(value = "查询日程管理", notes = "日程管理")
-    public ReturnInfo getSchedule(@RequestBody RequestPage<SplitPageInfo, GetScheduleBean> param){
+    public ReturnInfo getSchedule(@RequestBody RequestPage<SplitPageInfo, GetScheduleBean> param) {
         return iScheduleService.getSchedule(param);
     }
+
+    @PostMapping("liveBro")
+    @ApiOperation(value = "直播管理", notes = "日程-端管理")
+    public ReturnInfo liveBroadcast(@RequestBody Integer id) {
+        return iScheduleService.liveBroadcast(id);
+    }
+
+    @PostMapping("share")
+    @ApiOperation(value = "分享管理", notes = "日程-端管理")
+    public ReturnInfo share(@RequestBody Integer id) {
+        return iScheduleService.share(id);
+    }
+
+    @PostMapping("end")
+    @ApiOperation(value = "结束管理", notes = "日程-端管理")
+    public ReturnInfo end(@RequestBody Integer id) {
+        return iScheduleService.end(id);
+    }
+
 }
