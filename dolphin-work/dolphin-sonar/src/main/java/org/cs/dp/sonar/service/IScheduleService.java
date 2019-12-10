@@ -21,10 +21,4 @@ public interface IScheduleService {
     ReturnInfo editSchedule(ScheduleEntity param);
 
     ReturnInfo getSchedule(RequestPage<SplitPageInfo, GetScheduleBean> param);
-
-    ReturnInfo liveBroadcast(Integer id);
-
-    ReturnInfo share(Integer id);
-
-    ReturnInfo end(Integer id);
 }

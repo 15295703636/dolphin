@@ -11,8 +11,10 @@ import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
+import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 import org.cs.dp.sonar.domain.entity.ScheduleEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
+import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.mapper.CourseMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
@@ -38,6 +40,8 @@ public class ICourseServiceImpl implements ICourseService {
     private ScheduleMapper scheduleMapper;
     @Autowired
     private CourseDeviceMapper courseDeviceMapper;
+    @Autowired
+    private CourseHistoryMapper courseHistory;
 
     @Override
     public ReturnInfo delCourse(Integer param) {
@@ -93,6 +97,27 @@ public class ICourseServiceImpl implements ICourseService {
         devices.forEach(o -> courseDevices.add(new CourseDeviceEntity(id, Integer.valueOf(o))));
         courseDeviceMapper.insertBatch(courseDevices);
 
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo liveBroadcast(Integer id) {
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo share(Integer id) {
+        return new ReturnInfo();
+    }
+
+    /**
+     * 1.将此条数据插入到历史表，并删除该条信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ReturnInfo end(Integer id) {
+        courseHistory.insertSelectCurrent(id);
         return new ReturnInfo();
     }
 }

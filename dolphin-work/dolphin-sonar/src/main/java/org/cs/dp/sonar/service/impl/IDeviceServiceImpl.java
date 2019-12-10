@@ -6,7 +6,6 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.mapper.DeviceMapper;
@@ -19,9 +18,9 @@ import java.util.List;
 
 /**
 * @ClassName IDeviceServiceImpl
-* @Description 设备/端管理实现类
+* @Description 设备-端管理实现类
 * @Author LiuJT
-* @Date 2019-12-06 05:11:20
+* @Date 2019-12-10 08:04:05
 **/
 @Service
 public class IDeviceServiceImpl implements IDeviceService {
@@ -35,11 +34,8 @@ public class IDeviceServiceImpl implements IDeviceService {
     }
 
     @Override
-    public ReturnInfo delDevice(List<Integer> ids) {
-        if(ids.size() == 0){
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,"请选择设备!");
-        }
-        deviceMapper.deleteByPrimaryKey(ids);
+    public ReturnInfo delDevice(Integer param) {
+        deviceMapper.deleteByPrimaryKey(param);
         return new ReturnInfo();
     }
 

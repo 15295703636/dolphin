@@ -24,4 +24,11 @@ public interface ICourseDeviceService {
     ReturnInfo mute(Integer id);
 
     ReturnInfo cancelMute(Integer id);
+
+    ReturnInfo connect(Integer id);
+
+    ReturnInfo hangUp(Integer id);
+
+    ReturnInfo sidelines(Integer id);
+
 }

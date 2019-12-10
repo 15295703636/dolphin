@@ -16,7 +16,9 @@ public interface CourseDeviceMapper {
 
     int insertSelective(CourseDeviceEntity record);
 
-    CourseDeviceEntity selectByPrimaryKey(Integer id);
+    CourseDeviceEntity selectByPrimaryKey(Integer id);;
+
+    List<CourseDeviceEntity> selectByCondition();
 
     int updateByPrimaryKeySelective(CourseDeviceEntity record);
 

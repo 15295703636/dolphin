@@ -15,10 +15,10 @@ import lombok.Data;
 public class GetDeviceBean {
 
     @ApiModelProperty(value = "端ID")
-    private Integer device_id;
+    private Integer id;
 
     @ApiModelProperty(value = "端名称")
-    private String device_name;
+    private String name;
 
     @ApiModelProperty(value = "端型号")
     private String device_type;

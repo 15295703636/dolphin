@@ -21,4 +21,9 @@ public interface ICourseService {
 
     ReturnInfo getCourse(RequestPage<SplitPageInfo, Object> param);
 
+    ReturnInfo liveBroadcast(Integer id);
+
+    ReturnInfo share(Integer id);
+
+    ReturnInfo end(Integer id);
 }

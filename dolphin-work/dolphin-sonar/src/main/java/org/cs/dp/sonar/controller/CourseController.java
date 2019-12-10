@@ -49,4 +49,22 @@ public class CourseController {
     public ReturnInfo getCourse(@RequestBody RequestPage<SplitPageInfo, Object> param){
         return iCourseService.getCourse(param);
     }
+
+    @PostMapping("liveBro")
+    @ApiOperation(value = "直播管理", notes = "日程-端管理")
+    public ReturnInfo liveBroadcast(@RequestBody Integer id) {
+        return iCourseService.liveBroadcast(id);
+    }
+
+    @PostMapping("share")
+    @ApiOperation(value = "分享管理", notes = "日程-端管理")
+    public ReturnInfo share(@RequestBody Integer id) {
+        return iCourseService.share(id);
+    }
+
+    @PostMapping("end")
+    @ApiOperation(value = "结束管理", notes = "日程-端管理")
+    public ReturnInfo end(@RequestBody Integer id) {
+        return iCourseService.end(id);
+    }
 }

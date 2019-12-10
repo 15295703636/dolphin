@@ -55,19 +55,4 @@ public class IScheduleServiceImpl implements IScheduleService {
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
     }
-
-    @Override
-    public ReturnInfo liveBroadcast(Integer id) {
-        return new ReturnInfo();
-    }
-
-    @Override
-    public ReturnInfo share(Integer id) {
-        return new ReturnInfo();
-    }
-
-    @Override
-    public ReturnInfo end(Integer id) {
-        return new ReturnInfo();
-    }
 }

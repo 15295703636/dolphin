@@ -14,41 +14,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
 * @ClassName DeviceController
-* @Description 设备/端管理
+* @Description 设备-端管理
 * @Author LiuJT
-* @Date 2019-12-06 05:11:20
+* @Date 2019-12-10 08:04:05
 **/
 @RestController
 @RequestMapping("device")
-@Api(tags = "【设备/端管理】")
+@Api(tags = "【设备-端管理】")
 public class DeviceController {
     @Autowired
     private IDeviceService iDeviceService;
 
     @PostMapping("add")
-    @ApiOperation(value = "添加设备/端管理", notes = "设备/端管理")
+    @ApiOperation(value = "添加设备-端管理", notes = "设备-端管理")
     public ReturnInfo addDevice(@RequestBody DeviceEntity param){
         return iDeviceService.addDevice(param);
     }
 
     @PostMapping("del")
-    @ApiOperation(value = "删除设备/端管理", notes = "设备/端管理")
-    public ReturnInfo delDevice(@RequestBody List<Integer> ids){
-        return iDeviceService.delDevice(ids);
+    @ApiOperation(value = "删除设备-端管理", notes = "设备-端管理")
+    public ReturnInfo delDevice(@RequestBody Integer id){
+        return iDeviceService.delDevice(id);
     }
 
     @PostMapping("edit")
-    @ApiOperation(value = "修改设备/端管理", notes = "设备/端管理")
+    @ApiOperation(value = "修改设备-端管理", notes = "设备-端管理")
     public ReturnInfo editDevice(@RequestBody DeviceEntity param){
         return iDeviceService.editDevice(param);
     }
 
     @PostMapping("get")
-    @ApiOperation(value = "查询设备/端管理", notes = "设备/端管理")
+    @ApiOperation(value = "查询设备-端管理", notes = "设备-端管理")
     public ReturnInfo getDevice(@RequestBody RequestPage<SplitPageInfo, GetDeviceBean> param){
         return iDeviceService.getDevice(param);
     }

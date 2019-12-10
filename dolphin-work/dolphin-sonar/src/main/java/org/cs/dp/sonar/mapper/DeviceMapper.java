@@ -1,6 +1,5 @@
 package org.cs.dp.sonar.mapper;
 
-import org.apache.ibatis.annotations.Param;
 import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface DeviceMapper {
-    int deleteByPrimaryKey(@Param(value = "device_ids") List<Integer> device_ids);
+    int deleteByPrimaryKey(Integer device_id);
 
     int insertSelective(DeviceEntity record);
 
@@ -20,5 +19,4 @@ public interface DeviceMapper {
 
     int updateByPrimaryKeySelective(DeviceEntity record);
 
-    int updateByPrimaryKey(DeviceEntity record);
 }

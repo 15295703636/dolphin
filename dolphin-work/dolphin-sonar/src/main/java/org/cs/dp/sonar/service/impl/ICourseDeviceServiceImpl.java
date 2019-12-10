@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
-* @ClassName ICourseDeviceServiceImpl
-* @Description 日程-端管理实现类
-* @Author LiuJT
-* @Date 2019-12-10 01:11:55
-**/
+ * @ClassName ICourseDeviceServiceImpl
+ * @Description 日程-端管理实现类
+ * @Author LiuJT
+ * @Date 2019-12-10 01:11:55
+ **/
 @Service
 public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     @Autowired
@@ -48,7 +48,7 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     public ReturnInfo getCourseDevice(RequestPage<SplitPageInfo, Object> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CourseDeviceEntity> resList = null;//TODO 分页sql要自己实现 courseDeviceMapper.selectByObj(new HashMap());
+        List<CourseDeviceEntity> resList = courseDeviceMapper.selectByCondition();
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
@@ -61,6 +61,21 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
 
     @Override
     public ReturnInfo cancelMute(Integer id) {
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo connect(Integer id) {
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo hangUp(Integer id) {
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo sidelines(Integer id) {
         return new ReturnInfo();
     }
 }
