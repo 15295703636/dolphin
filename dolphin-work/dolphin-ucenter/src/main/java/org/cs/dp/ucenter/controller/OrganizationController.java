@@ -2,18 +2,21 @@ package org.cs.dp.ucenter.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.cs.dp.ucenter.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 /**
@@ -30,9 +33,10 @@ public class OrganizationController {
     @Autowired
     private IOrganizationService iOrganizationService;
 
+    @ParamValid
     @PostMapping("add")
     @ApiOperation(value = "添加组织信息", notes = "组织信息")
-    public ReturnInfo addOrg(@RequestBody OrganizationEntity param) {
+    public ReturnInfo addOrg(@Valid @RequestBody OrganizationEntity param, BindingResult result) {
         return iOrganizationService.addOrg(param);
     }
 

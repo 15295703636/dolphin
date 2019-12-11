@@ -40,6 +40,7 @@ public class Constant {
 
     //组织提示信息
     public static final String ORG_ID_ISEMPTY_MSG = "未选择组织!";
+    public static final String ORG_PREID_ID_MSG = "未选择父节点!";
 
     /**
      * 用户登录提示信息

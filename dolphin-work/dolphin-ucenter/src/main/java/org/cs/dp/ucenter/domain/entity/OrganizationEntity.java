@@ -3,12 +3,14 @@ package org.cs.dp.ucenter.domain.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.cs.dp.ucenter.common.Constant;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
 @ApiModel(value = "组织实体")
-public class OrganizationEntity  {
+public class OrganizationEntity {
     @ApiModelProperty(value = "id")
     private Integer org_id;
 
@@ -18,6 +20,7 @@ public class OrganizationEntity  {
     @ApiModelProperty(value = "类型;枚举:中心、区域、学校、部门，1、2、3、4")
     private Integer org_type;
 
+    @NotBlank(message = Constant.ORG_PREID_ID_MSG)
     @ApiModelProperty(value = "父节点;0为根节点")
     private Integer org_preid;
 
