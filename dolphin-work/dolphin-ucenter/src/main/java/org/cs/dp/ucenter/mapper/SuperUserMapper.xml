@@ -35,7 +35,7 @@
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
     user_tel, user_code,user_type,create_time
   </sql>
-    <select id="selectManage" resultMap="ResultMapWithBLOBs">
+    <select id="selectManage" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         from super_user

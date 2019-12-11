@@ -65,7 +65,7 @@ public class SuperUserController {
     }
 
     @PostMapping("get")
-    @ApiOperation(value = "查询客户经理(需要更具ID查,传相应的Id,查所有,不需要传)", notes = "平台管理员用户信息")
+    @ApiOperation(value = "查询客户经理(需要根据ID查,传相应的Id,查所有,不需要传)", notes = "平台管理员用户信息")
     public ReturnInfo get(@RequestBody Integer manageId) {
         return iSuperUserService.getManage(manageId);
     }

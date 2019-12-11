@@ -1,12 +1,13 @@
 package org.cs.dp.ucenter.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 
 import java.util.List;
 
 public interface SuperUserMapper {
 
-    List<SuperUserEntity> selectManage(Integer manageId);
+    List<SuperUserEntity> selectManage(@Param(value = "manageId") Integer manageId);
 
     int deleteByPrimaryKey(Integer user_id);
 
