@@ -10,8 +10,6 @@ import java.util.List;
 public interface ServerMapper {
     int deleteByPrimaryKey(Integer server_id);
 
-    int insert(ServerEntity record);
-
     int insertSelective(ServerEntity record);
 
     ServerEntity selectByPrimaryKey(Integer server_id);
@@ -20,5 +18,4 @@ public interface ServerMapper {
 
     int updateByPrimaryKeySelective(ServerEntity record);
 
-    int updateByPrimaryKey(ServerEntity record);
 }
