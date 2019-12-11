@@ -3,6 +3,7 @@ package org.cs.dp.sonar.service;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.GetCourseReqBean;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 
 /**
@@ -19,7 +20,7 @@ public interface ICourseService {
 
     ReturnInfo editCourse(CourseEntity param);
 
-    ReturnInfo getCourse(RequestPage<SplitPageInfo, Object> param);
+    ReturnInfo getCourse(RequestPage<SplitPageInfo, GetCourseReqBean> param);
 
     ReturnInfo liveBroadcast(Integer id);
 

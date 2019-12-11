@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.GetCourseReqBean;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class CourseController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询进行中日程管理", notes = "进行中日程管理")
-    public ReturnInfo getCourse(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getCourse(@RequestBody RequestPage<SplitPageInfo, GetCourseReqBean> param){
         return iCourseService.getCourse(param);
     }
 

@@ -123,6 +123,9 @@ public class CourseEntity {
     @ApiModelProperty(value = "带宽")
     private Integer bandwidth;
 
+    @ApiModelProperty(value = "组织ID")
+    private Integer org_id;
+
     public CourseEntity() {
     }
 

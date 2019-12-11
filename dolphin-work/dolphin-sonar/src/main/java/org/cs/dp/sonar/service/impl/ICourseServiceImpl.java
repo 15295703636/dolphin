@@ -8,7 +8,9 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.DateUtil;
+import org.cs.dp.sonar.domain.GetCourseReqBean;
 import org.cs.dp.sonar.domain.GetScheduleBean;
+import org.cs.dp.sonar.domain.UserConditionBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
@@ -56,10 +58,16 @@ public class ICourseServiceImpl implements ICourseService {
     }
 
     @Override
-    public ReturnInfo getCourse(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getCourse(RequestPage<SplitPageInfo, GetCourseReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CourseEntity> resList = null;//TODO 分页sql要自己实现 courseMapper.selectByObj(new HashMap());
+
+        UserConditionBean userConditionBean = new UserConditionBean();
+        GetCourseReqBean getCourseReqBean = param.getInfo();
+        if (null != getCourseReqBean.getOrgId() && 0 != getCourseReqBean.getOrgId()) {
+            userConditionBean.setOrgId(getCourseReqBean.getOrgId());
+        }
+        List<CourseEntity> resList = courseMapper.selectByCondition(getCourseReqBean, userConditionBean);
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
@@ -89,7 +97,7 @@ public class ICourseServiceImpl implements ICourseService {
                 null, schedule.getDevice_id(), schedule.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
                 schedule.getBandwidth());
-        courseMapper.insert(course);
+        courseMapper.insertSelective(course);
 
         //端控制
         List<String> devices = Arrays.asList(schedule.getDevice_ids().split("，"));
@@ -112,6 +120,7 @@ public class ICourseServiceImpl implements ICourseService {
 
     /**
      * 1.将此条数据插入到历史表，并删除该条信息
+     *
      * @param id
      * @return
      */
