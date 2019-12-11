@@ -111,6 +111,9 @@ public class ICustomerServiceImpl implements ICustomerService {
 
     @Override
     public ReturnInfo editCustomer(CustomerEntity param) {
+        if (null == param.getId() || 0 == param.getId()) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.CUSTOMER_ID_ISEMPTY_MSG);
+        }
         customerMapper.updateByPrimaryKeySelective(param);
         return new ReturnInfo();
     }
