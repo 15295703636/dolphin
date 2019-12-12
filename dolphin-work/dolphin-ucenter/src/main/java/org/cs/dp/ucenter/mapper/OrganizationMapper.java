@@ -1,12 +1,12 @@
 package org.cs.dp.ucenter.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 
 import java.util.List;
 
 public interface OrganizationMapper {
-    int deleteByPrimaryKey(Integer org_id);
+    int deleteByPrimaryKey(@Param("ids") List<Integer> ids, @Param("customerId") Integer customerId);
 
     int insertSelective(OrganizationEntity record);
 

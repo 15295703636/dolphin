@@ -33,12 +33,22 @@
         select count(1) from organization where customer_id = #{customer_id,jdbcType=INTEGER} and org_preid = 0
     </select>
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from organization
-    where org_id = #{org_id,jdbcType=INTEGER}
-  </delete>
+    <delete id="deleteByPrimaryKey">
+        delete from organization
+        where org_preid != 0
+        <if test="ids != null and ids.size() > 0">
+            and org_id in
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="customerId != null">
+            and customer_id = #{customerId}
+        </if>
+    </delete>
 
-    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="org_id" parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="org_id"
+            parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         insert into organization
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="org_id != null">

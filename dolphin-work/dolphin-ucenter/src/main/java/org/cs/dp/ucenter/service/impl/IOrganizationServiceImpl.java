@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.domain.TreeNodeBean;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
@@ -21,6 +22,7 @@ import org.cs.dp.ucenter.mapper.OrganizationMapper;
 import org.cs.dp.ucenter.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo upload(MultipartFile file) throws IOException {
         String name = file.getOriginalFilename();
         Workbook workbook = null;
@@ -60,10 +63,13 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         TreeNodeBean treeNodeBean = tree(workbook);
         treeNodeBean = treeNodeBean.getChild().get(0);
 
-        saveTreeOrg(Arrays.asList(treeNodeBean), 0);//TODO ThreadLocalUserInfoUtil.get().getOrg_id()
-        log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
-
-        return null;
+        if (null != treeNodeBean) {
+            organizationMapper.deleteByPrimaryKey(null, 20);//TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+            OrganizationEntity org = organizationMapper.getList(new OrganizationEntity(20)).get(0);
+            saveTreeOrg(Arrays.asList(treeNodeBean), org.getOrg_id());
+            log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
+        }
+        return new ReturnInfo();
     }
 
     private static TreeNodeBean tree(Workbook wb) {
@@ -139,7 +145,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         if (treeNodeBean.size() > 0) {
             for (TreeNodeBean item : treeNodeBean) {
                 org = new OrganizationEntity(
-                        null, item.getName(), null, periodId, 6 // TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+                        null, item.getName(), null, periodId, 20// TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
                 );
                 //插入数据库
                 organizationMapper.insertSelective(org);
@@ -159,8 +165,8 @@ public class IOrganizationServiceImpl implements IOrganizationService {
     }
 
     @Override
-    public ReturnInfo delOrg(int id) {
-        organizationMapper.deleteByPrimaryKey(id);
+    public ReturnInfo delOrg(List<Integer> id) {
+        organizationMapper.deleteByPrimaryKey(id, null);
         return new ReturnInfo();
     }
 

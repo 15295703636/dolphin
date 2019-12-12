@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @ClassName OrganizationController
@@ -54,7 +55,7 @@ public class OrganizationController {
 
     @PostMapping("del")
     @ApiOperation(value = "删除组织信息", notes = "组织信息")
-    public ReturnInfo delOrg(@RequestBody int id) {
+    public ReturnInfo delOrg(@RequestBody List<Integer> id) {
         return iOrganizationService.delOrg(id);
     }
 

@@ -7,6 +7,7 @@ import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IOrganizationService {
 
@@ -16,7 +17,7 @@ public interface IOrganizationService {
 
     ReturnInfo editOrg(OrganizationEntity param);
 
-    ReturnInfo delOrg( int id);
+    ReturnInfo delOrg( List<Integer> id);
 
     ReturnInfo getOrg(RequestPage<SplitPageInfo,OrganizationEntity> param) ;
 
