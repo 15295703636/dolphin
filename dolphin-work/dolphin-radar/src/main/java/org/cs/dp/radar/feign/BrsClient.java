@@ -2,9 +2,7 @@ package org.cs.dp.radar.feign;
 
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.radar.api.entity.brs.BssTaskReq;
-import org.cs.dp.radar.api.feign.IBaioClient;
 import org.cs.dp.radar.api.feign.IBrsClient;
-import org.cs.dp.radar.service.IBaioService;
 import org.cs.dp.radar.service.IBrsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
