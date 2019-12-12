@@ -1,59 +1,46 @@
 package org.cs.dp.ucenter.service.impl;
 
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dp.ucenter.domain.CodeBean;
+import org.cs.dp.ucenter.domain.entity.CodeEntity;
+import org.cs.dp.ucenter.mapper.CodeMapper;
 import org.cs.dp.ucenter.service.ICodeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- * @ClassName ICodeServiceImpl
- * @Description
- * @Author Liujt
- * @Date 2019/11/27 14:38
- **/
+* @ClassName ICodeServiceImpl
+* @Description 代码信息维护实现类
+* @Author Liujt
+* @Date 2019-12-09 09:37:29
+**/
 @Service
-public class ICodeServiceImpl {
-
+public class ICodeServiceImpl implements ICodeService {
     @Autowired
-    private ApplicationContext applicationContext;
+    private CodeMapper codeMapper;
 
-    public ReturnInfo getCodeInfo(String code) {
-        ICodeService iCodeService = getService(code);
-        if (null == iCodeService) {
-            new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "不存在该代码表!");
-        }
-        return iCodeService.getCodeInfo();
+    @Override
+    public ReturnInfo addCode(CodeEntity param) {
+        codeMapper.insertSelective(param);
+        return new ReturnInfo();
     }
 
-    public ReturnInfo editCodeInfo(CodeBean param) {
-        ICodeService iCodeService = getService(param.getTableName());
-        if (null == iCodeService) {
-            new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "不存在该代码表!");
-        }
-        return iCodeService.editCodeInfo(param.getObj());
+    @Override
+    public ReturnInfo delCode(Integer param) {
+        codeMapper.deleteByPrimaryKey(param);
+        return new ReturnInfo();
     }
 
-    public ReturnInfo addCodeInfo(CodeBean param) {
-        ICodeService iCodeService = getService(param.getTableName());
-        if (null == iCodeService) {
-            new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "不存在该代码表!");
-        }
-        return iCodeService.addCodeInfo(param.getObj());
+    @Override
+    public ReturnInfo editCode(CodeEntity param) {
+        codeMapper.updateByPrimaryKeySelective(param);
+        return new ReturnInfo();
     }
 
-    public ReturnInfo delCodeInfo(CodeBean param) {
-        ICodeService iCodeService = getService(param.getTableName());
-        if (null == iCodeService) {
-            new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "不存在该代码表!");
-        }
-        return iCodeService.delCodeInfo((Integer) param.getObj());
+    @Override
+    public ReturnInfo getCode(String tableName) {
+        List<CodeEntity> resList = codeMapper.select(tableName);
+        return new ReturnInfo(resList);
     }
-
-    private ICodeService getService(String code) {
-        return applicationContext.getBeansOfType(ICodeService.class).get(code);
-    }
-
 }

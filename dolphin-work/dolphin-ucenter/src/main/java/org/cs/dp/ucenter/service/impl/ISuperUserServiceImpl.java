@@ -1,5 +1,7 @@
 package org.cs.dp.ucenter.service.impl;
 
+import com.alibaba.druid.support.spring.stat.SpringStatUtils;
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
@@ -8,14 +10,18 @@ import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.*;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.common.SpringUtils;
+import org.cs.dp.ucenter.common.UploadDataListener;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.mapper.SuperUserMapper;
 import org.cs.dp.ucenter.service.ISuperUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -64,6 +70,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     @Override
     public ReturnInfo add(SuperUserEntity record) {
         if (0 < superUserMapper.selectByUserNameCou(record.getUser_name())) {
+            log.error("用户已存在：{}", JSON.toJSONString(record));
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }
         superUserMapper.insertSelective(record);
@@ -78,9 +85,22 @@ public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Override
     public ReturnInfo edit(SuperUserEntity record) {
+        record.setUser_name(null);
+        record.setCreate_time(null);
         superUserMapper.updateByPrimaryKeySelective(record);
         return new ReturnInfo();
     }
 
+    @Override
+    public ReturnInfo getManage(Integer manageId) {
+        return new ReturnInfo(superUserMapper.selectManage(manageId));
+    }
+
+    @Override
+    public ReturnInfo upload(MultipartFile file) throws IOException {
+        EasyExcel.read(file.getInputStream(), SuperUserEntity.class,
+                new UploadDataListener(SpringUtils.getBean(ISuperUserService.class))).sheet().doRead();
+        return new ReturnInfo();
+    }
 
 }

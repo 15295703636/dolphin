@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.CourseDeviceMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="course_id" property="course_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="device_id" property="device_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="type" property="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="state" property="state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, course_id, device_id,type,state
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_device
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_device
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from course_device
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into course_device (id, course_id, device_id,type,state) values
+        <foreach collection="param" item="list" separator=",">
+            (#{id,jdbcType=INTEGER}, #{course_id,jdbcType=INTEGER},
+            #{device_id,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{state,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
+
+    </insert>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        insert into course_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="course_id != null">
+                course_id,
+            </if>
+            <if test="device_id != null">
+                device_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="course_id != null">
+                #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        update course_device
+        <set>
+            <if test="course_id != null">
+                course_id = #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                device_id = #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

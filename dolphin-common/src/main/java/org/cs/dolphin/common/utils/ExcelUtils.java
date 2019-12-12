@@ -26,6 +26,5 @@ public class ExcelUtils {
         String fileName = URLEncoder.encode(excelName, "UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
         EasyExcel.write(response.getOutputStream(), clazz).sheet(sheetName).doWrite(list);
-
     }
 }

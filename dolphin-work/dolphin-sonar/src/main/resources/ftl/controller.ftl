@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 **/
 @RestController
 @RequestMapping("${name?uncap_first}")
-@Api(tags = "${explain}")
+@Api(tags = "【${explain}】")
 public class ${name}Controller {
     @Autowired
     private I${name}Service i${name}Service;

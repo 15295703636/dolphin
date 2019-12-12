@@ -7,6 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DateUtil {
+
+    /**
+     * 年月日 时分秒
+     */
+    public static final String YMDHMS = "yyyy-MM-dd HH:mm:ss";
     /**
      * 年。
      */

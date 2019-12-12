@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("all")
 public class RedisUtil<T> {
 
-    @Resource(name = "redisTemplate")
+    @Resource
     private RedisTemplate redisTemplate;
 
 

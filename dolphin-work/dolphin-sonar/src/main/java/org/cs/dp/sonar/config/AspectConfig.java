@@ -8,11 +8,15 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.AspectConstant;
 import org.cs.dolphin.common.constant.ModuleConstant;
+import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.domain.LogEntity;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.ExceptionUtil;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.sonar.common.redis.RedisUtil;
 import org.cs.dp.sonar.service.ISoUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +44,8 @@ import java.util.List;
 public class AspectConfig {
 
     @Autowired
+    private RedisUtil redisUtil;
+    @Autowired
     private ISoUserService iSoUserService;
 
     @Pointcut(AspectConstant.SONAR_SERVER)
@@ -59,6 +65,12 @@ public class AspectConfig {
         log.info("统一日志记录IP: {} ", request.getRemoteAddr());
         log.info("统一日志记录CLASS_METHOD : {} ", point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName());
         log.info("统一日志记录PARAM : {} ", Arrays.toString(point.getArgs()));
+
+        String token = request.getHeader("token");
+        //因为网关做了白名单过滤，业务模块不需要在做判断;获取到当前信息，存入到 ThreadLocal 中
+        if (null != token) {
+            ThreadLocalUserInfoUtil.set((UserInfo)redisUtil.getObject(RedisConstant.USER_TOKEN_PATH + token, UserInfo.class));
+        }
 
         Object returnObj = null;
 

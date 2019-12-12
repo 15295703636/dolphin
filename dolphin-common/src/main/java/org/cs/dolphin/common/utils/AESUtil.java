@@ -127,7 +127,7 @@ public class AESUtil {
         return null;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         String[] keys = {
                 "", "123456"
         };
@@ -139,6 +139,6 @@ public class AESUtil {
             String decryptString = aesDecode(encryptString);
             System.out.println(decryptString);
         }
-    }
+    }*/
 
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.CustomerServerMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CustomerServerEntity">
+        <id column="server_id" jdbcType="INTEGER" property="server_id"/>
+        <result column="server_name" jdbcType="VARCHAR" property="server_name"/>
+        <result column="server_ip" jdbcType="VARCHAR" property="server_ip"/>
+        <result column="server_port" jdbcType="INTEGER" property="server_port"/>
+        <result column="server_nat_ip" jdbcType="VARCHAR" property="server_nat_ip"/>
+        <result column="server_nat_port" jdbcType="INTEGER" property="server_nat_port"/>
+        <result column="serial_number" jdbcType="VARCHAR" property="serial_number"/>
+        <result column="org_id" jdbcType="INTEGER" property="org_id"/>
+        <result column="customer_id" jdbcType="INTEGER" property="customer_id"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    server_id, server_name, server_ip, server_port, server_nat_ip, server_nat_port,serial_number, org_id, customer_id
+  </sql>
+
+    <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from customer_server
+        where 1=1
+        <if test="server_id != null">
+            server_id = #{server_id,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from customer_server
+    where server_id = #{server_id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CustomerServerEntity">
+        insert into customer_server
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="server_id != null">
+                server_id,
+            </if>
+            <if test="server_name != null">
+                server_name,
+            </if>
+            <if test="server_ip != null">
+                server_ip,
+            </if>
+            <if test="server_port != null">
+                server_port,
+            </if>
+            <if test="server_nat_ip != null">
+                server_nat_ip,
+            </if>
+            <if test="server_nat_port != null">
+                server_nat_port,
+            </if>
+            <if test="serial_number != null">
+                serial_number,
+            </if>
+            <if test="org_id != null">
+                org_id,
+            </if>
+            <if test="customer_id != null">
+                customer_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="server_id != null">
+                #{server_id,jdbcType=INTEGER},
+            </if>
+            <if test="server_name != null">
+                #{server_name,jdbcType=VARCHAR},
+            </if>
+            <if test="server_ip != null">
+                #{server_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_port != null">
+                #{server_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_nat_ip != null">
+                #{server_nat_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_nat_port != null">
+                #{server_nat_port,jdbcType=INTEGER},
+            </if>
+            <if test="serial_number != null">
+                #{serial_number,jdbcType=VARCHAR},
+            </if>
+            <if test="org_id != null">
+                #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="customer_id != null">
+                #{customer_id,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CustomerServerEntity">
+        update customer_server
+        <set>
+            <if test="server_name != null">
+                server_name = #{server_name,jdbcType=VARCHAR},
+            </if>
+            <if test="server_ip != null">
+                server_ip = #{server_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_port != null">
+                server_port = #{server_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_nat_ip != null">
+                server_nat_ip = #{server_nat_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_nat_port != null">
+                server_nat_port = #{server_nat_port,jdbcType=INTEGER},
+            </if>
+            <if test="serial_number != null">
+                serial_number = #{serial_number,jdbcType=VARCHAR},
+            </if>
+            <if test="org_id != null">
+                org_id = #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="customer_id != null">
+                customer_id = #{customer_id,jdbcType=INTEGER},
+            </if>
+        </set>
+        where server_id = #{server_id,jdbcType=INTEGER}
+    </update>
+</mapper>

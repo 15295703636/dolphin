@@ -11,15 +11,12 @@ import javax.websocket.Session;
 import java.io.IOException;
 
 /**
- * @author 七脉 描述：订阅监听类
+ * @author Liujt 描述：订阅监听类
  */
 @Slf4j
 @Component
 public class SubscribeListener implements MessageListener {
 
-	@Resource(name = "redisTemplate")
-	private RedisTemplate redisTemplate;
-	
     private Session session;
     
     /**
@@ -35,7 +32,9 @@ public class SubscribeListener implements MessageListener {
 			} catch (IOException e) {
 				log.error("消息发送失败：",e);
 			}
-        }
+        }else {
+			log.error("--------未发现客户端session--------");
+		}
 	}
 
 	public Session getSession() {

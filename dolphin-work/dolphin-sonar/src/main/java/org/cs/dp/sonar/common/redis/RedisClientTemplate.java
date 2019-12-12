@@ -39,6 +39,7 @@ public class RedisClientTemplate {
     @Autowired
     private RedisConfig redisConfig;
 
+    /** ----------------------集群配置开始 ----------------------*/
     @Bean
     @Conditional(RedisClusterCondition.class)
     public RedisClusterConfiguration getClusterConfig() {
@@ -48,7 +49,6 @@ public class RedisClientTemplate {
         //rcc.setPassword(RedisPassword.of(clusterProperties.getPassword()));
         return rcc;
     }
-
 
     @Bean
     @Conditional(RedisClusterCondition.class)
@@ -75,12 +75,10 @@ public class RedisClientTemplate {
 
     /**
      * RedisTemplate配置
-     * key 和 value 都为String类型
-     * 都使用Jackson2JsonRedisSerializer进行序列化
      */
-    @Bean(name = "redisClusterTemplate")
+    @Bean
     @Conditional(RedisClusterCondition.class)
-    public RedisTemplate redisClusterTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate redisClusterTemplate(JedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 
         template.setConnectionFactory(factory);
@@ -105,8 +103,9 @@ public class RedisClientTemplate {
         return template;
     }
 
+    /** ----------------------集群配置结束 ----------------------*/
 
-    @Bean(name = "redisSimTemplate")
+    @Bean
     @Conditional(RedisSimCondition.class)
     public RedisTemplate redisSimTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

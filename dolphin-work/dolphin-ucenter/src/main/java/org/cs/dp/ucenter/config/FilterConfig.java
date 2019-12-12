@@ -19,7 +19,7 @@ import java.io.IOException;
  * @Date 2019/11/21 15:13
  **/
 @Slf4j
-@Component
+//@Component
 public class FilterConfig implements Filter {
 
     @Autowired

@@ -17,25 +17,25 @@ public class SplitPageInfo implements Serializable {
     /**
      * 开始记录数
      */
-    @ApiModelProperty(value = "开始记录数")
+    @ApiModelProperty(value = "开始记录数",hidden = true)
     protected int beginNum = 0;
 
     /**
      * 结束记录数
      */
-    @ApiModelProperty(value = "结束记录数")
+    @ApiModelProperty(value = "结束记录数",hidden = true)
     protected int endNum;
 
     /**
      * 分页查询的URL
      */
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value = "", hidden = true)
     private String queryURL;
 
     /**
      * 记录总数
      */
-    @ApiModelProperty(value = "记录总数(前端不传这个字段)")
+    @ApiModelProperty(value = "记录总数(前端不传这个字段)", hidden = true)
     private int totals;
 
     /**
@@ -47,7 +47,7 @@ public class SplitPageInfo implements Serializable {
     /**
      * 总页数
      */
-    @ApiModelProperty(value = "总页数")
+    @ApiModelProperty(value = "总页数",hidden = true)
     private int allPage;
 
     /**
@@ -103,7 +103,7 @@ public class SplitPageInfo implements Serializable {
      * @param aperpagenum int 每页记录数
      */
     public void setPerPageNum(int aperpagenum) {
-        this.perPageNum = aperpagenum;
+        this.perPageNum = aperpagenum == 0 ? 10 : aperpagenum;
     }
 
     /**

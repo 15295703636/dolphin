@@ -1,5 +1,7 @@
 package org.cs.dolphin.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +12,7 @@ import java.net.URLEncoder;
 /**
  * Cookie 工具类
  */
+@Slf4j
 public final class CookieUtils {
 
     /**
@@ -175,7 +178,7 @@ public final class CookieUtils {
                 cookie.setMaxAge(cookieMaxage);
             if (null != request) {// 设置域名的cookie
                 String domainName = getDomainName(request);
-                System.out.println(domainName);
+                log.info(domainName);
                 if (!"localhost".equals(domainName)) {
                     cookie.setDomain(domainName);
                 }

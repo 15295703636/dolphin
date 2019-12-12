@@ -16,37 +16,42 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @ClassName ServerController
  * @Description 服务管理
- * @Author Liujt
- * @Date 2019-51-29 11:51:51
+ * @Author LiuJT
+ * @Date 2019-12-06 09:22:10
  **/
 @RestController
 @RequestMapping("server")
-@Api(tags = "服务管理")
+@Api(tags = "【服务管理】")
 public class ServerController {
     @Autowired
     private IServerService iServerService;
 
     @PostMapping("add")
     @ApiOperation(value = "添加服务管理", notes = "服务管理")
-    public ReturnInfo addServer(@RequestBody ServerEntity param){
+    public ReturnInfo addServer(@RequestBody ServerEntity param) {
         return iServerService.addServer(param);
     }
 
     @PostMapping("del")
     @ApiOperation(value = "删除服务管理", notes = "服务管理")
-    public ReturnInfo delServer(@RequestBody Integer id){
+    public ReturnInfo delServer(@RequestBody Integer id) {
         return iServerService.delServer(id);
     }
 
     @PostMapping("edit")
-    @ApiOperation(value = "编辑服务管理", notes = "服务管理")
-    public ReturnInfo editServer(@RequestBody ServerEntity param){
+    @ApiOperation(value = "修改服务管理", notes = "服务管理")
+    public ReturnInfo editServer(@RequestBody ServerEntity param) {
         return iServerService.editServer(param);
     }
 
-    @PostMapping("get")
+    /*@PostMapping("get")
     @ApiOperation(value = "查询服务管理", notes = "服务管理")
     public ReturnInfo getServer(@RequestBody RequestPage<SplitPageInfo, Object> param){
         return iServerService.getServer(param);
+    }*/
+    @PostMapping("get")
+    @ApiOperation(value = "查询服务管理", notes = "服务管理")
+    public ReturnInfo getServer() {
+        return iServerService.getServer();
     }
 }

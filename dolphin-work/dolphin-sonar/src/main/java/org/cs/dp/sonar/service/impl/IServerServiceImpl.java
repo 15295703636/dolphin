@@ -3,9 +3,9 @@ package org.cs.dp.sonar.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
+import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.ServerMapper;
 import org.cs.dp.sonar.service.IServerService;
@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * @ClassName IServerServiceImpl
  * @Description 服务管理实现类
- * @Author Liujt
- * @Date 2019-11-29 12:59:33
+ * @Author LiuJT
+ * @Date 2019-12-06 09:22:10
  **/
 @Service
 public class IServerServiceImpl implements IServerService {
@@ -45,12 +45,18 @@ public class IServerServiceImpl implements IServerService {
     }
 
     @Override
+    public ReturnInfo getServer() {
+        List<ServerEntity> resList = serverMapper.selectAll();
+        return new ReturnInfo(resList);
+    }
+
+   /* @Override
     public ReturnInfo getServer(RequestPage<SplitPageInfo, Object> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<ServerEntity> resList = serverMapper.selectByObj(null);
+        List<ServerEntity> resList = null;//TODO 分页sql要自己实现 serverMapper.selectByObj(new HashMap());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
-    }
+    }*/
 }

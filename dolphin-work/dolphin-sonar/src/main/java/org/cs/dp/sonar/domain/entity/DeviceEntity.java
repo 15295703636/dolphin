@@ -4,18 +4,31 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@Data
-@ApiModel(value = "设备实体")
-public class DeviceEntity {
+import java.util.Date;
 
-    @ApiModelProperty(value = "ID")
+@Data
+@ApiModel(value = "设备-端管理")
+public class DeviceEntity {
+    @ApiModelProperty(value = "")
     private Integer device_id;
 
-    @ApiModelProperty(value = "设备名称")
-    private String device_name;
+    @ApiModelProperty(value = "住址ID")
+    private Integer org_id;
 
-    @ApiModelProperty(value = "设备昵称")
-    private String device_nickName;
+    @ApiModelProperty(value = "设备名称")
+    private String name;
+
+    @ApiModelProperty(value = "呼叫协议")
+    private String call_protocol;
+
+    @ApiModelProperty(value = "sip号码")
+    private String sip;
+
+    @ApiModelProperty(value = "IP地址")
+    private String ip;
+
+    @ApiModelProperty(value = "e164号")
+    private String e_code;
 
     @ApiModelProperty(value = "设备类型")
     private String device_type;
@@ -23,20 +36,13 @@ public class DeviceEntity {
     @ApiModelProperty(value = "设备状态")
     private String device_state;
 
-    @ApiModelProperty(value = "设备mac")
-    private String device_mac;
+    @ApiModelProperty(value = "设备序列号")
+    private String device_serial_number;
 
-    @ApiModelProperty(value = "设备uri")
-    private String device_uri;
+    @ApiModelProperty(value = "添加时间")
+    private Date create_time;
 
-    public DeviceEntity(Integer device_id, String device_name, String device_nickName, String device_type, String device_state, String device_mac, String device_uri) {
-        this.device_id = device_id;
-        this.device_name = device_name;
-        this.device_nickName = device_nickName;
-        this.device_type = device_type;
-        this.device_state = device_state;
-        this.device_mac = device_mac;
-        this.device_uri = device_uri;
-    }
+    @ApiModelProperty(value = "创建人ID")
+    private Integer create_user_id;
 
 }

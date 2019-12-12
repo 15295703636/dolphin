@@ -6,11 +6,11 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 
 /**
- * @ClassName ServerController
- * @Description 服务管理接口
- * @Author Liujt
- * @Date 2019/11/29 10:43
- **/
+* @ClassName IServerService
+* @Description 服务管理接口
+* @Author LiuJT
+* @Date 2019-12-06 09:22:10
+**/
 public interface IServerService {
 
     ReturnInfo addServer(ServerEntity param);
@@ -19,6 +19,7 @@ public interface IServerService {
 
     ReturnInfo editServer(ServerEntity param);
 
-    ReturnInfo getServer(RequestPage<SplitPageInfo, Object> param);
+    //ReturnInfo getServer(RequestPage<SplitPageInfo, Object> param);
 
+    ReturnInfo getServer();
 }

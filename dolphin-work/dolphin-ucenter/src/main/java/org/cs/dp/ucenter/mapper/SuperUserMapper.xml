@@ -27,17 +27,22 @@
             <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="DATE"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
-    user_tel, user_code
+    user_tel, user_code,user_type,create_time
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    <select id="selectManage" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         from super_user
-        where user_id = #{user_id,jdbcType=INTEGER}
+        where user_type = 1
+        <if test="manageId != null">
+            and user_id = #{manageId,jdbcType=INTEGER}
+        </if>
     </select>
 
 
@@ -56,16 +61,7 @@
     delete from super_user
     where user_id = #{user_id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
-    insert into super_user (user_id, user_name, user_qname, 
-      user_pwd, user_email, role_id, 
-      user_statu, user_number, user_tel, 
-      user_code)
-    values (#{user_id,jdbcType=INTEGER}, #{user_name,jdbcType=VARCHAR}, #{user_qname,jdbcType=VARCHAR}, 
-      #{user_pwd,jdbcType=VARCHAR}, #{user_email,jdbcType=VARCHAR}, #{role_id,jdbcType=INTEGER}, 
-      #{user_statu,jdbcType=BIT}, #{user_number,jdbcType=VARCHAR}, #{user_tel,jdbcType=VARCHAR}, 
-      #{user_code,jdbcType=VARCHAR})
-  </insert>
+
     <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         insert into super_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -99,7 +95,11 @@
             <if test="user_code != null">
                 user_code,
             </if>
+            <if test="user_type != null">
+                user_type,
+            </if>
         </trim>
+
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="user_id != null">
                 #{user_id,jdbcType=INTEGER},
@@ -131,8 +131,12 @@
             <if test="user_code != null">
                 #{user_code,jdbcType=VARCHAR},
             </if>
+            <if test="user_type != null">
+                #{user_type,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         update super_user
         <set>
@@ -166,30 +170,4 @@
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
-    update super_user
-    set user_name = #{user_name,jdbcType=VARCHAR},
-      user_qname = #{user_qname,jdbcType=VARCHAR},
-      user_pwd = #{user_pwd,jdbcType=VARCHAR},
-      user_email = #{user_email,jdbcType=VARCHAR},
-      role_id = #{role_id,jdbcType=INTEGER},
-      user_statu = #{user_statu,jdbcType=BIT},
-      user_number = #{user_number,jdbcType=VARCHAR},
-      user_tel = #{user_tel,jdbcType=VARCHAR},
-      user_code = #{user_code,jdbcType=VARCHAR}
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
-    update super_user
-    set user_name = #{user_name,jdbcType=VARCHAR},
-      user_qname = #{user_qname,jdbcType=VARCHAR},
-      user_pwd = #{user_pwd,jdbcType=VARCHAR},
-      user_email = #{user_email,jdbcType=VARCHAR},
-      role_id = #{role_id,jdbcType=INTEGER},
-      user_statu = #{user_statu,jdbcType=BIT},
-      user_number = #{user_number,jdbcType=VARCHAR},
-      user_tel = #{user_tel,jdbcType=VARCHAR},
-      user_code = #{user_code,jdbcType=VARCHAR}
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </update>
 </mapper>
