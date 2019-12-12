@@ -15,6 +15,7 @@ import org.cs.dp.ucenter.api.entity.User;
 import org.cs.dp.ucenter.api.feign.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.testng.annotations.Test;
 
 @RestController
 @RequestMapping("user")
@@ -50,5 +51,4 @@ public class UserTestController {
     public ReturnInfo addJob(@RequestBody XxlJobBean param){
         return iTestService.addJob(param);
     }
-
 }

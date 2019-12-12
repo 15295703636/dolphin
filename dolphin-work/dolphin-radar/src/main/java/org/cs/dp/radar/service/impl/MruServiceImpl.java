@@ -265,4 +265,54 @@ public class MruServiceImpl implements IMruService {
         }
         return ReturnInfo.ok(resp.getBody());
     }
+
+    @Override
+    public ReturnInfo addUser(String token, String url, RestOrgUserReq restOrgUserReq) {
+        ResponseEntity<Object>  resp = restful(restOrgUserReq,"http://"+url+"/api/rest/v2.0/org/users?token="+token,HttpMethod.POST);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString(     ));
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo updateUser(String token, String url, String userId, RestOrgUserReq restOrgUserReq) {
+        ResponseEntity<Object>  resp = restful(restOrgUserReq,"http://"+url+"/api/rest/v2.0/org/users/"+userId+"?token="+token,HttpMethod.PUT);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString(     ));
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo getUsers(String token, String url) {
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/users?token="+token,HttpMethod.GET);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString(     ));
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo getUser(String token, String userId, String url) {
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/users/"+userId+"?token="+token,HttpMethod.GET);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString(     ));
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo deleteUser(String token, String url, String userId) {
+        ResponseEntity<Object>  resp = restful(null,"http://"+url+"/api/rest/v2.0/org/users/"+userId+"?token="+token,HttpMethod.DELETE);
+        if(resp.getStatusCodeValue()!=200){
+            log.error("login error,error="+resp.getBody().toString(     ));
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG,"mru error",resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
 }
