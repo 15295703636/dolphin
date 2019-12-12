@@ -266,4 +266,57 @@ public interface IMruClient {
     @PostMapping(API_PREFIX+"/getEndpoint")
     ReturnInfo getEndpoint(@RequestParam String token,@RequestParam String url,
                            @RequestParam String endpointId);
+
+    /**
+     * 添加用户
+     * @param token
+     * @param url /api/rest/v2.0/org/users
+     * @param restOrgUserReq
+     * @return
+     */
+    @PostMapping(API_PREFIX+"/addUser")
+    ReturnInfo addUser(@RequestParam String token,@RequestParam String url,
+                           @RequestBody RestOrgUserReq restOrgUserReq);
+
+    /**
+     * 更新用户
+     * @param token
+     * @param url /api/rest/v2.0/org/users/{userId}
+     * @param userId
+     * @param restOrgUserReq
+     * @return
+     */
+    @PostMapping(API_PREFIX+"/updateUser")
+    ReturnInfo updateUser(@RequestParam String token,@RequestParam String url,
+                              @RequestParam String userId,@RequestBody RestOrgUserReq restOrgUserReq);
+
+    /**
+     * 获取用户列表
+     * @param token
+     * @param url /api/rest/v2.0/users
+     * @return
+     */
+    @PostMapping(API_PREFIX+"/getUsers")
+    ReturnInfo getUsers( @RequestParam String token,@RequestParam String url);
+
+    /**
+     * 用户详情
+     * @param token
+     * @param userId
+     * @param url /api/rest/v2.0/users/{userId}
+     * @return
+     */
+    @PostMapping(API_PREFIX+"/getUser")
+    ReturnInfo getUser( @RequestParam String token,@RequestParam String userId,@RequestParam String url);
+
+    /**
+     * 删除用户
+     * @param token
+     * @param url /api/rest/v2.0/org/users/{userId}
+     * @param userId
+     * @return
+     */
+    @PostMapping(API_PREFIX+"/deleteUser")
+    ReturnInfo deleteUser(@RequestParam String token,@RequestParam String url,
+                              @RequestParam String userId);
 }

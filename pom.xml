@@ -12,6 +12,7 @@
         <module>dolphin-gateway</module>
         <module>dolphin-work</module>
         <module>dolphin-work-api</module>
+        <module>dolphin-oss</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -26,7 +27,7 @@
         <alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>
         <nacos.version>0.2.1.RELEASE</nacos.version>
 
-        <swagger.version>2.7.0</swagger.version>
+        <swagger.version>2.9.2</swagger.version>
         <swagger.models.version>1.5.21</swagger.models.version>
         <swagger.bootstrapui.version>1.9.6</swagger.bootstrapui.version>
     </properties>

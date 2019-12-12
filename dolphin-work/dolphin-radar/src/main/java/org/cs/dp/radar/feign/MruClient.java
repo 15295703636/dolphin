@@ -173,4 +173,37 @@ public class MruClient implements IMruClient {
                                   @RequestParam String endpointId) {
         return iMruService.getEndpoint(token, url, endpointId);
     }
+
+    @Override
+    @PostMapping(API_PREFIX+"/addUser")
+    public ReturnInfo addUser(@RequestParam String token,@RequestParam String url,
+                              @RequestBody RestOrgUserReq restOrgUserReq) {
+        return iMruService.addUser(token, url, restOrgUserReq);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX+"/updateUser")
+    public ReturnInfo updateUser(@RequestParam String token,@RequestParam String url,
+                                 @RequestParam String userId,@RequestBody RestOrgUserReq restOrgUserReq) {
+        return iMruService.updateUser(token, url, userId, restOrgUserReq);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX+"/getUsers")
+    public ReturnInfo getUsers( @RequestParam String token,@RequestParam String url) {
+        return iMruService.getUsers(token, url);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX+"/getUser")
+    public ReturnInfo getUser(@RequestParam String token,@RequestParam String userId,@RequestParam String url) {
+        return iMruService.getUser(token, userId, url);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX+"/deleteUser")
+    public ReturnInfo deleteUser(@RequestParam String token,@RequestParam String url,
+                                 @RequestParam String userId) {
+        return iMruService.deleteUser(token, url, userId);
+    }
 }

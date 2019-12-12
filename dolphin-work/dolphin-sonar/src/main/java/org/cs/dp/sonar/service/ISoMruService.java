@@ -43,4 +43,12 @@ public interface ISoMruService {
     ReturnInfo updateEndpoint( String token, String url,String endpointId, RestEndpointReq restEndpointReq);
     ReturnInfo deleteEndpoint( String token, String url,String endpointId);
     ReturnInfo getEndpoint( String token, String url,String endpointId);
+    ReturnInfo addUser( String token, String url,
+                        RestOrgUserReq restOrgUserReq);
+    ReturnInfo updateUser( String token, String url,
+                           String userId, RestOrgUserReq restOrgUserReq);
+    ReturnInfo getUsers(  String token, String url);
+    ReturnInfo getUser(  String token, String userId, String url);
+    ReturnInfo deleteUser( String token, String url,
+                           String userId);
 }

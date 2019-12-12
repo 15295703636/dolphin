@@ -124,4 +124,29 @@ public class IMruClientFallBack implements IMruClient {
     public ReturnInfo getEndpoint(String token, String url, String endpointId) {
         return null;
     }
+
+    @Override
+    public ReturnInfo addUser(String token, String url, RestOrgUserReq restOrgUserReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo updateUser(String token, String url, String userId, RestOrgUserReq restOrgUserReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getUsers(String token, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getUser(String token, String userId, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo deleteUser(String token, String url, String userId) {
+        return null;
+    }
 }

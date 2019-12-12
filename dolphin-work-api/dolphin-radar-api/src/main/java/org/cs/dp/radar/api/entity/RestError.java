@@ -3,6 +3,7 @@ package org.cs.dp.radar.api.entity;
 public class RestError {
     private int errorCode;
     private String errorInfo;
+    private String result;
 
     public int getErrorCode() {
         return errorCode;
@@ -18,5 +19,13 @@ public class RestError {
 
     public void setErrorInfo(String errorInfo) {
         this.errorInfo = errorInfo;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }
