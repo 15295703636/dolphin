@@ -9,18 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.AspectConstant;
-import org.cs.dolphin.common.constant.ModuleConstant;
-import org.cs.dolphin.common.constant.RedisConstant;
-import org.cs.dolphin.common.domain.LogEntity;
-import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dolphin.common.utils.ExceptionUtil;
-import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
-import org.cs.dp.ucenter.common.RedisUtil;
-import org.cs.dp.ucenter.service.ILogService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -35,7 +24,7 @@ import java.util.List;
 
 /**
  * @ClassName LogAspect
- * @Description 统一日志记录切面
+ * @Description 统一日志打印，参数校验
  * @Author Liujt
  * @Date 2019/11/25 9:37
  **/
@@ -43,12 +32,6 @@ import java.util.List;
 @Aspect
 @Component
 public class AspectConfig {
-
-    @Autowired
-    private ILogService iLogService;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
     @Pointcut(AspectConstant.USER_SERVER)
     public void webLog() {
@@ -63,26 +46,17 @@ public class AspectConfig {
         HttpServletRequest request = attributes.getRequest();
 
         Object returnObj = null;
+        // 记录下请求内容
+        log.info("统一日志记录URL:{} ", request.getRequestURL().toString());
+        log.info("统一日志记录HTTP_METHOD: {} ", request.getMethod());
+        log.info("统一日志记录IP: {} ", request.getRemoteAddr());
+        log.info("统一日志记录CLASS_METHOD : {} ", point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName());
+        Object obj[] = point.getArgs();
+        if (!"GET".equals(request.getMethod()) && !request.getHeader("content-type").contains("multipart") && obj.length > 0) {
+            log.info("统一日志记录PARAM : {} ", JSON.toJSONString(obj[0]));
+        }
+
         try {
-            // 记录下请求内容
-            log.info("统一日志记录URL:{} ", request.getRequestURL().toString());
-            log.info("统一日志记录HTTP_METHOD: {} ", request.getMethod());
-            log.info("统一日志记录IP: {} ", request.getRemoteAddr());
-            log.info("统一日志记录CLASS_METHOD : {} ", point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName());
-            Object obj[] = point.getArgs();
-            if (!"GET".equals(request.getMethod()) && !request.getHeader("content-type").contains("multipart") && obj.length > 0) {
-                log.info("统一日志记录PARAM : {} ", JSON.toJSONString(obj[0]));
-            }
-
-            String token = request.getParameter("token");
-            if (null == token) {
-                token = request.getHeader("token");
-            }
-            //因为网关做了白名单过滤，业务模块不需要在做判断;获取到当前信息，存入到 ThreadLocal 中
-            if (null != token) {
-                ThreadLocalUserInfoUtil.set((UserInfo) redisUtil.getObject(RedisConstant.USER_TOKEN_PATH + token, UserInfo.class));
-            }
-
             // 获取切入的 Method
             MethodSignature joinPointObject = (MethodSignature) point.getSignature();
             Method method = joinPointObject.getMethod();
@@ -97,23 +71,13 @@ public class AspectConfig {
             } else {
                 returnObj = point.proceed();
             }
-        } catch (BaseException be) {
-            returnObj = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, be.getDetailMessage());
         } catch (Exception e) {
-            log.error("Controller捕获未知异常，{}", e);
-            try {
-                iLogService.addLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
-                        "error", "error,", request.getRemoteAddr(), request.getRequestURL().toString(),
-                        ExceptionUtil.getStackTrace(e)
-                ));
-            } catch (Exception e1) {
-                log.error("记录日志捕获未知异常，{}", e1);
-            }
-            returnObj = new ReturnInfo(MessageCode.EXCEPTION, "系统繁忙，请稍后重试!");
+            throw e;
+        } finally {
+            // 处理完请求，返回内容
+            log.info("统一日志记录RESPONSE : {}", returnObj);
+            log.info("统一日志记录SPEND TIME : {}", (System.currentTimeMillis() - startTime));
         }
-        // 处理完请求，返回内容
-        log.info("统一日志记录RESPONSE : {}", returnObj);
-        log.info("统一日志记录SPEND TIME : {}", (System.currentTimeMillis() - startTime));
         return returnObj;
     }
 

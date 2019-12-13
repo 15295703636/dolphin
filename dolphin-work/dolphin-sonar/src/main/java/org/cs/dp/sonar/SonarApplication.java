@@ -1,5 +1,6 @@
 package org.cs.dp.sonar;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 /**
  * 业务
  */
+@Slf4j
 @EnableAsync
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -18,5 +20,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class SonarApplication {
     public static void main(String[] args) {
         SpringApplication.run(SonarApplication.class, args);
+        log.error(">>>>>>>>>>>>>>>>Sonar服务启动完成<<<<<<<<<<<<<<<<<<<<<");
     }
 }

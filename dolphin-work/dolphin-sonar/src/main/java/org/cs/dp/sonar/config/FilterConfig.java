@@ -1,4 +1,4 @@
-package org.cs.dp.ucenter.config;
+package org.cs.dp.sonar.config;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +11,8 @@ import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.ExceptionUtil;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
-import org.cs.dp.ucenter.common.RedisUtil;
-import org.cs.dp.ucenter.service.ILogService;
+import org.cs.dp.sonar.common.redis.RedisUtil;
+import org.cs.dp.ucenter.api.feign.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +35,7 @@ public class FilterConfig implements Filter {
     private RedisUtil redisUtil;
 
     @Autowired
-    private ILogService iLogService;
+    private IUserClient iUserClient;
 
     @Override
     public void init(javax.servlet.FilterConfig filterConfig) throws ServletException {
@@ -61,7 +61,7 @@ public class FilterConfig implements Filter {
             ReturnInfo returnInfo = null;
             log.error("Controller捕获未知异常，{}", e);
             try {
-                iLogService.addLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
+                iUserClient.allLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
                         "error", "error,", request.getRemoteAddr(), request.getRequestURL().toString(),
                         ExceptionUtil.getStackTrace(e)
                 ));
