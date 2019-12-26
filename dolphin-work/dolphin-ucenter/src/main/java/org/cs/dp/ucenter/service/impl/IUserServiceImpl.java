@@ -10,19 +10,24 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dolphin.common.utils.*;
-import org.cs.dp.ucenter.common.*;
+import org.cs.dolphin.common.utils.Constants;
+import org.cs.dolphin.common.utils.DateUtil;
+import org.cs.dolphin.common.utils.MD5Util;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.ucenter.common.Constant;
+import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.common.SpringUtils;
+import org.cs.dp.ucenter.common.UploadUserListener;
 import org.cs.dp.ucenter.domain.AddUserBean;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.ResetPwdBean;
 import org.cs.dp.ucenter.domain.UPBean;
-import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.mapper.UserOrgMapper;
-import org.cs.dp.ucenter.service.ISuperUserService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +58,7 @@ public class IUserServiceImpl implements IUserService {
      * @return
      */
     @Override
-    public ReturnInfo login(UPBean param) {
+    public ReturnInfo login(UPBean param) throws BaseException {
         //根据用户名查询用户信息，判断用户是否存在
         UserInfo user = userMapper.selectByUserName(param.getUserName());
         if (null == user) {
@@ -66,9 +71,10 @@ public class IUserServiceImpl implements IUserService {
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
 
-        boolean result = redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
-        if (!result) {
-            return new ReturnInfo(MessageCode.DB_CONNECTION_EXCEPTION, Constant.EXCEPTION_MSG);
+        try {
+            redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
+        } catch (Exception e) {
+            throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
         return new ReturnInfo(token);
     }

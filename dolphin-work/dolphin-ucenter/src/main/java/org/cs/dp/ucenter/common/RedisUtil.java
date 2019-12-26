@@ -143,21 +143,10 @@ public class RedisUtil<T> {
      * @param value
      * @return
      */
-    public boolean set(final String key, Object value, Long expireTime) {
-        boolean result = false;
-        try {
-            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
-            operations.set(key, value);
-            redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
-            result = true;
-        } catch (Exception e) {
-            log.error("写入缓存异常：{}", e);
-            iLogService.addLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
-                    "error", "error,", null, null,
-                    ExceptionUtil.getStackTrace(e)
-            ));
-        }
-        return result;
+    public void set(final String key, Object value, Long expireTime) {
+        ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+        operations.set(key, value);
+        redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
     }
 
     /**

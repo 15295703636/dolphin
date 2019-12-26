@@ -3,6 +3,7 @@ package org.cs.dp.ucenter.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.*;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.AddUserBean;
 import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
 import org.cs.dp.ucenter.domain.ResetPwdBean;
@@ -34,7 +35,7 @@ public class UserController {
     @ParamValid
     @PostMapping("login")
     @ApiOperation(value = "登录接口", notes = "用户信息")
-    public ReturnInfo login(@Valid @RequestBody UPBean param, BindingResult result) {
+    public ReturnInfo login(@Valid @RequestBody UPBean param, BindingResult result) throws BaseException {
         return iUserService.login(param);
     }
 

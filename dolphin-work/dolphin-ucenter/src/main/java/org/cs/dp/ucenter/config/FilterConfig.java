@@ -68,8 +68,8 @@ public class FilterConfig implements Filter {
             } catch (Exception e2) {
                 log.error("记录日志捕获未知异常，{}", e2);
             }
-            if (e instanceof BaseException) {
-                returnInfo = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, ((BaseException) e).getDetailMessage());
+            if (e.getCause() instanceof BaseException) {
+                returnInfo = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, ((BaseException) e.getCause()).getDetailMessage());
             } else {
                 returnInfo = new ReturnInfo(MessageCode.EXCEPTION, "系统繁忙，请稍后重试!");
             }

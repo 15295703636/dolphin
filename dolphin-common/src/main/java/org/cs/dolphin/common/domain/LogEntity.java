@@ -3,10 +3,12 @@ package org.cs.dolphin.common.domain;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import lombok.Data;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 
 import java.util.Date;
 
+@Data
 public class LogEntity {
     @ColumnWidth(10)
     @ExcelProperty("ID")
@@ -45,6 +47,10 @@ public class LogEntity {
     @ExcelProperty("日志内容")
     private String log_content;
 
+    @ColumnWidth(100)
+    @ExcelProperty("参数")
+    private String reqParam;
+
     public LogEntity( String log_module, String log_type,String log_level, String log_ip, String log_url, String log_content) {
         this.log_module = log_module;
         this.log_type = log_type;
@@ -75,41 +81,5 @@ public class LogEntity {
         this.log_ip = log_ip;
         this.log_url = log_url;
         this.log_content = log_content;
-    }
-
-    public Long getLog_id() {
-        return log_id;
-    }
-
-    public String getLog_module() {
-        return log_module;
-    }
-
-    public Date getLog_time() {
-        return log_time;
-    }
-
-    public String getLog_user_name() {
-        return log_user_name;
-    }
-
-    public String getLog_type() {
-        return log_type;
-    }
-
-    public String getLog_level() {
-        return log_level;
-    }
-
-    public String getLog_ip() {
-        return log_ip;
-    }
-
-    public String getLog_url() {
-        return log_url;
-    }
-
-    public String getLog_content() {
-        return log_content;
     }
 }

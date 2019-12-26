@@ -1,13 +1,15 @@
 package org.cs.dp.ucenter.service.impl;
 
-import com.alibaba.druid.support.spring.stat.SpringStatUtils;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dolphin.common.utils.*;
+import org.cs.dolphin.common.utils.Constants;
+import org.cs.dolphin.common.utils.DateUtil;
+import org.cs.dolphin.common.utils.MD5Util;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
@@ -41,7 +43,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
      * @return
      */
     @Override
-    public ReturnInfo login(UPBean param) {
+    public ReturnInfo login(UPBean param) throws BaseException {
         //根据用户名查询用户信息，判断用户是否存在
         SuperUserEntity user = superUserMapper.selectByUserName(param.getUserName());
         if (null == user) {
@@ -53,9 +55,10 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
-        boolean result = redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
-        if (!result) {
-            return new ReturnInfo(MessageCode.DB_CONNECTION_EXCEPTION, Constant.EXCEPTION_MSG);
+        try {
+            redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
+        } catch (Exception e) {
+            throw new BaseException(null,Constant.EXCEPTION_MSG);
         }
         return new ReturnInfo(token);
     }

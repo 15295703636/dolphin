@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.service.ISuperUserService;
@@ -35,7 +36,7 @@ public class SuperUserController {
 
     @PostMapping("login")
     @ApiOperation(value = "登录接口", notes = "平台管理员用户信息")
-    public ReturnInfo login(@RequestBody UPBean param) {
+    public ReturnInfo login(@RequestBody UPBean param) throws BaseException {
         return iSuperUserService.login(param);
     }
 
