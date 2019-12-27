@@ -58,7 +58,7 @@ public class FilterConfig implements Filter {
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
-            ReturnInfo returnInfo = null;
+            ReturnInfo returnInfo = new ReturnInfo(MessageCode.EXCEPTION, "系统繁忙，请稍后重试!");
             log.error("Controller捕获未知异常，{}", e);
             try {
                 iUserClient.allLog(new LogEntity(ModuleConstant.MODULE_UCENTER,
@@ -68,10 +68,8 @@ public class FilterConfig implements Filter {
             } catch (Exception e2) {
                 log.error("记录日志捕获未知异常，{}", e2);
             }
-            if (e instanceof BaseException) {
-                returnInfo = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, ((BaseException) e).getDetailMessage());
-            } else {
-                returnInfo = new ReturnInfo(MessageCode.EXCEPTION, "系统繁忙，请稍后重试!");
+            if (e.getCause() instanceof BaseException) {
+                returnInfo = new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, ((BaseException) e.getCause()).getDetailMessage());
             }
 
             PrintWriter writer = null;
@@ -82,7 +80,7 @@ public class FilterConfig implements Filter {
                 writer.write(JSON.toJSONString(returnInfo));
                 writer.flush();
             } catch (IOException ex) {
-                log.error(ex.getMessage());
+                log.error("手动输出流异常：", ex);
             } finally {
                 if (writer != null) {
                     writer.close();
