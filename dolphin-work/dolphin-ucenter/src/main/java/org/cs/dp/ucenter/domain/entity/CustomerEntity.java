@@ -14,6 +14,12 @@ public class CustomerEntity {
     @ApiModelProperty(value = "ID")
     private Integer id;
 
+    @ApiModelProperty(value = "客户代表")
+    private String user_qname;
+
+    @ApiModelProperty(value = "客户手机")
+    private String user_tel;
+
     @ApiModelProperty(value = "租户ID")
     private String customer_id;
 
@@ -34,7 +40,7 @@ public class CustomerEntity {
     private Date customer_end_time;
 
     @ApiModelProperty(value = "租户状态")
-    private Integer customer_status;
+    private String customer_status;
 
     @ApiModelProperty(value = "云视讯登录名")
     private String out_name;
@@ -60,8 +66,15 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(Integer id, String customer_id, Integer manage_id, String customer_name, Integer customer_type, Date customer_end_time, Integer customer_status, String out_name, String out_pwd, String customer_address, String effective_time, String remark, Date create_time, Date update_time) {
+    public CustomerEntity(Integer id, String customer_id, Integer manage_id,
+                          String customer_name, Integer customer_type, Date customer_end_time,
+                          String customer_status, String out_name, String out_pwd,
+                          String customer_address, String effective_time, String remark,
+                          Date create_time, Date update_time, String user_qname, String user_tel
+    ) {
         this.id = id;
+        this.user_qname = user_qname;
+        this.user_tel = user_tel;
         this.customer_id = customer_id;
         this.manage_id = manage_id;
         this.customer_name = customer_name;

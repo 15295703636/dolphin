@@ -26,6 +26,8 @@ public interface IUserService {
 
     ReturnInfo resetPwd(ResetPwdBean param);
 
+    ReturnInfo checkUserInfo(String user_name,Integer id);
+
     ReturnInfo add(AddUserBean record,boolean isAuto);
 
     ReturnInfo del(List<Integer> userIds);

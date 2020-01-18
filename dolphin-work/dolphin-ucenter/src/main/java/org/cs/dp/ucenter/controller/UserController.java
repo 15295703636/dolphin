@@ -4,10 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.*;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
-import org.cs.dp.ucenter.domain.ResetPwdBean;
-import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +53,12 @@ public class UserController {
     @ApiOperation(value = "重置密码", notes = "用户信息")
     public ReturnInfo resetPwd(@Valid @RequestBody ResetPwdBean param, BindingResult result) {
         return iUserService.resetPwd(param);
+    }
+
+    @PostMapping("checkUserInfo")
+    @ApiOperation(value = "校验用户名信息", notes = "用户信息")
+    public ReturnInfo checkUserInfo(@Validated @RequestBody UserCheckNameReqBean param, BindingResult result) {
+        return iUserService.checkUserInfo(param.getUser_name(), param.getId());
     }
 
     @ParamValid

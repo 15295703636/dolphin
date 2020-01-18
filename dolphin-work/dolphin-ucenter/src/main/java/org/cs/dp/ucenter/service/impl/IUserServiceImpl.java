@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
@@ -20,10 +21,7 @@ import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
 import org.cs.dp.ucenter.common.UploadUserListener;
-import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
-import org.cs.dp.ucenter.domain.ResetPwdBean;
-import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
@@ -113,9 +111,21 @@ public class IUserServiceImpl implements IUserService {
         return new ReturnInfo();
     }
 
+    @Override
+    public ReturnInfo checkUserInfo(String userName, Integer id) {
+        UserEntity userEntity = userMapper.checkUserInfo(id, userName);
+        if (null != userEntity) {
+            if (!StringUtils.isEmpty(userEntity.getUser_name()) && userEntity.getUser_name().equals(userName)) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+            }
+        }
+        return new ReturnInfo();
+    }
+
 
     /**
      * 添加用户的同时，需不需要添加组织和用户的关系
+     * *
      *
      * @param record
      * @param isAuto 是添加租户自动添加，还是租户手动添加标志

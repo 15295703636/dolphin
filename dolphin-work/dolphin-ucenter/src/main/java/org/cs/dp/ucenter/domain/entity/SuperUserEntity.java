@@ -29,6 +29,9 @@ public class SuperUserEntity {
     @ApiModelProperty(value = "用户密码")
     private String user_pwd;
 
+    @ApiModelProperty(value = "用户新密码")
+    private String new_pwd;
+
     @ExcelProperty(index = 3)
     @ApiModelProperty(value = "用户邮箱")
     private String user_email;

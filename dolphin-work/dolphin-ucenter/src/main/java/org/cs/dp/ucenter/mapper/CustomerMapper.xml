@@ -39,14 +39,59 @@
         </foreach>
     </delete>
 
-    <select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByObj" resultType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
         select
-        <include refid="Base_Column_List"/>
-        from customer
+        id,
+        customer_id,
+        suser.user_qname,
+        suser.user_tel,
+        manage_id,
+        customer_name,
+        customer_type,
+        customer_end_time,
+        out_name,
+        out_pwd,
+        customer_address,
+        customer_start_time,
+        remark,
+        cus.create_time,
+        cus.update_time,
+        ( CASE
+        <![CDATA[
+                    WHEN customer_end_time > NOW() THEN '已启用'
+                    WHEN customer_end_time < NOW() THEN '已停用'
+                ]]>
+        ELSE '已停用' END
+        ) customer_status
+        from customer cus LEFT JOIN super_user suser on cus.manage_id = suser.user_id
         where 1=1
         <if test="name != null and name !='' ">
             and customer_name like CONCAT('%',#{name},'%')
         </if>
+        <if test='state == "1"'>
+            and <![CDATA[ customer_end_time > NOW() ]]>
+        </if>
+        <if test='state == "2"'>
+            and <![CDATA[ customer_end_time < NOW() ]]>
+        </if>
+    </select>
+
+    <select id="getCusAdminInfo" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+        SELECT
+            u.user_name,
+            u.user_pwd,
+            u.user_id
+            FROM
+                user u,
+                organization org,
+                customer cus,
+                user2org uo
+            WHERE
+                u.user_id = uo.user_id
+            AND uo.org_id = org.org_id
+            and org.customer_id = cus.id
+            AND u.role_id = 1
+            AND org.customer_id = #{id,jdbcType=INTEGER}
     </select>
 
 

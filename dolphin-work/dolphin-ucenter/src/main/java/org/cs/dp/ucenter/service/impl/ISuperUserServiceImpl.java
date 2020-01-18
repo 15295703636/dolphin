@@ -2,8 +2,13 @@ package org.cs.dp.ucenter.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
@@ -14,6 +19,8 @@ import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
 import org.cs.dp.ucenter.common.UploadDataListener;
+import org.cs.dp.ucenter.domain.CheckAddInfoReqBean;
+import org.cs.dp.ucenter.domain.SuperUserGetReqBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.mapper.SuperUserMapper;
@@ -24,6 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -58,15 +68,33 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         try {
             redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         } catch (Exception e) {
-            throw new BaseException(null,Constant.EXCEPTION_MSG);
+            throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
-        return new ReturnInfo(token);
+        user.setUser_pwd(null);
+        Map userInfo = new HashMap();
+        userInfo.put("token", token);
+        userInfo.put("userInfo", user);
+        return new ReturnInfo(userInfo);
     }
 
     @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
         String token = request.getHeader("token");
         redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo checkAddInfo(CheckAddInfoReqBean record) {
+        CheckAddInfoReqBean checkRes = superUserMapper.checkAddInfo(record);
+        if (null != checkRes) {
+            if (!StringUtils.isEmpty(record.getUser_name()) && record.getUser_name().equals(checkRes.getUser_name())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+            }
+            if (!StringUtils.isEmpty(record.getUser_tel()) && record.getUser_tel().equals(checkRes.getUser_tel())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PHONE_EXIST_MSG);
+            }
+        }
         return new ReturnInfo();
     }
 
@@ -81,13 +109,24 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     }
 
     @Override
-    public ReturnInfo del(Integer user_id) {
-        superUserMapper.deleteByPrimaryKey(user_id);
+    public ReturnInfo del(List<Integer> user_ids) {
+        if (user_ids.size() == 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "请选择删除信息!");
+        }
+        superUserMapper.deleteByPrimaryKey(user_ids);
         return new ReturnInfo();
     }
 
     @Override
     public ReturnInfo edit(SuperUserEntity record) {
+        //如果是超级管理员校验当前密码
+        if (2 == record.getUser_type()) {
+            SuperUserEntity user = superUserMapper.selectManage(record.getUser_id(), null).get(0);
+            if (null != record.getUser_pwd() && !user.getUser_pwd().equals(record.getUser_pwd())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NOW_PWD_ERROR_MSG);
+            }
+            record.setUser_pwd(record.getNew_pwd());
+        }
         record.setUser_name(null);
         record.setCreate_time(null);
         superUserMapper.updateByPrimaryKeySelective(record);
@@ -95,8 +134,14 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     }
 
     @Override
-    public ReturnInfo getManage(Integer manageId) {
-        return new ReturnInfo(superUserMapper.selectManage(manageId));
+    public ReturnInfo getManage(RequestPage<SplitPageInfo, SuperUserGetReqBean> param) {
+        if (null != param.getPage()) {
+            PageHelper.startPage(param.getPage().getCurrPage(), param.getPage().getPerPageNum());
+        }
+        List<SuperUserEntity> list = superUserMapper.selectManage(param.getInfo().getUser_id(), param.getInfo().getUser_name());
+        PageInfo p = new PageInfo(list);
+        param.getPage().setTotals((int) p.getTotal());
+        return new ReturnInfo(param.getPage(), list);
     }
 
     @Override

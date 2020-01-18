@@ -22,4 +22,6 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(UserEntity record);
 
     List<UserEntity> getListByOrgId(@Param(value = "orgId") int orgId, @Param(value = "userId") int userId);
+
+    UserEntity checkUserInfo(@Param(value = "user_id") Integer user_id, @Param(value = "user_name")String user_name);
 }
