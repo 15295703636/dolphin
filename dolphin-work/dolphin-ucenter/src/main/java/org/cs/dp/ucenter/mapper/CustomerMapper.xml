@@ -64,8 +64,8 @@
         '已停用'
         END ]]>
         ) customer_status,
-        date_format( customer_start_time, '%Y-%m-%d %H:%I:%S' ) customer_start_time_str,
-        date_format( customer_end_time, '%Y-%m-%d %H:%I:%S' ) customer_end_time_str
+        date_format( customer_start_time, '%Y-%m-%d %H:%i:%s' ) customer_start_time_str,
+        date_format( customer_end_time, '%Y-%m-%d %H:%i:%s' ) customer_end_time_str
         FROM customer cus
         LEFT JOIN super_user suser ON cus.manage_id = suser.user_id
         where 1=1
