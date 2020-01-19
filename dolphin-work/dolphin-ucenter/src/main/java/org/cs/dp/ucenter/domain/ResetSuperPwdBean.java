@@ -15,14 +15,14 @@ import javax.validation.constraints.NotNull;
  * @Date 2019/11/28 11:37
  **/
 @Data
-@ApiModel("重置密码入参")
-public class ResetPwdBean {
+@ApiModel("更改密码入参")
+public class ResetSuperPwdBean {
 
-    @ApiModelProperty(value = "用户id", required = true)
+    @ApiModelProperty(value = "更改密码用户的id", required = true)
     @NotNull(message = Constant.RESET_PWD_ID_MSG)
     private Integer user_id;
 
-    @ApiModelProperty(value = "当前密码(客户代表更改不需要传)", required = true)
+    @ApiModelProperty(value = "当前密码", required = true)
     //@NotBlank(message = Constant.RESET_PWD_OLD_MSG)
     private String user_pwd;
 

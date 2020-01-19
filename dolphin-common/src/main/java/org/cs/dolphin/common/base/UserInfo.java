@@ -8,6 +8,9 @@ public class UserInfo {
     @ApiModelProperty(value = "ID")
     private Integer user_id;
 
+    @ApiModelProperty(value = "用户类型(只有运维人员登录字段才会有值)")
+    private Integer user_type;
+
     @ApiModelProperty(value = "用户登录名")
     private String user_name;
 

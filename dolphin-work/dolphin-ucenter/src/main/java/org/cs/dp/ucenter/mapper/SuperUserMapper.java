@@ -21,4 +21,6 @@ public interface SuperUserMapper {
     SuperUserEntity selectByUserName(String name);
 
     int selectByUserNameCou(String name);
+
+    SuperUserEntity selectByUserId(Integer user_id);
 }

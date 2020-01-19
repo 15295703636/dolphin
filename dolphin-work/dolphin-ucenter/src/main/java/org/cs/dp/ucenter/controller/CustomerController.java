@@ -46,8 +46,8 @@ public class CustomerController {
 
     @PostMapping("getCusAdminInfo")
     @ApiOperation(value = "查询租户Admin用户信息", notes = "租户管理")
-    public ReturnInfo getCusAdminInfo(@RequestBody Integer id) {
-        return iCustomerService.getCusAdminInfo(id);
+    public ReturnInfo getCusAdminInfo(@RequestBody GetCusAdminInfoBean param) {
+        return iCustomerService.getCusAdminInfo(param.getId());
     }
 
     @ParamValid
@@ -69,10 +69,11 @@ public class CustomerController {
         return iCustomerService.editCustomer(param);
     }
 
+    @ParamValid
     @PostMapping("author")
     @ApiOperation(value = "授权租户管理", notes = "租户管理")
-    public ReturnInfo author(@RequestBody CustomerEntity param) {
-        return iCustomerService.editCustomer(param);
+    public ReturnInfo author(@RequestBody CustomerAuthorBean param,BindingResult bindingResult) {
+        return iCustomerService.author(param);
     }
 
     @PostMapping("getByName")
@@ -83,8 +84,8 @@ public class CustomerController {
 
     @PostMapping("getByManageId")
     @ApiOperation(value = "客户代表Id查询租户管理", notes = "租户管理")
-    public ReturnInfo getCustomerByManageId(@RequestBody Integer manageId) {
-        return iCustomerService.getCustomerByManageId(manageId);
+    public ReturnInfo getCustomerByManageId(@RequestBody GetCustomerByManIdReqBean manageId) {
+        return iCustomerService.getCustomerByManageId(manageId.getManger_id());
     }
 
     @PostMapping("editStatus")

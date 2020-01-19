@@ -99,14 +99,19 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ReturnInfo resetPwd(ResetPwdBean param) {
-        UserEntity userEntity = userMapper.selectByPrimaryKey(param.getUserId());
+        UserEntity userEntity = userMapper.selectByPrimaryKey(param.getUser_id());
         if (null == userEntity) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_NO_EXIST_MSG);
         }
-        if (!param.getOldPwd().equals(userEntity.getUser_pwd())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
+        if (null == ThreadLocalUserInfoUtil.get().getUser_type()) {
+            if (StringUtils.isEmpty(param.getUser_pwd())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_NULL_MSG);
+            }
+            if (!param.getUser_id().equals(userEntity.getUser_pwd())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
+            }
         }
-        userEntity.setUser_pwd(param.getNewPwd());
+        userEntity.setUser_pwd(param.getNew_pwd());
         int res = userMapper.updateByPrimaryKeySelective(userEntity);
         return new ReturnInfo();
     }

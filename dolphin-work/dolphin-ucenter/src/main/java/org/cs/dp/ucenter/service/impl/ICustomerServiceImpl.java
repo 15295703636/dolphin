@@ -10,6 +10,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.domain.*;
@@ -83,7 +84,7 @@ public class ICustomerServiceImpl implements ICustomerService {
 
     @Override
     public ReturnInfo checkAddInfo(String customer_name, Integer id) {
-        if (0 < customerMapper.selectByUserNameCou(customer_name)) {
+        if (0 < customerMapper.selectByUserNameCou(customer_name, id)) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.CUSTOMER_NAME_EXIST_MSG);
         }
         return new ReturnInfo();
@@ -137,6 +138,16 @@ public class ICustomerServiceImpl implements ICustomerService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.CUSTOMER_ID_ISEMPTY_MSG);
         }
         customerMapper.updateByPrimaryKeySelective(param);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo author(CustomerAuthorBean param) {
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setId(param.getId());
+        customerEntity.setCustomer_start_time(DateUtil.StringToDate(param.getCustomer_start_time(), DateUtil.YMDHMS));
+        customerEntity.setCustomer_end_time(DateUtil.StringToDate(param.getCustomer_end_time(), DateUtil.YMDHMS));
+        customerMapper.updateByPrimaryKeySelective(customerEntity);
         return new ReturnInfo();
     }
 

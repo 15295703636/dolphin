@@ -16,14 +16,15 @@ public interface CustomerMapper {
 
     CustomerEntity selectByPrimaryKey(Integer id);
 
-    int selectByUserNameCou(String name);
+    int selectByUserNameCou(@Param(value = "name") String name,
+                            @Param(value = "id")Integer id);
 
     UserEntity getCusAdminInfo(Integer id);
 
     List<CustomerEntity > selectByObj(@Param(value = "name") String name,
                                       @Param(value = "state") String state);
 
-    List<CustomerEntity > selectByManageId(@Param(value = "manageId") Integer manageId);
+    List<String > selectByManageId(@Param(value = "manageId") Integer manageId);
 
     int updateByPrimaryKeySelective(CustomerEntity record);
 

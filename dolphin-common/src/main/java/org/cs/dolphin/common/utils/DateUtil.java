@@ -679,6 +679,7 @@ public class DateUtil {
      */
     public static Date StringToDate(String dateStr, String formatStr) {
         DateFormat sdf = new SimpleDateFormat(formatStr);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         Date date = null;
         try {
             date = sdf.parse(dateStr);

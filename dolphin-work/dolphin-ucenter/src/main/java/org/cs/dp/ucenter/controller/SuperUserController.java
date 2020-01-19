@@ -8,6 +8,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.CheckAddInfoReqBean;
+import org.cs.dp.ucenter.domain.ResetSuperPwdBean;
 import org.cs.dp.ucenter.domain.SuperUserGetReqBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
@@ -65,7 +66,7 @@ public class SuperUserController {
 
     @PostMapping("checkAddInfo")
     @ApiOperation(value = "校验用户名手机号是否已注册", notes = "平台管理员用户信息")
-    public ReturnInfo checkAddInfo(@RequestBody CheckAddInfoReqBean param){
+    public ReturnInfo checkAddInfo(@RequestBody CheckAddInfoReqBean param) {
         return iSuperUserService.checkAddInfo(param);
     }
 
@@ -86,6 +87,21 @@ public class SuperUserController {
     @ApiOperation(value = "导入客户经理信息", notes = "平台管理员用户信息")
     public ReturnInfo upload(MultipartFile file) throws IOException {
         return iSuperUserService.upload(file);
+    }
+
+    /**
+     * 如果当前用户id == 入参的Id，说明是自己重置密码，需要验证当前密码
+     * 如果不相等，说明是超级管理员重置客户代表密码，不需要验证当前密码
+     *
+     * @param param
+     * @param result
+     * @return
+     */
+    @ParamValid
+    @PostMapping("resetPwd")
+    @ApiOperation(value = "客户代表/超级管理员用户自己重置密码", notes = "平台管理员用户信息")
+    public ReturnInfo resetPwd(@Valid @RequestBody ResetSuperPwdBean param, BindingResult result) {
+        return iSuperUserService.resetPwd(param);
     }
 
 }

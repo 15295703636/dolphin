@@ -277,4 +277,7 @@ public interface MessageCode {
     //*******************************  Classroom Platform End ************************************
 
     long EXCEPTION = 5000;
+
+    //服务不可用，熔断触发
+    long SERVER_EXCEPTION = 9999;
 }

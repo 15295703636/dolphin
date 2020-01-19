@@ -39,6 +39,12 @@ public class CustomerEntity {
     @ApiModelProperty(value = "租户结束时间")
     private Date customer_end_time;
 
+    @ApiModelProperty(value = "租户开始时间String")
+    private String customer_start_time_str;
+
+    @ApiModelProperty(value = "租户结束时间String")
+    private String customer_end_time_str;
+
     @ApiModelProperty(value = "租户状态")
     private String customer_status;
 
@@ -50,9 +56,6 @@ public class CustomerEntity {
 
     @ApiModelProperty(value = "租户地址")
     private String customer_address;
-
-    @ApiModelProperty(value = "有效时间")
-    private String effective_time;
 
     @ApiModelProperty(value = "备注")
     private String remark;
@@ -68,9 +71,12 @@ public class CustomerEntity {
 
     public CustomerEntity(Integer id, String customer_id, Integer manage_id,
                           String customer_name, Integer customer_type, Date customer_end_time,
+                          Date customer_start_time,
                           String customer_status, String out_name, String out_pwd,
-                          String customer_address, String effective_time, String remark,
-                          Date create_time, Date update_time, String user_qname, String user_tel
+                          String customer_address, String remark,
+                          Date create_time, Date update_time,
+                          String user_qname, String user_tel, String customer_start_time_str,
+                          String customer_end_time_str
     ) {
         this.id = id;
         this.user_qname = user_qname;
@@ -84,10 +90,12 @@ public class CustomerEntity {
         this.out_name = out_name;
         this.out_pwd = out_pwd;
         this.customer_address = customer_address;
-        this.effective_time = effective_time;
         this.remark = remark;
         this.create_time = create_time;
         this.update_time = update_time;
+        this.customer_start_time = customer_start_time;
+        this.customer_end_time_str = customer_end_time_str;
+        this.customer_start_time_str = customer_start_time_str;
     }
 
 }

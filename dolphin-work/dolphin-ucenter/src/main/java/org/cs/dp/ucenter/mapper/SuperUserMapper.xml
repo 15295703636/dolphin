@@ -34,6 +34,13 @@
         </if>
     </select>
 
+    <select id="selectByUserId"  resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from super_user
+        where user_id = #{user_id,jdbcType=VARCHAR}
+    </select>
+
     <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>

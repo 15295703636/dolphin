@@ -5,6 +5,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.CheckAddInfoReqBean;
+import org.cs.dp.ucenter.domain.ResetSuperPwdBean;
 import org.cs.dp.ucenter.domain.SuperUserGetReqBean;
 import org.cs.dp.ucenter.domain.UPBean;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
@@ -30,4 +31,6 @@ public interface ISuperUserService {
     ReturnInfo getManage(RequestPage<SplitPageInfo, SuperUserGetReqBean> param);
 
     ReturnInfo upload(MultipartFile file) throws IOException;
+
+    ReturnInfo resetPwd(ResetSuperPwdBean param);
 }

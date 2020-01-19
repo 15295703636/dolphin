@@ -14,7 +14,6 @@
             <arg column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="effective_time" javaType="java.lang.String" jdbcType="CHAR"/>
             <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
             <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
@@ -22,7 +21,7 @@
     </resultMap>
     <sql id="Base_Column_List">
     id, customer_id, manage_id, customer_name, customer_type,customer_start_time, customer_end_time, customer_status,
-    out_name, out_pwd, customer_address, effective_time, remark, create_time, update_time
+    out_name, out_pwd, customer_address,  remark, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -40,7 +39,7 @@
     </delete>
 
     <select id="selectByObj" resultType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
-        select
+        SELECT
         id,
         customer_id,
         suser.user_qname,
@@ -56,14 +55,19 @@
         remark,
         cus.create_time,
         cus.update_time,
-        ( CASE
-        <![CDATA[
-                    WHEN customer_end_time > NOW() THEN '已启用'
-                    WHEN customer_end_time < NOW() THEN '已停用'
-                ]]>
-        ELSE '已停用' END
-        ) customer_status
-        from customer cus LEFT JOIN super_user suser on cus.manage_id = suser.user_id
+        (
+        CASE
+        <![CDATA[ WHEN customer_end_time > NOW() THEN '已启用'
+        WHEN customer_end_time < NOW() THEN
+        '已停用'
+        ELSE
+        '已停用'
+        END ]]>
+        ) customer_status,
+        date_format( customer_start_time, '%Y-%m-%d %H:%I:%S' ) customer_start_time_str,
+        date_format( customer_end_time, '%Y-%m-%d %H:%I:%S' ) customer_end_time_str
+        FROM customer cus
+        LEFT JOIN super_user suser ON cus.manage_id = suser.user_id
         where 1=1
         <if test="name != null and name !='' ">
             and customer_name like CONCAT('%',#{name},'%')
@@ -94,15 +98,17 @@
             AND org.customer_id = #{id,jdbcType=INTEGER}
     </select>
 
-
-    <select id="selectByManageId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByManageId" resultType="java.lang.String">
         select
-        <include refid="Base_Column_List"/>
-        from customer where and manage_id = #{manageId}
+        customer_name
+        from customer where manage_id = #{manageId}
     </select>
 
-    <select id="selectByUserNameCou" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id="selectByUserNameCou" resultType="java.lang.Integer">
         select count(1) from customer where customer_name = #{name,jdbcType=VARCHAR}
+        <if test="id != null">
+            and id != #{id,jdbcType=INTEGER}
+        </if>
     </select>
 
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
@@ -142,9 +148,6 @@
             <if test="customer_address != null">
                 customer_address,
             </if>
-            <if test="effective_time != null">
-                effective_time,
-            </if>
             <if test="remark != null">
                 remark,
             </if>
@@ -172,10 +175,10 @@
                 #{customer_type,jdbcType=INTEGER},
             </if>
             <if test="customer_start_time != null">
-                #{customer_start_time,jdbcType=DATE}
+                #{customer_start_time,jdbcType=TIMESTAMP}
             </if>
             <if test="customer_end_time != null">
-                #{customer_end_time,jdbcType=DATE},
+                #{customer_end_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_status != null">
                 #{customer_status,jdbcType=INTEGER},
@@ -188,9 +191,6 @@
             </if>
             <if test="customer_address != null">
                 #{customer_address,jdbcType=VARCHAR},
-            </if>
-            <if test="effective_time != null">
-                #{effective_time,jdbcType=CHAR},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -219,10 +219,10 @@
                 customer_type = #{customer_type,jdbcType=INTEGER},
             </if>
             <if test="customer_start_time != null">
-                customer_start_time = #{customer_start_time,jdbcType=DATE},
+                customer_start_time = #{customer_start_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_end_time != null">
-                customer_end_time = #{customer_end_time,jdbcType=DATE},
+                customer_end_time = #{customer_end_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_status != null">
                 customer_status = #{customer_status,jdbcType=INTEGER},
@@ -235,9 +235,6 @@
             </if>
             <if test="customer_address != null">
                 customer_address = #{customer_address,jdbcType=VARCHAR},
-            </if>
-            <if test="effective_time != null">
-                effective_time = #{effective_time,jdbcType=CHAR},
             </if>
             <if test="remark != null">
                 remark = #{remark,jdbcType=VARCHAR},

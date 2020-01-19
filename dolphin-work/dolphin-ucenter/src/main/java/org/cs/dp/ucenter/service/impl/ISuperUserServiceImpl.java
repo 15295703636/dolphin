@@ -2,6 +2,7 @@ package org.cs.dp.ucenter.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -9,20 +10,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.Constants;
 import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dolphin.common.utils.MD5Util;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
 import org.cs.dp.ucenter.common.UploadDataListener;
-import org.cs.dp.ucenter.domain.CheckAddInfoReqBean;
-import org.cs.dp.ucenter.domain.SuperUserGetReqBean;
-import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
+import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.mapper.SuperUserMapper;
 import org.cs.dp.ucenter.service.ISuperUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +68,8 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
         String token = MD5Util.MD5(param.getUserName() + DateUtil.getCurrentDate(Constants.DATE_PATTERN));
         try {
-            redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
+            UserInfo userInfo = JSONObject.parseObject(JSON.toJSONString(user), UserInfo.class);
+            redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(userInfo), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         } catch (Exception e) {
             throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
@@ -148,6 +151,21 @@ public class ISuperUserServiceImpl implements ISuperUserService {
     public ReturnInfo upload(MultipartFile file) throws IOException {
         EasyExcel.read(file.getInputStream(), SuperUserEntity.class,
                 new UploadDataListener(SpringUtils.getBean(ISuperUserService.class))).sheet().doRead();
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo resetPwd(ResetSuperPwdBean param) {
+        SuperUserEntity superUserEntity = superUserMapper.selectByUserId(param.getUser_id());
+        if(!param.getUser_id().equals(ThreadLocalUserInfoUtil.get().getUser_id())){
+            if (!param.getUser_pwd().equals(superUserEntity.getUser_pwd())) {
+                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NOW_PWD_ERROR_MSG);
+            }
+        }
+        SuperUserEntity updateInfo = new SuperUserEntity();
+        updateInfo.setUser_id(param.getUser_id());
+        updateInfo.setUser_pwd(param.getNew_pwd());
+        superUserMapper.updateByPrimaryKeySelective(updateInfo);
         return new ReturnInfo();
     }
 

@@ -263,10 +263,10 @@
     <select id="checkUserInfo" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
         select user_name,user_tel from user
         where
-        <if test="user_id != null and user_id != ''">
+        <if test="user_id != null ">
             user_id != #{user_id,jdbcType=INTEGER} and
         </if>
-        (user_name = #{user_name,jdbcType=VARCHAR})
+        user_name = #{user_name,jdbcType=VARCHAR}
     </select>
 
 </mapper>

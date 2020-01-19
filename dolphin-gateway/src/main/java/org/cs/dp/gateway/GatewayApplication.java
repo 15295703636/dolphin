@@ -1,5 +1,8 @@
 package org.cs.dp.gateway;
 
+import com.alibaba.fastjson.JSONObject;
+import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.exception.MessageCode;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -28,7 +31,8 @@ public class GatewayApplication {
     @RequestMapping("/fallback")
     public Mono<String> fallback() {
         // Mono是一个Reactive stream，对外输出一个“fallback”字符串。
-        return Mono.just("fallback");
+        ReturnInfo returnInfo = new ReturnInfo(MessageCode.SERVER_EXCEPTION,"后端服务维护,请等待!");
+        return Mono.just(JSONObject.toJSONString(returnInfo));
     }
 
     @Bean

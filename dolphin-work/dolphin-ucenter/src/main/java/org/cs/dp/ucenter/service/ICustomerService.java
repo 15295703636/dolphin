@@ -4,10 +4,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddCustomerBean;
-import org.cs.dp.ucenter.domain.AddCustomerUserBean;
-import org.cs.dp.ucenter.domain.CustomerByNameAndStateReqBean;
-import org.cs.dp.ucenter.domain.EditStatusBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 
 import java.util.List;
@@ -29,6 +26,8 @@ public interface ICustomerService {
     ReturnInfo delCustomer(List<Integer> param);
 
     ReturnInfo editCustomer(CustomerEntity param);
+
+    ReturnInfo author(CustomerAuthorBean param);
 
     ReturnInfo getCustomer(RequestPage<SplitPageInfo, CustomerByNameAndStateReqBean> param);
 
