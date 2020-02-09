@@ -71,6 +71,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
             UserInfo userInfo = JSONObject.parseObject(JSON.toJSONString(user), UserInfo.class);
             redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(userInfo), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         } catch (Exception e) {
+            log.error("token，存入redis异常",e);
             throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
         user.setUser_pwd(null);

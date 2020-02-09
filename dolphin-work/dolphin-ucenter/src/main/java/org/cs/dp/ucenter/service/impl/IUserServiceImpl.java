@@ -33,7 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -74,7 +76,11 @@ public class IUserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
-        return new ReturnInfo(token);
+        user.setUser_pwd(null);
+        Map userInfo = new HashMap();
+        userInfo.put("token", token);
+        userInfo.put("userInfo", user);
+        return new ReturnInfo(userInfo);
     }
 
     @Override
