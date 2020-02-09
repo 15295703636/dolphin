@@ -66,7 +66,7 @@ public class OrganizationController {
     }
 
     @PostMapping("get")
-    @ApiOperation(value = "查询所有组织信息(分页参数totals不传这个字段)", notes = "组织信息")
+    @ApiOperation(value = "查询当前用户的组织信息", notes = "组织信息")
     public ReturnInfo getOrg() {
         return iOrganizationService.getOrg();
     }
