@@ -105,9 +105,12 @@ public class ICustomerServiceImpl implements ICustomerService {
      * @throws BaseException
      */
     public ReturnInfo addAdminUser(AddCustomerUserBean param) throws BaseException {
+        if(!param.getUser_name().matches("[a-zA-Z0-9]+")){
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,Constant.USER_NAME_ERROR_MSG);
+        }
         List<OrganizationEntity> orgs = organizationMapper.getList(new OrganizationEntity(param.getCustomer_id()));
         if (1 != orgs.size()) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_NORMAL, "已存在多条组织信息,暂时无法添加管理员信息,如有疑问请联系管理员!");
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "已存在多条组织信息,暂时无法添加管理员信息,如有疑问请联系管理员!");
         }
         //添加用户
         AddUserBean user = new AddUserBean();
