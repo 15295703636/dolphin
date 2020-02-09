@@ -71,7 +71,7 @@ public class ISuperUserServiceImpl implements ISuperUserService {
             UserInfo userInfo = JSONObject.parseObject(JSON.toJSONString(user), UserInfo.class);
             redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(userInfo), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         } catch (Exception e) {
-            log.error("token，存入redis异常",e);
+            log.error("token，存入redis异常", e);
             throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
         user.setUser_pwd(null);
@@ -83,7 +83,10 @@ public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getParameter("token");
+        if (null == token) {
+            token = request.getHeader("token");
+        }
         redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
         return new ReturnInfo();
     }
@@ -157,17 +160,31 @@ public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Override
     public ReturnInfo resetPwd(ResetSuperPwdBean param) {
-        SuperUserEntity superUserEntity = superUserMapper.selectByUserId(param.getUser_id());
-        if(!param.getUser_id().equals(ThreadLocalUserInfoUtil.get().getUser_id())){
-            if (!param.getUser_pwd().equals(superUserEntity.getUser_pwd())) {
-                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NOW_PWD_ERROR_MSG);
-            }
+        SuperUserEntity superUserEntity = superUserMapper.selectByUserId(ThreadLocalUserInfoUtil.get().getUser_id());
+        if (!param.getUser_pwd().equals(superUserEntity.getUser_pwd())) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NOW_PWD_ERROR_MSG);
         }
         SuperUserEntity updateInfo = new SuperUserEntity();
         updateInfo.setUser_id(param.getUser_id());
         updateInfo.setUser_pwd(param.getNew_pwd());
         superUserMapper.updateByPrimaryKeySelective(updateInfo);
         return new ReturnInfo();
+    }
+
+    /**
+     * 根据企业用户查询客户代表
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public ReturnInfo getSuperUserByUserId(Integer user_id) {
+        SuperUserEntity superUser = superUserMapper.getSuperUserByUserId(user_id);
+        if (null == superUser) {
+            new ReturnInfo(MessageCode.DB_EXCEPTION, Constant.DATA_ERROR_MSG);
+        }
+        superUser.setUser_pwd(null);
+        return new ReturnInfo(superUser);
     }
 
 }
