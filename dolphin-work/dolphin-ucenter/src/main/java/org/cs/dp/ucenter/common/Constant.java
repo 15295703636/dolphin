@@ -46,6 +46,7 @@ public class Constant {
      * 用户登录提示信息
      */
     public static final String USER_LOGIN_MSG = "请输入登录名";
+    public static final String USER_NAME_ERROR_MSG = "用户名不合法";
     public static final String PWD_LOGIN_MSG = "请输入登录密码";
 
     /**
@@ -65,5 +66,7 @@ public class Constant {
     public static final String PWD_NULL_MSG = "请输入当前密码!";
 
     public static final String EXCEPTION_MSG = "服务异常!";
+
+    public static final String DATA_ERROR_MSG = "数据异常，请联系管理员!";
 
 }
