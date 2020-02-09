@@ -3,6 +3,11 @@ package org.cs.dp.radar.config;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sun.misc.BASE64Decoder;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * 动态创建广播队列发送消息
@@ -26,6 +31,11 @@ public class BrsSender {
      * @param message
      */
     public Object sendAll(String message,String queue){
-        return this.rabbitmqTemplate.convertSendAndReceive("brs.exchangete.topic",queue, message);
+//        Object o= this.rabbitmqTemplate.convertSendAndReceive("brs.exchangete.topic",queue, message);
+        Object o= this.rabbitmqTemplate.convertSendAndReceive(queue, message);
+        if(o==null){
+            return null;
+        }
+        return new String((byte[])o);
     }
 }

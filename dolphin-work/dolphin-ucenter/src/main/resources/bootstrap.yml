@@ -98,7 +98,7 @@ xxl:
       logpath: ${xxl.job.executor.logpath}
       logretentiondays: ${xxl.job.executor.logretentiondays}
     accessToken:
-    start: true
+    start: false
   api:
     add:
       job:

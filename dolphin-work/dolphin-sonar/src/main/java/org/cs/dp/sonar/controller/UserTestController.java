@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.jsonrpc.JsonRpcReq;
+import org.cs.dp.radar.api.entity.brs.BssTaskReq;
 import org.cs.dp.radar.api.feign.IBaioClient;
 import org.cs.dp.radar.api.feign.IBrsClient;
 import org.cs.dp.sonar.domain.PostTestBean;
@@ -34,9 +35,13 @@ public class UserTestController {
     @GetMapping("/getTest/{page}")
     @ApiOperation(value = "方法业务说明；例：测试Get方法", notes = "用户信息")
     public ReturnInfo GetTest(@PathVariable(value = "page") Integer page) {
-        iBaioClient.sendmsg("123","m1");
-        iBrsClient.sendmsg("456","m2");
-        return  null;
+//        iBaioClient.sendmsg("123","m1");
+//        iBrsClient.sendmsg("456","m2");
+        BssTaskReq bssTaskReq = new BssTaskReq();
+        bssTaskReq.setUsername("admin");
+        bssTaskReq.setPasswd("123456");
+        ReturnInfo r = iBrsClient.login(bssTaskReq,"rpc_queue_test");
+        return  r;
 //        return iUserClient.selectUserByOrg(page, 20, 1);
     }
 

@@ -17,6 +17,10 @@ spring:
     port: ${rabbit.server.port}
     username: guest
     password: guest
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
 management:
   endpoints:
     web:

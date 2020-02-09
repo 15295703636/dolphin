@@ -21,6 +21,7 @@ public class SomqClient implements ISomqClient {
     @Override
     @GetMapping(API_PREFIX+"/receivemsg")
     public ReturnInfo receiveMsg(@RequestParam String msg) {
+        System.out.println("bsms_keeplive = "+msg);
         ReturnInfo returnInfo = new ReturnInfo();
         JsonRpcRsp rsp = JsonRpcRsp.generateMsg(msg, HashMap.class);
         //处理消息

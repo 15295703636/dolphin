@@ -7,6 +7,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMqConfiguration {
+
+    @Bean
+    public Queue bsmsKeepalive() {
+        return new Queue("bsms_keepalive");
+    }
+
     /**
      * 声明一个名为simple的队列
      */
@@ -72,6 +78,16 @@ public class RabbitMqConfiguration {
     public TopicExchange brsTopicexchange(){
         return new TopicExchange("brs.exchangete.topic");
     }
+
+    @Bean
+    public Queue brstopicQueuea() {
+        return new Queue("abcde123456");
+    }
+    @Bean
+    public Binding bindMessagebrsa(){
+        return BindingBuilder.bind(brstopicQueuea()).to(brsTopicexchange()).with("abcde123456");
+    }
+
 
     /**
      * 声明一个名为topic.message2的队列

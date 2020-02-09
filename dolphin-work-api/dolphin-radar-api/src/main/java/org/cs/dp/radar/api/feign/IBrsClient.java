@@ -5,6 +5,7 @@ import org.cs.dolphin.common.utils.AppConstant;
 import org.cs.dp.radar.api.entity.brs.BssTaskReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,22 +20,22 @@ public interface IBrsClient {
     @GetMapping(API_PREFIX+"/sendmsgtopic")
     ReturnInfo sendmsgtopic(@RequestParam String msg, @RequestParam String method,@RequestParam String queue);
 
-    @GetMapping(API_PREFIX+"/login")
+    @PostMapping(API_PREFIX+"/login")
     ReturnInfo login(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
 
-    @GetMapping(API_PREFIX+"/starttask")
+    @PostMapping(API_PREFIX+"/starttask")
     ReturnInfo startTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/stoptask")
+    @PostMapping(API_PREFIX+"/stoptask")
     ReturnInfo stopTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/querytask")
+    @PostMapping(API_PREFIX+"/querytask")
     ReturnInfo queryTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/deletetask")
+    @PostMapping(API_PREFIX+"/deletetask")
     ReturnInfo deleteTaskTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/uploadfile")
+    @PostMapping(API_PREFIX+"/uploadfile")
     ReturnInfo uploadFile(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/uploadthum")
+    @PostMapping(API_PREFIX+"/uploadthum")
     ReturnInfo uploadThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
-    @GetMapping(API_PREFIX+"/catthum")
+    @PostMapping(API_PREFIX+"/catthum")
     ReturnInfo catThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
 
 
