@@ -64,6 +64,26 @@
 
     </select>
 
+    <select id="getSuperUserByUserId" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        super_user su
+        WHERE
+        su.user_id = (
+        SELECT
+        c.manage_id
+        FROM
+        user2org uo,
+        organization o,
+        customer c
+        WHERE
+        uo.org_id = o.org_id
+        AND c.id = o.customer_id
+        AND uo.user_id = #{user_id}
+        )
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from super_user
         where user_id in

@@ -15,10 +15,7 @@ import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.service.ISuperUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +99,12 @@ public class SuperUserController {
     @ApiOperation(value = "客户代表/超级管理员用户自己重置密码", notes = "平台管理员用户信息")
     public ReturnInfo resetPwd(@Valid @RequestBody ResetSuperPwdBean param, BindingResult result) {
         return iSuperUserService.resetPwd(param);
+    }
+
+    @GetMapping("getSuperUserByUserId")
+    @ApiOperation(value = "根据企业用户id查询客户代表信息", notes = "平台管理员用户信息")
+    public ReturnInfo getSuperUserByUserId(Integer userId) {
+        return iSuperUserService.getSuperUserByUserId(userId);
     }
 
 }
