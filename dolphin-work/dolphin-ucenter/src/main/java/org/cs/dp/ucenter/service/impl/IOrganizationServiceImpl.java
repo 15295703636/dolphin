@@ -46,6 +46,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo addOrg(OrganizationEntity param) {
+        param.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         organizationMapper.insertSelective(param);
         return new ReturnInfo();
     }
@@ -64,7 +65,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         treeNodeBean = treeNodeBean.getChild().get(0);
 
         if (null != treeNodeBean) {
-            organizationMapper.deleteByPrimaryKey(null, 20);//TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+            organizationMapper.deleteByPrimaryKey(null, ThreadLocalUserInfoUtil.get().getCustomer_id());
             OrganizationEntity org = organizationMapper.getList(new OrganizationEntity(20)).get(0);
             saveTreeOrg(Arrays.asList(treeNodeBean), org.getOrg_id());
             log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
@@ -166,7 +167,9 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo delOrg(List<Integer> id) {
-        organizationMapper.deleteByPrimaryKey(id, null);
+        List<Integer> childId =  organizationMapper.getChildIdByParentId(id.get(0));
+        childId.add(id.get(0));
+        organizationMapper.deleteByPrimaryKey(childId, null);
         return new ReturnInfo();
     }
 
@@ -184,7 +187,9 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo getOrg() {
-        return new ReturnInfo(organizationMapper.getList(null));
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+        return new ReturnInfo(organizationMapper.getList(organization));
     }
 
     @Override
