@@ -101,10 +101,10 @@ public class SuperUserController {
         return iSuperUserService.resetPwd(param);
     }
 
-    @GetMapping("getSuperUserByUserId")
-    @ApiOperation(value = "根据企业用户id查询客户代表信息", notes = "平台管理员用户信息")
-    public ReturnInfo getSuperUserByUserId(Integer userId) {
-        return iSuperUserService.getSuperUserByUserId(userId);
+    @GetMapping("geCusId")
+    @ApiOperation(value = "查询客户代表信息", notes = "平台管理员用户信息")
+    public ReturnInfo geCusId() {
+        return iSuperUserService.getSuperUserByCusId();
     }
 
 }

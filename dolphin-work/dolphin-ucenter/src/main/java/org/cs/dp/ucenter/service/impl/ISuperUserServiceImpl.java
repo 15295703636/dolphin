@@ -178,8 +178,8 @@ public class ISuperUserServiceImpl implements ISuperUserService {
      * @return
      */
     @Override
-    public ReturnInfo getSuperUserByUserId(Integer user_id) {
-        SuperUserEntity superUser = superUserMapper.getSuperUserByUserId(user_id);
+    public ReturnInfo getSuperUserByCusId() {
+        SuperUserEntity superUser = superUserMapper.getSuperUserByCusId(ThreadLocalUserInfoUtil.get().getCustomer_id());
         if (null == superUser) {
             new ReturnInfo(MessageCode.DB_EXCEPTION, Constant.DATA_ERROR_MSG);
         }

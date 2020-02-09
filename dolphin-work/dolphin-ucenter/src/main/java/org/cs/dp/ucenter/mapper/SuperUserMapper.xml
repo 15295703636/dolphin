@@ -30,11 +30,11 @@
             and user_id = #{manageId,jdbcType=INTEGER}
         </if>
         <if test="user_name != null">
-            and (user_name like CONCAT('%',#{user_name},'%')  or user_qname like CONCAT('%',#{user_name},'%'))
+            and (user_name like CONCAT('%',#{user_name},'%') or user_qname like CONCAT('%',#{user_name},'%'))
         </if>
     </select>
 
-    <select id="selectByUserId"  resultMap="ResultMapWithBLOBs">
+    <select id="selectByUserId" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         from super_user
@@ -64,23 +64,12 @@
 
     </select>
 
-    <select id="getSuperUserByUserId" resultMap="ResultMapWithBLOBs">
+    <select id="getSuperUserByCusId" resultMap="ResultMapWithBLOBs">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM
-        super_user su
-        WHERE
-        su.user_id = (
-        SELECT
-        c.manage_id
-        FROM
-        user2org uo,
-        organization o,
-        customer c
-        WHERE
-        uo.org_id = o.org_id
-        AND c.id = o.customer_id
-        AND uo.user_id = #{user_id}
+        FROM super_user su
+        WHERE su.user_id = (
+        SELECT c.manage_id FROM customer c WHERE c.id =#{}
         )
     </select>
 

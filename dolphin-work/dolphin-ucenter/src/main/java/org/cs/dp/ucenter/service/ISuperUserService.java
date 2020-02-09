@@ -34,10 +34,5 @@ public interface ISuperUserService {
 
     ReturnInfo resetPwd(ResetSuperPwdBean param);
 
-    /**
-     * 根据企业用户查询客户代表
-     * @param userId
-     * @return
-     */
-    ReturnInfo getSuperUserByUserId(Integer userId);
+    ReturnInfo getSuperUserByCusId();
 }
