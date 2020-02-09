@@ -26,6 +26,7 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.mapper.UserOrgMapper;
+import org.cs.dp.ucenter.service.ISuperUserService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,8 @@ public class IUserServiceImpl implements IUserService {
     private UserMapper userMapper;
     @Autowired
     private UserOrgMapper userOrgMapper;
+    @Autowired
+    private ISuperUserService iSuperUserService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -76,6 +79,10 @@ public class IUserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new BaseException(null, Constant.EXCEPTION_MSG);
         }
+        /*ReturnInfo returnInfo = iSuperUserService.getSuperUserByUserId(user.getUser_id());
+        if(MessageCode.COMMON_SUCCEED_FLAG == returnInfo.getReturnCode()){
+            return returnInfo;
+        }*/
         user.setUser_pwd(null);
         Map userInfo = new HashMap();
         userInfo.put("token", token);
@@ -90,7 +97,10 @@ public class IUserServiceImpl implements IUserService {
 
     @Override
     public ReturnInfo loginOut(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getParameter("token");
+        if (null == token) {
+            token = request.getHeader("token");
+        }
         redisUtil.remove(RedisConstant.USER_TOKEN_PATH + token);
         return new ReturnInfo();
     }
@@ -113,7 +123,7 @@ public class IUserServiceImpl implements IUserService {
             if (StringUtils.isEmpty(param.getUser_pwd())) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_NULL_MSG);
             }
-            if (!param.getUser_id().equals(userEntity.getUser_pwd())) {
+            if (!param.getUser_pwd().equals(userEntity.getUser_pwd())) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
             }
         }
