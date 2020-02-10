@@ -8,7 +8,7 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 import java.util.List;
 
 public interface UserMapper {
-    int deleteByPrimaryKey(List<Integer> userIds);
+    int deleteByPrimaryKey(@Param(value = "userIds") List<Integer> userIds);
 
     int insert(UserEntity record);
 
