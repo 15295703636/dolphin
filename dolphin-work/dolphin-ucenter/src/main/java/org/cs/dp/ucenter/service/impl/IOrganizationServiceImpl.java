@@ -152,7 +152,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         if (treeNodeBean.size() > 0) {
             for (TreeNodeBean item : treeNodeBean) {
                 org = new OrganizationEntity(
-                        null, item.getName(), null, periodId, 20// TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+                        null, item.getName(), null, periodId, ThreadLocalUserInfoUtil.get().getCustomer_id()
                 );
                 //插入数据库
                 organizationMapper.insertSelective(org);
