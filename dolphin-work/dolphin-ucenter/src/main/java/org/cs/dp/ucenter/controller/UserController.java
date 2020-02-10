@@ -80,10 +80,16 @@ public class UserController {
         return iUserService.edit(param);
     }
 
-    @PostMapping("getUsersByOrgId")
+    /*@PostMapping("getUsersByOrgId")
     @ApiOperation(value = "组织Id查询用户列表", notes = "用户信息")
     public ReturnInfo getUsersByOrgId(@RequestBody RequestPage<SplitPageInfo, OrgIdAndTokenBean> param) {
         return iUserService.getUsersByOrgId(param);
+    }*/
+
+    @PostMapping("getUsersList")
+    @ApiOperation(value = "查询用户列表", notes = "用户信息")
+    public ReturnInfo getUsersList(@RequestBody RequestPage<SplitPageInfo, GetUserReqBean> param) {
+        return iUserService.getUsersList(param);
     }
 
     @PostMapping("upload")

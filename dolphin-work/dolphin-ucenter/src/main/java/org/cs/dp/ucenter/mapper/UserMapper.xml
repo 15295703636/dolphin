@@ -223,13 +223,12 @@
     <!--1.先根据当前的组织id查询到所有子节点的组织id，
     2.在关联组织用户关系表，查出用户id，
     3.在关联用户表查询用户信息-->
-    <select id="getListByOrgId" parameterType="java.lang.Integer"
+    <select id="getUsersList" parameterType="java.lang.Integer"
             resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
         SELECT
             u.user_id,
             u.user_name,
             u.user_qname,
-            u.user_pwd,
             u.user_email,
             u.role_id,
             u.user_statu,
@@ -237,26 +236,31 @@
             u.user_tel,
             u.user_code,
             u.user_desc
-        FROM
-            USER u
-        WHERE
-            user_id IN (
-                SELECT uo.user_id AS res FROM
-                    (SELECT org_id FROM
-                            (SELECT t1.org_id, IF (
-                                    find_in_set(org_preid, @pids) > 0,
-                                    @pids := concat(@pids, ',', org_id),
-                                    0
-                                ) AS ischild
-                                FROM (SELECT org_id, org_preid
-                                        FROM organization t
-                                        ORDER BY org_preid, org_id
-                                    )t1,(SELECT @pids := #{orgId}) t2
-                            ) t3
-                        WHERE ischild != 0
-                    ) orgId, user2org uo
-                WHERE orgId.org_id = uo.org_id
-            )
+        FROM USER u
+        where user_id in(
+            select user_id from user2org uo where uo.org_id in(
+            SELECT org_id FROM
+                        ( SELECT t1.org_id,
+                            IF (
+                                find_in_set(org_preid, @pids) > 0,
+                                @pids := concat(@pids, ',', org_id),
+                                0
+                            ) AS ischild
+                            FROM ( SELECT org_id, org_preid
+                                    FROM organization t where t.customer_id=#{customer_id}
+                                    ORDER BY org_id, org_preid
+                                ) t1, ( SELECT  @pids := #{org_id} ) t2
+                        ) t3
+                    WHERE ischild != 0) or uo.org_id=#{org_id})
+            <if test='role_id = "1"'>
+                and u.role_id = 1
+            </if>
+            <if test='role_id != "1"'>
+                and u.role_id != 1
+            </if>
+            <if test="user_name != ''">
+                and u.user_name  like concat('%',#{user_name},'%')
+            </if>
     </select>
 
 

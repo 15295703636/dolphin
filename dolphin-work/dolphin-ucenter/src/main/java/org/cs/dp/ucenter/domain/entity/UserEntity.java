@@ -54,7 +54,7 @@ public class UserEntity {
     @ApiModelProperty(value = "身份证号")
     private String user_code;
 
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value = "所属")
     private String user_desc;
 
     public UserEntity() {

@@ -4,10 +4,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
-import org.cs.dp.ucenter.domain.ResetPwdBean;
-import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +32,8 @@ public interface IUserService {
     ReturnInfo edit(UserEntity record);
 
     ReturnInfo getUsersByOrgId(RequestPage<SplitPageInfo, OrgIdAndTokenBean> param);
+
+    ReturnInfo getUsersList(RequestPage<SplitPageInfo, GetUserReqBean> param);
 
     ReturnInfo upload(MultipartFile file) throws IOException;
 }
