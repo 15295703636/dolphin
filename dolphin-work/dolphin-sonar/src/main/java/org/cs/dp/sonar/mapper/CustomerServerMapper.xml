@@ -16,13 +16,13 @@
     server_id, server_name, server_ip, server_port, server_nat_ip, server_nat_port,serial_number, org_id, customer_id
   </sql>
 
-    <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByOrgId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from customer_server
-        where 1=1
-        <if test="server_id != null">
-            server_id = #{server_id,jdbcType=INTEGER}
+        where customer_id = #{customer_id}
+        <if test="org_id != null">
+            and org_id = #{org_id,jdbcType=INTEGER}
         </if>
     </select>
 

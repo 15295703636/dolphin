@@ -46,7 +46,7 @@ public class CustomerServerController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询租户-服务管理", notes = "租户-服务管理")
-    public ReturnInfo getCustomerServer(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getCustomerServer(@RequestBody RequestPage<SplitPageInfo, Integer> param){
         return iCustomerServerService.getCustomerServer(param);
     }
 }

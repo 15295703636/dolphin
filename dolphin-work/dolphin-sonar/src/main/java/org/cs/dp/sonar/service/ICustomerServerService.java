@@ -19,6 +19,6 @@ public interface ICustomerServerService {
 
     ReturnInfo editCustomerServer(CustomerServerEntity param);
 
-    ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Object> param);
+    ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Integer> param);
 
 }
