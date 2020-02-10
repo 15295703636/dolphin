@@ -6,6 +6,7 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface IOrganizationService {
     ReturnInfo addOrg(OrganizationEntity param) ;
 
     ReturnInfo upload(MultipartFile file) throws IOException;
+
+    void export(HttpServletResponse response);
 
     ReturnInfo editOrg(OrganizationEntity param);
 

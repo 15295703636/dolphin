@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,6 +72,11 @@ public class IOrganizationServiceImpl implements IOrganizationService {
             log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
         }
         return new ReturnInfo();
+    }
+
+    @Override
+    public void export(HttpServletResponse response) {
+        //TODO 组织导出接口
     }
 
     private static TreeNodeBean tree(Workbook wb) {

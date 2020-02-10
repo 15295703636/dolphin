@@ -10,12 +10,10 @@ import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.cs.dp.ucenter.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -45,6 +43,13 @@ public class OrganizationController {
     @ApiOperation(value = "导入组织信息", notes = "组织信息")
     public ReturnInfo upload(MultipartFile file) throws IOException {
         return iOrganizationService.upload(file);
+    }
+
+
+    @GetMapping("export")
+    @ApiOperation(value = "导出组织信息", notes = "组织信息")
+    public void export(HttpServletResponse response) throws Exception {
+        iOrganizationService.export(response);
     }
 
     @PostMapping("edit")
