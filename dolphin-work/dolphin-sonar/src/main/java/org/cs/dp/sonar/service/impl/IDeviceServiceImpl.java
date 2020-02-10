@@ -34,7 +34,7 @@ public class IDeviceServiceImpl implements IDeviceService {
     }
 
     @Override
-    public ReturnInfo delDevice(Integer param) {
+    public ReturnInfo delDevice(List<Integer> param) {
         deviceMapper.deleteByPrimaryKey(param);
         return new ReturnInfo();
     }
