@@ -46,9 +46,12 @@
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from device
-    where device_id = #{device_id,jdbcType=INTEGER}
-  </delete>
+        delete from device
+        where device_id in
+        <foreach collection="device_id" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
         insert into device

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface DeviceMapper {
-    int deleteByPrimaryKey(Integer device_id);
+    int deleteByPrimaryKey(List<Integer> device_id);
 
     int insertSelective(DeviceEntity record);
 

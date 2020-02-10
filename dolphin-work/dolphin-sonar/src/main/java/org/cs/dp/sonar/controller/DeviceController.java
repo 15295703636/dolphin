@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
 * @ClassName DeviceController
 * @Description 设备-端管理
@@ -35,8 +37,8 @@ public class DeviceController {
 
     @PostMapping("del")
     @ApiOperation(value = "删除设备-端管理", notes = "设备-端管理")
-    public ReturnInfo delDevice(@RequestBody Integer id){
-        return iDeviceService.delDevice(id);
+    public ReturnInfo delDevice(@RequestBody List<Integer> ids){
+        return iDeviceService.delDevice(ids);
     }
 
     @PostMapping("edit")

@@ -12,7 +12,7 @@ public class DeviceEntity {
     @ApiModelProperty(value = "")
     private Integer device_id;
 
-    @ApiModelProperty(value = "住址ID")
+    @ApiModelProperty(value = "组织ID")
     private Integer org_id;
 
     @ApiModelProperty(value = "设备名称")
