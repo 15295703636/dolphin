@@ -24,5 +24,5 @@ public interface SuperUserMapper {
 
     SuperUserEntity selectByUserId(Integer user_id);
 
-    SuperUserEntity getSuperUserByCusId(Integer user_id);
+    SuperUserEntity getSuperUserByCusId(Integer customer_id);
 }

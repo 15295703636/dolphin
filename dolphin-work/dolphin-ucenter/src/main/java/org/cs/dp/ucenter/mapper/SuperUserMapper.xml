@@ -69,7 +69,7 @@
         <include refid="Base_Column_List"/>
         FROM super_user su
         WHERE su.user_id = (
-        SELECT c.manage_id FROM customer c WHERE c.id =#{}
+        SELECT c.manage_id FROM customer c WHERE c.id =#{customer_id}
         )
     </select>
 
