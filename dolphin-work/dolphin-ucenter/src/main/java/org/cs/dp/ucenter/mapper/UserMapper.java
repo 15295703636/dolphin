@@ -2,6 +2,7 @@ package org.cs.dp.ucenter.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.cs.dolphin.common.base.UserInfo;
+import org.cs.dp.ucenter.domain.GetUserListResBean;
 import org.cs.dp.ucenter.domain.GetUserReqBean;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 
@@ -24,7 +25,7 @@ public interface UserMapper {
 
     List<UserEntity> getListByOrgId(@Param(value = "orgId") int orgId, @Param(value = "userId") int userId);
 
-    List<UserEntity> getUsersList(GetUserReqBean userReqBean);
+    List<GetUserListResBean> getUsersList(GetUserReqBean userReqBean);
 
     UserEntity checkUserInfo(@Param(value = "user_id") Integer user_id, @Param(value = "user_name")String user_name);
 }

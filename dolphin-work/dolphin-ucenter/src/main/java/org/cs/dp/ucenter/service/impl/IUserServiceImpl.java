@@ -197,7 +197,7 @@ public class IUserServiceImpl implements IUserService {
         GetUserReqBean getUserReqBean = param.getInfo();
         getUserReqBean.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<UserEntity> userEntities = userMapper.getUsersList(getUserReqBean);
+        List<GetUserListResBean> userEntities = userMapper.getUsersList(getUserReqBean);
         PageInfo p = new PageInfo(userEntities);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, userEntities);

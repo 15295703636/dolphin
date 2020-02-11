@@ -224,7 +224,7 @@
     2.在关联组织用户关系表，查出用户id，
     3.在关联用户表查询用户信息-->
     <select id="getUsersList" parameterType="java.lang.Integer"
-            resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+            resultType="org.cs.dp.ucenter.domain.GetUserListResBean">
         SELECT
             u.user_id,
             u.user_name,
@@ -235,7 +235,8 @@
             u.user_number,
             u.user_tel,
             u.user_code,
-            u.user_desc
+            u.user_desc,
+            (select org_id from user2org u2o where u2o.user_id = u.user_id) org_id
         FROM USER u
         where user_id in(
             select user_id from user2org uo where uo.org_id in(
