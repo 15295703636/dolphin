@@ -27,14 +27,17 @@
     </select>
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetDeviceBean" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from device
-        where 1=1
-        <if test="device_id != null">
+        SELECT  <include refid="Base_Column_List"/> FROM device d WHERE d.org_id IN (
+        SELECT org_id FROM ( SELECT
+        t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0 ) OR d.org_id = #{org_id}
+        <if test="id != null">
             and id = #{id,jdbcType=INTEGER}
         </if>
-        <if test="device_name != null">
+        <if test="name != null">
             and name like CONCAT('%',#{name},'%')
         </if>
         <if test="device_type != null">
@@ -43,6 +46,7 @@
         <if test="device_state != null">
             and device_state = #{device_state,jdbcType=INTEGER}
         </if>
+
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

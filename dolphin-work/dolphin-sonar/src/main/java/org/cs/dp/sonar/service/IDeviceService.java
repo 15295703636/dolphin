@@ -22,6 +22,6 @@ public interface IDeviceService {
 
     ReturnInfo editDevice(DeviceEntity param);
 
-    ReturnInfo getDevice(RequestPage<SplitPageInfo, GetDeviceBean> param);
+    ReturnInfo getDevice( RequestPage<SplitPageInfo, GetDeviceBean> param);
 
 }

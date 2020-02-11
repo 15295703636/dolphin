@@ -44,13 +44,9 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
     }
 
     @Override
-    public ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Integer> param) {
-        SplitPageInfo splitPageInfo = param.getPage();
-        PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
+    public ReturnInfo getCustomerServer( Integer param) {
         List<CustomerServerEntity> resList = customerServerMapper.selectByOrgId(
-                param.getInfo(), ThreadLocalUserInfoUtil.get().getCustomer_id());
-        PageInfo p = new PageInfo(resList);
-        splitPageInfo.setTotals((int) p.getTotal());
-        return new ReturnInfo(splitPageInfo, resList);
+                param, ThreadLocalUserInfoUtil.get().getCustomer_id());
+        return new ReturnInfo(resList);
     }
 }

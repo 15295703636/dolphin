@@ -25,4 +25,10 @@ public class GetDeviceBean {
 
     @ApiModelProperty(value = "端状态")
     private String device_state;
+
+    @ApiModelProperty(value = "组织ID")
+    private Integer org_id;
+
+    @ApiModelProperty(value = "租户ID", hidden = true)
+    private Integer customer_id;
 }
