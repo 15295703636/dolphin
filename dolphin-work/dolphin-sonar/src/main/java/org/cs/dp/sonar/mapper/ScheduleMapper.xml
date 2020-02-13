@@ -2,39 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.sonar.mapper.ScheduleMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.ScheduleEntity">
-        <constructor>
-            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="date" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="duration" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_number" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_ids" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="device_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="device_ids" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="device_number" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="isLive" javaType="java.lang.String" jdbcType="CHAR"/>
-            <arg column="isRecord" javaType="java.lang.String" jdbcType="CHAR"/>
-            <arg column="resolving_power" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="bandwidth" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="create_user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="teacher_name" javaType="java.lang.String" jdbcType="INTEGER"/>
-        </constructor>
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="duration" property="duration" jdbcType="VARCHAR"/>
+        <result column="user_number" property="user_number" jdbcType="INTEGER"/>
+        <result column="user_ids" property="user_ids" jdbcType="VARCHAR"/>
+        <result column="device_id" property="device_id" jdbcType="INTEGER"/>
+        <result column="device_ids" property="device_ids" jdbcType="VARCHAR"/>
+        <result column="device_number" property="device_number" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="isLive" property="isLive" jdbcType="CHAR"/>
+        <result column="isRecord" property="isRecord" jdbcType="CHAR"/>
+        <result column="resolving_power" property="resolving_power" jdbcType="VARCHAR"/>
+        <result column="bandwidth" property="bandwidth" jdbcType="VARCHAR"/>
+        <result column="org_id" property="org_id" jdbcType="INTEGER"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+        <result column="create_user_id" property="create_user_id" jdbcType="INTEGER"/>
+        <result column="teacher_name" property="teacher_name" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, name, state, date, duration, user_number, user_ids, device_id, device_ids, device_number, 
     type, isLive, isRecord, resolving_power, bandwidth, org_id, create_time, update_time, 
     create_user_id,teacher_name
   </sql>
-    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetScheduleBean" resultMap="BaseResultMap">
+    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetScheduleBean" resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
         select
         <include refid="Base_Column_List"/>
         from schedule
-        where 1 = 1
+        where (org_id in(
+        SELECT org_id FROM ( SELECT
+        t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0) or org_id = #{org_id})
         <if test="id != null and id !=''">
             and id = #{id,jdbcType=INTEGER}
         </if>
@@ -137,7 +141,7 @@
                 #{user_ids,jdbcType=VARCHAR},
             </if>
             <if test="device_id != null">
-                #{device_id,jdbcType=VARCHAR},
+                #{device_id,jdbcType=INTEGER},
             </if>
             <if test="device_ids != null">
                 #{device_ids,jdbcType=VARCHAR},
@@ -199,7 +203,7 @@
                 user_ids = #{user_ids,jdbcType=VARCHAR},
             </if>
             <if test="device_id != null">
-                device_id = #{device_id,jdbcType=VARCHAR},
+                device_id = #{device_id,jdbcType=INTEGER},
             </if>
             <if test="device_ids != null">
                 device_ids = #{device_ids,jdbcType=VARCHAR},

@@ -19,7 +19,10 @@ public class DeviceEntity {
     private String name;
 
     @ApiModelProperty(value = "呼叫协议")
-    private String call_protocol;
+    private Integer call_protocol;
+
+    @ApiModelProperty(value = "呼叫号")
+    private String call_num;
 
     @ApiModelProperty(value = "sip号码")
     private String sip;
@@ -31,10 +34,10 @@ public class DeviceEntity {
     private String e_code;
 
     @ApiModelProperty(value = "设备类型")
-    private String device_type;
+    private Integer device_type;
 
     @ApiModelProperty(value = "设备状态")
-    private String device_state;
+    private Integer device_state;
 
     @ApiModelProperty(value = "设备序列号")
     private String device_serial_number;

@@ -23,6 +23,12 @@ public class GetScheduleBean {
     @ApiModelProperty(value = "类型 1会议 2互动 3录播")
     private String type;
 
+    @ApiModelProperty(value = "组织ID")
+    private Integer org_id;
+
+    @ApiModelProperty(value = "租户ID", hidden = true)
+    private Integer customer_id;
+
     public GetScheduleBean() {
     }
 

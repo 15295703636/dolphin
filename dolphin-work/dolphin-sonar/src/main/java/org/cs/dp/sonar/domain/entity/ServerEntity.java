@@ -13,7 +13,7 @@ public class ServerEntity {
     @ApiModelProperty(value = "服务名称")
     private String server_name;
 
-    @ApiModelProperty(value = "服务类型")
+    @ApiModelProperty(value = "服务类型:14流媒体 15云视讯 42网关配置")
     private Integer server_type;
 
     @ApiModelProperty(value = "服务ip")
@@ -31,7 +31,7 @@ public class ServerEntity {
     @ApiModelProperty(value = "服务备注")
     private String server_desc;
 
-    @ApiModelProperty(value = "服务ID")
+    @ApiModelProperty(value = "")
     private String serial_number;
 
     public ServerEntity() {

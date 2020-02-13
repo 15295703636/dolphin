@@ -27,6 +27,7 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
 
     @Override
     public ReturnInfo addCustomerServer(CustomerServerEntity param) {
+        param.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         customerServerMapper.insertSelective(param);
         return new ReturnInfo();
     }
@@ -44,9 +45,13 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
     }
 
     @Override
-    public ReturnInfo getCustomerServer( Integer param) {
+    public ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Integer> param) {
+        SplitPageInfo splitPageInfo = param.getPage();
+        PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
         List<CustomerServerEntity> resList = customerServerMapper.selectByOrgId(
-                param, ThreadLocalUserInfoUtil.get().getCustomer_id());
-        return new ReturnInfo(resList);
+                param.getInfo(), ThreadLocalUserInfoUtil.get().getCustomer_id());
+        PageInfo p = new PageInfo(resList);
+        splitPageInfo.setTotals((int) p.getTotal());
+        return new ReturnInfo(splitPageInfo, resList);
     }
 }

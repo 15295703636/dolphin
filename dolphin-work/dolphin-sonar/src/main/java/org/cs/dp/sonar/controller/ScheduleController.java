@@ -6,7 +6,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.GetScheduleBean;
-import org.cs.dp.sonar.domain.entity.ScheduleEntity;
+import org.cs.dp.sonar.domain.ScheduleArrayBean;
 import org.cs.dp.sonar.service.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +29,7 @@ public class ScheduleController {
 
     @PostMapping("add")
     @ApiOperation(value = "添加日程配置管理", notes = "日程配置管理")
-    public ReturnInfo addSchedule(@RequestBody ScheduleEntity param) {
+    public ReturnInfo addSchedule(@RequestBody ScheduleArrayBean param) {
         return iScheduleService.addSchedule(param);
     }
 
@@ -41,7 +41,7 @@ public class ScheduleController {
 
     @PostMapping("edit")
     @ApiOperation(value = "修改日程配置管理", notes = "日程配置管理")
-    public ReturnInfo editSchedule(@RequestBody ScheduleEntity param) {
+    public ReturnInfo editSchedule(@RequestBody ScheduleArrayBean param) {
         return iScheduleService.editSchedule(param);
     }
 

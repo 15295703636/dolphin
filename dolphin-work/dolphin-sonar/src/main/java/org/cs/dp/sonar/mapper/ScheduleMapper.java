@@ -8,12 +8,12 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface ScheduleMapper {
+public interface ScheduleMapper<T> {
     int deleteByPrimaryKey(Integer id);
 
     int insertSelective(ScheduleEntity record);
 
-    List<ScheduleEntity> selectByCondition(GetScheduleBean param);
+    List<T> selectByCondition(GetScheduleBean param);
 
     int updateByPrimaryKeySelective(ScheduleEntity record);
 }

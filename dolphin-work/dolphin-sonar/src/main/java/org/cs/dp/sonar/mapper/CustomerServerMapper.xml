@@ -17,13 +17,18 @@
   </sql>
 
     <select id="selectByOrgId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"/>
-        from customer_server
-        where customer_id = #{customer_id}
-        <if test="org_id != null">
-            and org_id = #{org_id,jdbcType=INTEGER}
-        </if>
+        FROM customer_server c WHERE
+        c.org_id IN ( SELECT org_id FROM
+        ( SELECT t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0,
+        @pids := concat(@pids, ',', org_id),
+        0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t
+        WHERE t.customer_id =#{customer_id} ORDER BY org_id, org_preid ) t1,
+        (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0 ) OR c.org_id =#{org_id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

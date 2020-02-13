@@ -21,10 +21,13 @@ public class GetDeviceBean {
     private String name;
 
     @ApiModelProperty(value = "端型号")
-    private String device_type;
+    private Integer device_type;
 
     @ApiModelProperty(value = "端状态")
-    private String device_state;
+    private Integer device_state;
+
+    @ApiModelProperty(value = "呼叫协议")
+    private Integer call_protocol;
 
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;
