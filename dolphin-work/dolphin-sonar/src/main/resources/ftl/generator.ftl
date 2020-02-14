@@ -10,7 +10,7 @@
             <property name="suppressDate" value="true" /> <!-- 是否生成注释代时间戳-->
         </commentGenerator>
         <!--jdbc的数据库连接 -->
-        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="${connectionURL}"
                         userId="${userId}"
                         password="${password}">
