@@ -54,7 +54,7 @@
     delete from schedule
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.ScheduleEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.ScheduleEntity" keyProperty="id">
         insert into schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

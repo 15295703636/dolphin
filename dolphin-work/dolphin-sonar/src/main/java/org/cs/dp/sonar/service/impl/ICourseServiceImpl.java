@@ -1,8 +1,8 @@
 package org.cs.dp.sonar.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
@@ -13,7 +13,6 @@ import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.UserConditionBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
-import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 import org.cs.dp.sonar.domain.entity.ScheduleEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
 import org.cs.dp.sonar.mapper.CourseHistoryMapper;
@@ -24,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -100,9 +97,9 @@ public class ICourseServiceImpl implements ICourseService {
         courseMapper.insertSelective(course);
 
         //端控制
-        List<String> devices = Arrays.asList(schedule.getDevice_ids().split("，"));
+        List<Integer> devices = JSONArray.parseArray(schedule.getDevice_ids(), Integer.class);
         List<CourseDeviceEntity> courseDevices = new ArrayList<>();
-        devices.forEach(o -> courseDevices.add(new CourseDeviceEntity(id, Integer.valueOf(o))));
+        devices.forEach(o -> courseDevices.add(new CourseDeviceEntity(id, o)));
         courseDeviceMapper.insertBatch(courseDevices);
 
         return new ReturnInfo();

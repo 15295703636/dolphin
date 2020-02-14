@@ -14,8 +14,20 @@ import java.util.List;
  * @Date 2020/2/12 17:57
  **/
 @Data
-@ApiModel(value ="")
+@ApiModel(value ="端数组存储")
 public class ScheduleArrayBean extends ScheduleEntity {
     @ApiModelProperty(value = "端ID")
     private List<Integer> deviceIds;
+
+    @ApiModelProperty(value = "用户ID")
+    private List<Integer> userIds;
+
+    @ApiModelProperty(value = "现在开会标志 true开会")
+    private boolean new_start;
+
+    @ApiModelProperty(value = "持续时长—小时")
+    private Integer duration_hour;
+
+    @ApiModelProperty(value = "持续时长—分钟")
+    private Integer duration_minute;
 }
