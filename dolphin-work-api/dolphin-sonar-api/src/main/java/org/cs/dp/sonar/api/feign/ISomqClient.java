@@ -12,5 +12,5 @@ public interface ISomqClient {
     String API_PREFIX = "/somq";
 
     @GetMapping(API_PREFIX+"/receivemsg")
-    ReturnInfo receiveMsg(@RequestParam String msg);
+    ReturnInfo receiveMsg(@RequestParam(name = "msg") String msg);
 }

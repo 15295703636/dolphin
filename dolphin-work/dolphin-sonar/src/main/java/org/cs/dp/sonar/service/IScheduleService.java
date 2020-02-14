@@ -21,4 +21,6 @@ public interface IScheduleService {
     ReturnInfo editSchedule(ScheduleArrayBean param);
 
     ReturnInfo getSchedule(RequestPage<SplitPageInfo, GetScheduleBean> param);
+
+    ReturnInfo getById(Integer id);
 }

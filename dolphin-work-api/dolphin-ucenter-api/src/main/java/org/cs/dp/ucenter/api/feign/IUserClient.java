@@ -17,9 +17,9 @@ public interface IUserClient {
     String API_PREFIX_LOG = "/log";
 
     @GetMapping(API_PREFIX + "/selectUserByOrg")
-    ReturnInfo selectUserByOrg(@RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "10") Integer rows,
-                               @RequestParam Integer org_id);
+    ReturnInfo selectUserByOrg(@RequestParam(defaultValue = "1", name = "page") Integer page,
+                               @RequestParam(defaultValue = "10", name = "rows") Integer rows,
+                               @RequestParam(name = "org_id") Integer org_id);
 
     @PostMapping(API_PREFIX_LOG + "/add")
     ReturnInfo allLog(@RequestBody LogEntity param);

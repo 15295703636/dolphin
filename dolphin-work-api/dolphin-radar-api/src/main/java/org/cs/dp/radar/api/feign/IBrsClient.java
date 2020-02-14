@@ -15,27 +15,29 @@ public interface IBrsClient {
 
 
     @GetMapping(API_PREFIX+"/sendmsg")
-    ReturnInfo sendmsg(@RequestParam String msg, @RequestParam String method);
+    ReturnInfo sendmsg(@RequestParam(name = "msg") String msg, @RequestParam(name = "method") String method);
     @GetMapping(API_PREFIX+"/sendmsgtopic")
-    ReturnInfo sendmsgtopic(@RequestParam String msg, @RequestParam String method,@RequestParam String queue);
+    ReturnInfo sendmsgtopic(@RequestParam(name = "msg") String msg,
+                            @RequestParam(name = "method") String method,
+                            @RequestParam(name = "queue") String queue);
 
     @GetMapping(API_PREFIX+"/login")
-    ReturnInfo login(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo login(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
 
     @GetMapping(API_PREFIX+"/starttask")
-    ReturnInfo startTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo startTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/stoptask")
-    ReturnInfo stopTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo stopTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/querytask")
-    ReturnInfo queryTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo queryTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/deletetask")
-    ReturnInfo deleteTaskTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo deleteTaskTask(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/uploadfile")
-    ReturnInfo uploadFile(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo uploadFile(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/uploadthum")
-    ReturnInfo uploadThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo uploadThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
     @GetMapping(API_PREFIX+"/catthum")
-    ReturnInfo catThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue);
+    ReturnInfo catThumbnail(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue);
 
 
 }

@@ -74,4 +74,12 @@ public class IScheduleServiceImpl implements IScheduleService {
         });
         return new ReturnInfo(splitPageInfo, resList);
     }
+
+    @Override
+    public ReturnInfo getById(Integer id) {
+        GetScheduleBean getSchedule = new GetScheduleBean();
+        getSchedule.setId(id);
+        List<ScheduleArrayBean> resList = (List<ScheduleArrayBean>) scheduleMapper.selectByCondition(getSchedule);
+        return new ReturnInfo(resList.get(0));
+    }
 }

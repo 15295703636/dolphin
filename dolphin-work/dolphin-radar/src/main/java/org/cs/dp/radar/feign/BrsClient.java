@@ -21,20 +21,22 @@ public class BrsClient implements IBrsClient {
 
     @Override
     @GetMapping(API_PREFIX+"/sendmsg")
-    public ReturnInfo sendmsg(@RequestParam String msg,@RequestParam String method) {
+    public ReturnInfo sendmsg(@RequestParam(name = "msg") String msg,@RequestParam(name = "method") String method) {
         System.out.println("brs="+msg);
         return iBrsService.sendmsg(msg,method);
     }
 
     @Override
     @GetMapping(API_PREFIX+"/sendmsgtopic")
-    public ReturnInfo sendmsgtopic(@RequestParam String msg,@RequestParam String method,@RequestParam String queue) {
+    public ReturnInfo sendmsgtopic(@RequestParam(name = "msg") String msg,
+                                   @RequestParam(name = "method") String method,
+                                   @RequestParam(name = "queue") String queue) {
         return iBrsService.sendmsgtopic(msg,method,queue);
     }
 
     @Override
     @GetMapping(API_PREFIX+"/login")
-    public ReturnInfo login(@RequestBody BssTaskReq bssTaskReq,@RequestParam String queue) {
+    public ReturnInfo login(@RequestBody BssTaskReq bssTaskReq,@RequestParam(name = "queue") String queue) {
         return iBrsService.login(bssTaskReq, queue);
     }
 

@@ -71,7 +71,7 @@ public class IMruClientFallBack implements IMruClient {
     }
 
     @Override
-    public ReturnInfo startLiveStreaming(String confId, RestLiveStreamingReq restLiveStreamingReq, String token, String url) {
+    public ReturnInfo startLiveStreaming(RestLiveStreamingReq restLiveStreamingReq,String confId,  String token, String url) {
         return null;
     }
 
@@ -81,7 +81,7 @@ public class IMruClientFallBack implements IMruClient {
     }
 
     @Override
-    public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
+    public ReturnInfo muteMultipleParties(List<String> peers,String confId, boolean muteAudio,  String token, String url) {
         return null;
     }
 

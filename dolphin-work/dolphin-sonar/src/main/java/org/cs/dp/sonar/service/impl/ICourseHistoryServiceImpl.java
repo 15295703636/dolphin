@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.sonar.domain.GetCourseHistoryReqBean;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.service.ICourseHistoryService;
@@ -43,10 +45,11 @@ public class ICourseHistoryServiceImpl implements ICourseHistoryService {
     }
 
     @Override
-    public ReturnInfo getCourseHistory(RequestPage<SplitPageInfo, Object> param) {
+    public ReturnInfo getCourseHistory(RequestPage<SplitPageInfo, GetCourseHistoryReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CourseHistoryEntity> resList = courseHistoryMapper.selectByCondition();
+        param.getInfo().setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+        List<CourseHistoryEntity> resList = courseHistoryMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

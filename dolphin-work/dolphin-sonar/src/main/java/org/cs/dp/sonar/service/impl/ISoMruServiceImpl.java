@@ -12,8 +12,6 @@ import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +20,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
+@SuppressWarnings("all")
 public class ISoMruServiceImpl implements ISoMruService {
     @Autowired
     IMruClient iMruClient;
@@ -192,7 +191,7 @@ public class ISoMruServiceImpl implements ISoMruService {
 
     @Override
     public ReturnInfo startLiveStreaming(String confId, RestLiveStreamingReq restLiveStreamingReq, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.startLiveStreaming(confId, restLiveStreamingReq, token, url);
+        ReturnInfo returnInfo = iMruClient.startLiveStreaming(restLiveStreamingReq, confId, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if(returnInfo.getReturnCode()== MessageCode.COMMON_SUCCEED_FLAG){
             Map restConf = JSON.parseObject(s, Map.class);
@@ -220,7 +219,7 @@ public class ISoMruServiceImpl implements ISoMruService {
 
     @Override
     public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.muteMultipleParties(confId, muteAudio, peers, token, url);
+        ReturnInfo returnInfo = iMruClient.muteMultipleParties(peers, confId, muteAudio, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if(returnInfo.getReturnCode()== MessageCode.COMMON_SUCCEED_FLAG){
             Map restConf = JSON.parseObject(s, Map.class);
