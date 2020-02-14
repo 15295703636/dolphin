@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * @ClassName ScheduleController
  * @Description 日程管理
@@ -35,8 +37,8 @@ public class ScheduleController {
 
     @PostMapping("del")
     @ApiOperation(value = "删除日程配置管理", notes = "日程配置管理")
-    public ReturnInfo delSchedule(@RequestBody Integer id) {
-        return iScheduleService.delSchedule(id);
+    public ReturnInfo delSchedule(@RequestBody Map<String, Integer> param) {
+        return iScheduleService.delSchedule(param.get("id"));
     }
 
     @PostMapping("edit")
@@ -49,6 +51,12 @@ public class ScheduleController {
     @ApiOperation(value = "查询日程配置管理", notes = "日程配置管理")
     public ReturnInfo getSchedule(@RequestBody RequestPage<SplitPageInfo, GetScheduleBean> param) {
         return iScheduleService.getSchedule(param);
+    }
+
+    @PostMapping("getById")
+    @ApiOperation(value = "根据id查询日程", notes = "日程配置管理")
+    public ReturnInfo getById(@RequestBody Map<String, Integer> param) {
+        return iScheduleService.getById(param.get("id"));
     }
 
 }

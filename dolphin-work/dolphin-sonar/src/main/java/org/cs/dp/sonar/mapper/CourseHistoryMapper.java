@@ -1,5 +1,6 @@
 package org.cs.dp.sonar.mapper;
 
+import org.cs.dp.sonar.domain.GetCourseHistoryReqBean;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -16,7 +17,7 @@ public interface CourseHistoryMapper {
 
     CourseHistoryEntity selectByPrimaryKey(Integer id);
 
-    List<CourseHistoryEntity> selectByCondition();
+    List<CourseHistoryEntity> selectByCondition(GetCourseHistoryReqBean param);
 
     int updateByPrimaryKeySelective(CourseHistoryEntity record);
 
