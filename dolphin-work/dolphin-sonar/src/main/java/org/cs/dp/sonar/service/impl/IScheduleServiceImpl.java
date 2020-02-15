@@ -77,9 +77,12 @@ public class IScheduleServiceImpl implements IScheduleService {
 
     @Override
     public ReturnInfo getById(Integer id) {
-        GetScheduleBean getSchedule = new GetScheduleBean();
-        getSchedule.setId(id);
-        List<ScheduleArrayBean> resList = (List<ScheduleArrayBean>) scheduleMapper.selectByCondition(getSchedule);
-        return new ReturnInfo(resList.get(0));
+        ScheduleArrayBean res = scheduleMapper.selectById(id);
+        String duration[] = res.getDuration().split(",");
+        res.setDeviceIds(JSONArray.parseArray(res.getDevice_ids(), Integer.class));
+        res.setUserIds(JSONArray.parseArray(res.getUser_ids(), Integer.class));
+        res.setDuration_hour(Integer.valueOf(duration[0]));
+        res.setDuration_minute(Integer.valueOf(duration[1]));
+        return new ReturnInfo(res);
     }
 }

@@ -28,7 +28,16 @@
     type, isLive, isRecord, resolving_power, bandwidth, org_id, create_time, update_time, 
     create_user_id,teacher_name
   </sql>
-    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetScheduleBean" resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
+
+    <select id="selectById" resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
+        select
+        <include refid="Base_Column_List"/>
+        from schedule
+        where id = #{id}
+    </select>
+
+    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetScheduleBean"
+            resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
         select
         <include refid="Base_Column_List"/>
         from schedule

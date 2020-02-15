@@ -49,6 +49,13 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 预约会议
+     * @param restConfReq
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo startConference(RestConfReq restConfReq, String token, String url) {
         ReturnInfo returnInfo = iMruClient.startConference(restConfReq, token, url);
@@ -63,6 +70,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 获取会议列表
+     * @param token
+     * @param url
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public ReturnInfo getConferences(String token, String url, String startTime, String endTime) {
         ReturnInfo returnInfo = iMruClient.getConferences(token, url, startTime, endTime);
@@ -77,6 +92,13 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 结束会议
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo stopConference(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.stopConference(confId, token, url);
@@ -217,6 +239,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 静音、取消静音部分终端
+     * @param confId
+     * @param muteAudio
+     * @param peers
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
         ReturnInfo returnInfo = iMruClient.muteMultipleParties(peers, confId, muteAudio, token, url);

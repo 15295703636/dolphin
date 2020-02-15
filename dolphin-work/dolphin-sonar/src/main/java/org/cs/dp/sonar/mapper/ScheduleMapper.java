@@ -1,6 +1,8 @@
 package org.cs.dp.sonar.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.cs.dp.sonar.domain.GetScheduleBean;
+import org.cs.dp.sonar.domain.ScheduleArrayBean;
 import org.cs.dp.sonar.domain.entity.ScheduleEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,6 +16,8 @@ public interface ScheduleMapper<T> {
     int insertSelective(ScheduleEntity record);
 
     List<T> selectByCondition(GetScheduleBean param);
+
+    ScheduleArrayBean selectById(@Param(value = "id") Integer id);
 
     int updateByPrimaryKeySelective(ScheduleEntity record);
 }
