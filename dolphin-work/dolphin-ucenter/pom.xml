@@ -115,6 +115,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.cs</groupId>
+            <artifactId>dolphin-radar-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!--生成代码脚本包-->
     </dependencies>
 
