@@ -25,7 +25,7 @@ public interface IUserService {
 
     ReturnInfo checkUserInfo(String user_name,Integer id);
 
-    ReturnInfo add(AddUserBean record,boolean isAuto);
+    ReturnInfo add(AddUserBean record,boolean isAuto) throws BaseException;
 
     ReturnInfo del(List<Integer> userIds);
 

@@ -13,10 +13,9 @@ import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
-import org.cs.dolphin.common.utils.Constants;
-import org.cs.dolphin.common.utils.DateUtil;
-import org.cs.dolphin.common.utils.MD5Util;
-import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dolphin.common.utils.*;
+import org.cs.dp.radar.api.entity.RestOrgUserReq;
+import org.cs.dp.radar.api.entity.RestUser;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
@@ -26,14 +25,17 @@ import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.mapper.UserOrgMapper;
+import org.cs.dp.ucenter.service.ISoMruService;
 import org.cs.dp.ucenter.service.ISuperUserService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,8 @@ public class IUserServiceImpl implements IUserService {
     private UserOrgMapper userOrgMapper;
     @Autowired
     private ISuperUserService iSuperUserService;
+    @Autowired
+    private ISoMruService iSoMruService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -68,7 +72,7 @@ public class IUserServiceImpl implements IUserService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_NO_EXIST_MSG);
         }
         //判断用户名密码是否正确
-        if (!user.getUser_pwd().equals(param.getPassWord())) {
+        if (!MD5Util.MD5(user.getUser_pwd()).equals(param.getPassWord())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
         }
         //用户名密码校验通过，根据用户名生成token，存入redis，并返回调用端
@@ -123,7 +127,7 @@ public class IUserServiceImpl implements IUserService {
             if (StringUtils.isEmpty(param.getUser_pwd())) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_NULL_MSG);
             }
-            if (!param.getUser_pwd().equals(userEntity.getUser_pwd())) {
+            if (!param.getUser_pwd().equals(MD5Util.MD5(userEntity.getUser_pwd()))) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
             }
         }
@@ -153,7 +157,8 @@ public class IUserServiceImpl implements IUserService {
      * @return
      */
     @Override
-    public ReturnInfo add(AddUserBean record, boolean isAuto) {
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
+    public ReturnInfo add(AddUserBean record, boolean isAuto) throws BaseException {
         if (null != userMapper.selectByUserName(record.getUser_name())) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
         }
@@ -163,7 +168,35 @@ public class IUserServiceImpl implements IUserService {
             //用户组织关系维护
             userOrgMapper.insertSelective(new UserOrgEntity(null, record.getOrg_id(), record.getUser_id()));
         }
-        return new ReturnInfo();
+        ReturnInfo res = new ReturnInfo();
+        /*try {
+            res = addYSX(record);
+        } catch (Exception e) {
+            log.error("调用云视讯服务异常", e);
+            throw new BaseException(e.getMessage(), "调用云视讯服务异常");
+        }*/
+        return res;
+    }
+
+    private ReturnInfo addYSX(AddUserBean record) throws NoSuchAlgorithmException {
+        RestOrgUserReq restOrgUserReq = new RestOrgUserReq();
+        restOrgUserReq.setCellphone(record.getUser_tel());
+        restOrgUserReq.setDisplayName(record.getUser_qname());
+        restOrgUserReq.setEmail(record.getUser_email());
+        restOrgUserReq.setName(record.getUser_name());
+        restOrgUserReq.setPassword(SHA1Util.sha1(record.getUser_pwd()));
+        restOrgUserReq.setRole("USER");
+        restOrgUserReq.setDescription("测试");
+        //restOrgUserReq.setDeptId(30);
+        ReturnInfo res = iSoMruService.getService(iSoMruService.ADDUSER_NAME, restOrgUserReq);
+
+        if (MessageCode.COMMON_SUCCEED_FLAG == res.getReturnCode()) {
+            RestUser restUser = (RestUser) res.getReturnData();
+            UserEntity userEntity = new UserEntity();
+            userEntity.setYsx_id(restUser.getId());
+            userMapper.updateByPrimaryKeySelective(userEntity);
+        }
+        return res;
     }
 
     @Override
