@@ -26,7 +26,7 @@ public class Constant {
 
 
     //组织提示信息
-    public static final String COMMON_ID_CARD = "未选择组织!";
+    public static final String COMMON_ID_CARD = "身份证信息错误!";
 
     /**
      * 租户提示信息
