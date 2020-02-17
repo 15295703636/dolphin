@@ -38,9 +38,11 @@
         ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
         WHERE ischild != 0) or org_id = #{org_id})
         <if test="name != null">
-            name like  concat('%',#{name},'%')
+            and name like  concat('%',#{name},'%')
         </if>
-
+        <if test="course_type != null">
+            and type =  #{course_type}
+        </if>
     </select>
 
     <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
