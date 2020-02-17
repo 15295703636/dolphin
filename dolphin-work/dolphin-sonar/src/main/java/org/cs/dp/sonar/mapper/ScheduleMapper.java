@@ -15,7 +15,7 @@ public interface ScheduleMapper<T> {
 
     int insertSelective(ScheduleEntity record);
 
-    List<T> selectByCondition(GetScheduleBean param);
+    List<T> selectByCondition(@Param(value = "param")GetScheduleBean param);
 
     ScheduleArrayBean selectById(@Param(value = "id") Integer id);
 

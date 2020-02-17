@@ -19,6 +19,12 @@ public class ScheduleArrayBean extends ScheduleEntity {
     @ApiModelProperty(value = "端ID")
     private List<Integer> deviceIds;
 
+    @ApiModelProperty(value = "主讲端名称")
+    private String deviceName;
+
+    @ApiModelProperty(value = "远程端名称")
+    private List<String> deviceNames;
+
     @ApiModelProperty(value = "用户ID")
     private List<Integer> userIds;
 
