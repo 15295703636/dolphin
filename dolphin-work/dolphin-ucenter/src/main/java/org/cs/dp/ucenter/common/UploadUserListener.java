@@ -6,9 +6,8 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
-import org.cs.dp.ucenter.service.ISuperUserService;
 import org.cs.dp.ucenter.service.IUserService;
 
 /**
@@ -42,7 +41,12 @@ public class UploadUserListener extends AnalysisEventListener<AddUserBean> {
     @Override
     public void invoke(AddUserBean data, AnalysisContext context) {
         log.info("解析到一条数据:{}", JSON.toJSONString(data));
-        ReturnInfo returnInfo = iUserService.add(data, false);
+        ReturnInfo returnInfo = null;
+        try {
+            returnInfo = iUserService.add(data, false);
+        } catch (BaseException e) {
+            e.printStackTrace();
+        }
         log.info("写入返回结果：{}", JSON.toJSONString(returnInfo));
     }
 

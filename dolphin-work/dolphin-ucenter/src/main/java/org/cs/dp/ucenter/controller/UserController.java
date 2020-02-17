@@ -64,7 +64,7 @@ public class UserController {
     @ParamValid
     @PostMapping("add")
     @ApiOperation(value = "添加用户信息", notes = "用户信息")
-    public ReturnInfo add(@Validated @RequestBody AddUserBean param, BindingResult result) {
+    public ReturnInfo add(@Validated @RequestBody AddUserBean param, BindingResult result) throws BaseException {
         return iUserService.add(param, false);
     }
 
