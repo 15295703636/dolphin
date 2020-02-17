@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @ClassName GetAppSchBean
  * @Description 查看预约日程入参
@@ -28,6 +30,12 @@ public class GetScheduleBean {
 
     @ApiModelProperty(value = "租户ID", hidden = true)
     private Integer customer_id;
+
+    @ApiModelProperty(value = "设备id", hidden = true)
+    private List deviceIds;
+
+    @ApiModelProperty(value = "日程名称,端名称")
+    private String name;
 
     public GetScheduleBean() {
     }
