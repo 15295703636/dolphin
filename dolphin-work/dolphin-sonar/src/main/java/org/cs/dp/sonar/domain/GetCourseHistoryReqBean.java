@@ -22,4 +22,7 @@ public class GetCourseHistoryReqBean {
 
     @ApiModelProperty(value = "租户id", hidden = true)
     private Integer customer_id;
+
+    @ApiModelProperty(value = "日程类型 1会议 2互动 3录播")
+    private Integer course_type;
 }
