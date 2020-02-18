@@ -13,9 +13,9 @@ import java.util.List;
 public interface ScheduleMapper<T> {
     int deleteByPrimaryKey(Integer id);
 
-    int insertSelective(ScheduleEntity record);
+    int insertSelective(ScheduleArrayBean record);
 
-    List<T> selectByCondition(@Param(value = "param")GetScheduleBean param);
+    List<T> selectByCondition(@Param(value = "param") GetScheduleBean param);
 
     ScheduleArrayBean selectById(@Param(value = "id") Integer id);
 

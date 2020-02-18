@@ -30,20 +30,63 @@
   </sql>
 
     <select id="selectById" resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
-        select
-        <include refid="Base_Column_List"/>
-        from schedule
-        where id = #{id}
+        SELECT
+        sc.id,
+        sc.name,
+        sc.state,
+        sc.date,
+        sc.duration,
+        sc.user_number,
+        sc.device_id,
+        sc.device_number,
+        sc.type,
+        sc.isLive,
+        sc.isRecord,
+        sc.resolving_power,
+        sc.bandwidth,
+        sc.org_id,
+        sc.create_time,
+        sc.update_time,
+        sc.create_user_id,
+        sc.teacher_name,
+        ( SELECT group_concat(device_id SEPARATOR ",") FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=1) AS device_ids,
+        ( SELECT group_concat(device_id SEPARATOR ",") FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=1) AS user_ids,
+        ( SELECT group_concat(d.`name` SEPARATOR ",") FROM device d WHERE d.device_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=1) ) AS device_names,
+        ( SELECT group_concat(u.user_name SEPARATOR ",") FROM user u WHERE u.user_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=1)  ) AS user_names,
+        ( SELECT d.name FROM device d WHERE d.device_id = (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=0) ) AS deviceName,
+        ( SELECT u.user_name FROM user u WHERE u.user_id = (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=0)  ) AS userName
+        FROM `schedule` sc where sc.id = #{id}
     </select>
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetScheduleBean"
             resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
-        select
-        <include refid="Base_Column_List"/>
-        from schedule
-        where (org_id in(
-        SELECT org_id FROM ( SELECT
-        t1.org_id,
+        SELECT
+        sc.id,
+        sc.name,
+        sc.state,
+        sc.date,
+        sc.duration,
+        sc.user_number,
+        sc.device_id,
+        sc.device_number,
+        sc.type,
+        sc.isLive,
+        sc.isRecord,
+        sc.resolving_power,
+        sc.bandwidth,
+        sc.org_id,
+        sc.create_time,
+        sc.update_time,
+        sc.create_user_id,
+        sc.teacher_name,
+        ( SELECT group_concat(device_id SEPARATOR ",") FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=1) AS device_ids,
+        ( SELECT group_concat(device_id SEPARATOR ",") FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=1) AS user_ids,
+        ( SELECT group_concat(d.`name` SEPARATOR ",") FROM device d WHERE d.device_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=1) ) AS device_names,
+        ( SELECT group_concat(u.user_name SEPARATOR ",") FROM user u WHERE u.user_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=1)  ) AS user_names,
+        ( SELECT d.name FROM device d WHERE d.device_id = (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=0) ) AS deviceName,
+        ( SELECT u.user_name FROM user u WHERE u.user_id = (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=0)  ) AS userName
+        FROM `schedule` sc WHERE  (org_id in(
+        SELECT org_id FROM ( SELECT t1.org_id,
         IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
         FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{param.customer_id}
         ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{param.org_id}) t2 ) t3
@@ -55,16 +98,14 @@
             and type = #{param.type,jdbcType=INTEGER}
         </if>
         <if test="param.name != null and param.name !=''">
-            and name like concat('%',#{param.name,jdbcType=INTEGER},'%')
+            and (id IN (select schedule_id from schedule_device where device_id in(
+            select u.user_id as id FROM user u where u.user_name like CONCAT('%',#{param.name},'%')
+            union ALL
+            select d.device_id as id FROM device d where d.name like CONCAT('%',#{param.name},'%')
+            )) or name like concat('%',#{param.name},'%'))
         </if>
         <if test="param.date != null and param.date !=''">
             and date like CONCAT(#{param.date},'%')
-        </if>
-        <if test="param.deviceIds != null and param.deviceIds.size > 0">
-            AND
-            <foreach collection="param.deviceIds" index="index" open="(" separator=" or " close=")">
-                device_ids like concat('%',#{param.deviceIds[${index}]},'%')
-            </foreach>
         </if>
         order by create_time
     </select>
@@ -73,7 +114,7 @@
     delete from schedule
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.ScheduleEntity" keyProperty="id">
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.ScheduleArrayBean" useGeneratedKeys="true" keyProperty="id">
         insert into schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

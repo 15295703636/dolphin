@@ -28,14 +28,23 @@ public class ScheduleEntity {
     @ApiModelProperty(value = "日程人数")
     private Integer user_number;
 
-    @ApiModelProperty(value = "用户Id")
-    private String user_ids;
-
     @ApiModelProperty(value = "日程主场(端ID)")
     private Integer device_id;
 
-    @ApiModelProperty(value = "参会者端ID")
+    @ApiModelProperty(value = "日程主场(软终端ID)")
+    private Integer user_id;
+
+    @ApiModelProperty(value = "用户Id", hidden = true)
+    private String user_ids;
+
+    @ApiModelProperty(value = "参会者端ID", hidden = true)
     private String device_ids;
+
+    @ApiModelProperty(value = "用户名称")
+    private String user_names;
+
+    @ApiModelProperty(value = "端名称", hidden = true)
+    private String device_names;
 
     @ApiModelProperty(value = "终端数量")
     private Integer device_number;
