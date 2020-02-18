@@ -14,22 +14,22 @@
     <sql id="Base_Column_List">
     id, name, teacher_name, course_type, create_time, create_user, duration,customer_id
   </sql>
-    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByCon" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from video_demand
         where customer_id = #{customer_id}
-        <if test="name != null">
+        <if test="name != null and name != ''">
             and ( name like concat('%',#{name},'%')
-            or teacher_namelike concat('%',#{name},'%')
-            or course_type = #{name})
+            or teacher_name like concat('%',#{name},'%')
+            or type_str = #{name})
         </if>
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from video_demand
         where id in
         <foreach collection="ids" item="item" open="(" separator="," close=")">
-            #{id,jdbcType=INTEGER}
+            #{item,jdbcType=INTEGER}
         </foreach>
     </delete>
 
