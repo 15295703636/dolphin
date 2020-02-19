@@ -59,4 +59,10 @@ public class ScheduleController {
         return iScheduleService.getById(param.get("id"));
     }
 
+    @PostMapping("start")
+    @ApiOperation(value = "开会", notes = "日程配置管理")
+    public ReturnInfo start(@RequestBody Map<String,Integer> param) {
+        return iScheduleService.start(param.get("id"));
+    }
+
 }

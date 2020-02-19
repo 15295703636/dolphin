@@ -2,10 +2,7 @@ package org.cs.dp.sonar.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,8 +45,8 @@ public class CourseDeviceController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询日程-端管理", notes = "日程-端管理")
-    public ReturnInfo getCourseDevice(@RequestBody Map param) {
-        return new ReturnInfo();//iCourseDeviceService.getCourseDevice(param);
+    public ReturnInfo getCourseDevice(@RequestBody Map<String,Integer> param) {
+        return iCourseDeviceService.getCourseDevice(param.get("id"));
     }
 
     @PostMapping("mute")

@@ -1,19 +1,16 @@
 package org.cs.dp.sonar.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.DateUtil;
-import org.cs.dp.sonar.domain.GetCourseReqBean;
-import org.cs.dp.sonar.domain.GetScheduleBean;
-import org.cs.dp.sonar.domain.UserConditionBean;
-import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
-import org.cs.dp.sonar.domain.entity.ScheduleEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
 import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.mapper.CourseMapper;
@@ -21,9 +18,10 @@ import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName ICourseServiceImpl
@@ -61,13 +59,31 @@ public class ICourseServiceImpl implements ICourseService {
 
         UserConditionBean userConditionBean = new UserConditionBean();
         GetCourseReqBean getCourseReqBean = param.getInfo();
-        if (null != getCourseReqBean.getOrgId() && 0 != getCourseReqBean.getOrgId()) {
-            userConditionBean.setOrgId(getCourseReqBean.getOrgId());
+        getCourseReqBean.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+        if (null != getCourseReqBean.getOrg_id() && 0 != getCourseReqBean.getOrg_id()) {
+            userConditionBean.setOrgId(getCourseReqBean.getOrg_id());
         }
-        List<CourseEntity> resList = courseMapper.selectByCondition(getCourseReqBean, userConditionBean);
+        List<CourseEntity> resList = courseMapper.selectByCondition(getCourseReqBean);
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
+    }
+
+    public ReturnInfo getById(Integer id) {
+
+        CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
+
+        List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
+        if (courseDevices.size() > 0) {
+            CourseResBean courseRes = courseDevices.stream().filter(
+                    e -> e.getIsMain().equals(0)).collect(Collectors.toList()).get(0);
+            courseDevices.remove(courseRes);
+
+            courseGetByIdRes.setRemote(courseDevices);
+            courseGetByIdRes.setMain(courseRes);
+        }
+
+        return new ReturnInfo(courseGetByIdRes);
     }
 
     /**
@@ -78,29 +94,26 @@ public class ICourseServiceImpl implements ICourseService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo startSchedule(Integer id) {
-        List<ScheduleEntity> resList = scheduleMapper.selectByCondition(new GetScheduleBean(id));
-        if (0 == resList.size()) {
+        ScheduleArrayBean res = scheduleMapper.selectById(id);
+        if (null == res) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "选择日程不能在!");
         }
-        ScheduleEntity schedule = resList.get(0);
 
         String currentDateStr = DateUtil.getCurrentDate(DateUtil.YMDHMS);
         CourseEntity course = new CourseEntity(
-                null, schedule.getName(), schedule.getType(), schedule.getState(), schedule.getTeacher_name(),
-                schedule.getIsRecord(), schedule.getIsLive(), null, null, null, null,
+                null, res.getName(), res.getType(), res.getState(), res.getTeacher_name(),
+                res.getIsRecord(), res.getIsLive(), null, null, null, null,
                 null, null, null, currentDateStr, null, currentDateStr, null, null,
-                null, null, schedule.getResolving_power(), null, null, null, null, 1000,
-                null, schedule.getDevice_id(), schedule.getDevice_ids(), null, null,
+                null, null, res.getResolving_power(), null, null, null, null, 1000,
+                null, res.getDevice_id(), res.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
-                schedule.getBandwidth());
+                res.getBandwidth());
         courseMapper.insertSelective(course);
 
         //端控制
-        List<Integer> devices = JSONArray.parseArray(schedule.getDevice_ids(), Integer.class);
-        List<CourseDeviceEntity> courseDevices = new ArrayList<>();
-        devices.forEach(o -> courseDevices.add(new CourseDeviceEntity(id, o)));
-        courseDeviceMapper.insertBatch(courseDevices);
+        courseDeviceMapper.insertByScheduleId(course.getCourse_id(), id);
 
         return new ReturnInfo();
     }

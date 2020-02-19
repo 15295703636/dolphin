@@ -5,6 +5,7 @@ import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.cs.dp.sonar.domain.entity.UserEntity;
 
 import java.util.List;
 
@@ -14,7 +15,10 @@ public interface DeviceMapper {
 
     int insertSelective(DeviceEntity record);
 
-    DeviceEntity selectByPrimaryKey(Integer device_id);
+    List<DeviceEntity> selectByPrimaryKey(@Param(value = "ids") List<Integer> ids);
+
+    //TODO 更改调用ucnter模块
+    List<UserEntity> selectUserById(@Param(value = "ids") List<Integer> ids);
 
     List<DeviceEntity> selectByCondition(GetDeviceBean param);
 

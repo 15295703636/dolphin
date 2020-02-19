@@ -8,10 +8,13 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
+import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.ScheduleArrayBean;
+import org.cs.dp.sonar.domain.ScheduleOneDeviceBean;
 import org.cs.dp.sonar.domain.entity.ScheduleDeviceEntity;
+import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleDeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
@@ -38,10 +41,16 @@ public class IScheduleServiceImpl implements IScheduleService {
     private ICourseService iCourseService;
     @Autowired
     private ScheduleDeviceMapper scheduleDeviceMapper;
+    @Autowired
+    private DeviceMapper deviceMapper;
 
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo addSchedule(ScheduleArrayBean param) {
+
+        if (null == param.getDevice_id() && null == param.getUser_id()) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "请选择");
+        }
 
         param.setDevice_ids(JSONArray.toJSONString(param.getDeviceIds()));
         param.setUser_ids(JSONArray.toJSONString(param.getUserIds()));
@@ -63,10 +72,15 @@ public class IScheduleServiceImpl implements IScheduleService {
         if (isEdit) {
             //处理端/软终端数据
             List<ScheduleDeviceEntity> scheduleDevices = new ArrayList<>();
-            param.getDeviceIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 1)));
-            scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 0));
-            param.getUserIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 1)));
-            scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 0));
+            if (!param.getType().equals(3)) {
+                param.getDeviceIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 1)));
+                param.getUserIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 1)));
+            }
+            if (null != param.getDevice_id()) {
+                scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 0));
+            } else {
+                scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 0));
+            }
             scheduleDeviceMapper.insertBatch(scheduleDevices);
         }
     }
@@ -123,23 +137,39 @@ public class IScheduleServiceImpl implements IScheduleService {
 
     @Override
     public ReturnInfo getById(Integer id) {
-        ScheduleArrayBean res = scheduleMapper.selectById(id);
-        if (null != res.getDevice_ids()) {
-            res.setDeviceIds(JSONArray.parseArray("[" + res.getDevice_ids() + "]", Integer.class));
+        ScheduleOneDeviceBean res = scheduleMapper.selectById(id);
+        if (!res.getType().equals(3)) {
+            if (null != res.getDevice_ids()) {
+                res.setDeviceIds(JSONArray.parseArray("[" + res.getDevice_ids() + "]", Integer.class));
+                res.setDevices(
+                        deviceMapper.selectByPrimaryKey(res.getDeviceIds())
+                );
+            }
+            if (null != res.getUser_ids()) {
+                res.setUserIds(JSONArray.parseArray("[" + res.getUser_ids() + "]", Integer.class));
+                res.setUsers(
+                        deviceMapper.selectUserById(res.getUserIds())
+                );
+            }
+            if (null != res.getDevice_names()) {
+                res.setDeviceNames(JSONArray.parseArray("[\"" + res.getDevice_names().replace(",", "\",\"") + "\"]", String.class));
+            }
+            if (null != res.getUser_names()) {
+                res.setUserNames(JSONArray.parseArray("[\"" + res.getUser_names().replace(",", "\",\"") + "\"]", String.class));
+            }
+
         }
-        if (null != res.getUser_ids()) {
-            res.setUserIds(JSONArray.parseArray("[" + res.getUser_ids() + "]", Integer.class));
-        }
-        if (null != res.getDevice_names()) {
-            res.setDeviceNames(JSONArray.parseArray("[\"" + res.getDevice_names().replace(",", "\",\"") + "\"]", String.class));
-        }
-        if (null != res.getUser_names()) {
-            res.setUserNames(JSONArray.parseArray("[\"" + res.getUser_names().replace(",", "\",\"") + "\"]", String.class));
-        }
+
+
         String duration[] = res.getDuration().split(",");
         res.setDuration_hour(Integer.valueOf(duration[0]));
         res.setDuration_minute(Integer.valueOf(duration[1]));
 
         return new ReturnInfo(res);
+    }
+
+    @Override
+    public ReturnInfo start(Integer id) {
+        return iCourseService.startSchedule(id);
     }
 }

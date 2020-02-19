@@ -32,7 +32,7 @@
 
     <select id="selectByUserName" parameterType="java.lang.String" resultType="org.cs.dolphin.common.base.UserInfo">
        SELECT uo.*,org.customer_id,org.org_type ,org.org_preid FROM
-        (SELECT u.*, o.org_id FROM USER u
+        (SELECT u.*, o.org_id FROM user u
             LEFT JOIN user2org o ON u.user_id = o.user_id where user_name = #{userName,jdbcType=INTEGER}
         ) uo
         LEFT JOIN organization org ON org.org_id = uo.org_id
@@ -221,7 +221,7 @@
         u.user_code,
         u.user_desc,
         (select org_id from user2org u2o where u2o.user_id = u.user_id) org_id
-        FROM USER u
+        FROM user u
         where user_id in(
         select user_id from user2org uo where uo.org_id in(
         SELECT org_id FROM

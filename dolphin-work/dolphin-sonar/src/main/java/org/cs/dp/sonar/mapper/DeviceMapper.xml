@@ -24,11 +24,25 @@
         select
         <include refid="Base_Column_List"/>
         from device
-        where device_id = #{device_id,jdbcType=INTEGER}
+        where device_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectUserById" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.entity.UserEntity">
+        select
+        user_id, user_name, user_qname, user_email, role_id, user_desc, user_statu, user_number, user_tel, user_code, create_time
+        from user where user_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
     </select>
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetDeviceBean" resultMap="BaseResultMap">
-        SELECT  <include refid="Base_Column_List"/> FROM device d WHERE (d.org_id IN (
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM device d WHERE (d.org_id IN (
         SELECT org_id FROM ( SELECT
         t1.org_id,
         IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
@@ -40,9 +54,10 @@
         </if>
         <if test="name != null">
             and (
-                name like CONCAT('%',#{name},'%')
-                or
-                call_protocol = (select code_id from code where table_name = 'deviceAgreement' and code_name like CONCAT('%',#{name},'%'))
+            name like CONCAT('%',#{name},'%')
+            or
+            call_protocol = (select code_id from code where table_name = 'deviceAgreement' and code_name like
+            CONCAT('%',#{name},'%'))
             )
         </if>
         <if test="device_type != null">

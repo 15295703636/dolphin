@@ -29,12 +29,6 @@ public class CourseController {
     @Autowired
     private ICourseService iCourseService;
 
-    @PostMapping("start")
-    @ApiOperation(value = "添加(开始)进行中日程管理", notes = "进行中日程管理")
-    public ReturnInfo startSchedule(@RequestBody Map param){
-        return new ReturnInfo();//iCourseService.startSchedule(param);
-    }
-
     @PostMapping("del")
     @ApiOperation(value = "删除进行中日程管理", notes = "进行中日程管理")
     public ReturnInfo delCourse(@RequestBody Map param){
@@ -48,9 +42,15 @@ public class CourseController {
     }
 
     @PostMapping("get")
-    @ApiOperation(value = "查询进行中日程管理", notes = "进行中日程管理")
+    @ApiOperation(value = "查询进行中日程列表", notes = "进行中日程管理")
     public ReturnInfo getCourse(@RequestBody RequestPage<SplitPageInfo, GetCourseReqBean> param){
         return iCourseService.getCourse(param);
+    }
+
+    @PostMapping("getById")
+    @ApiOperation(value = "查询日程ID查询教学列表数据", notes = "进行中日程管理")
+    public ReturnInfo getById(@RequestBody Map<String,Integer> param){
+        return iCourseService.getById(param.get("id"));
     }
 
     @PostMapping("liveBro")

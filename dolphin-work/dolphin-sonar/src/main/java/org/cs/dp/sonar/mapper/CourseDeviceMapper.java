@@ -1,5 +1,7 @@
 package org.cs.dp.sonar.mapper;
 
+import org.apache.ibatis.annotations.Param;
+import org.cs.dp.sonar.domain.CourseResBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,13 +16,14 @@ public interface CourseDeviceMapper {
 
     int insertBatch(List<CourseDeviceEntity> param);
 
+    int insertByScheduleId(@Param(value = "courseId") Integer courseId, @Param(value = "scheduleId") Integer scheduleId);
+
     int insertSelective(CourseDeviceEntity record);
 
-    CourseDeviceEntity selectByPrimaryKey(Integer id);;
+    CourseDeviceEntity selectByPrimaryKey(Integer id);
 
-    List<CourseDeviceEntity> selectByCondition();
+    List<CourseResBean> selectByCourseId(Integer id);
 
     int updateByPrimaryKeySelective(CourseDeviceEntity record);
 
-    int updateByPrimaryKey(CourseDeviceEntity record);
 }

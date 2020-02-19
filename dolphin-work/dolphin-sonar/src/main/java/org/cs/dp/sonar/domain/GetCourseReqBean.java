@@ -13,10 +13,15 @@ import lombok.Data;
 @Data
 @ApiModel(value = "查询进行中日程管理")
 public class GetCourseReqBean {
-
     @ApiModelProperty(value = "组织ID")
-    private Integer orgId;
+    private Integer org_id;
 
-    @ApiModelProperty(value = "输入条件")
-    private String content;
+    @ApiModelProperty(value = "类型 1会议 2互动 3录播")
+    private String type;
+
+    @ApiModelProperty(value = "租户ID", hidden = true)
+    private Integer customer_id;
+
+    @ApiModelProperty(value = "日程名称,主讲姓名，端名称")
+    private String name;
 }

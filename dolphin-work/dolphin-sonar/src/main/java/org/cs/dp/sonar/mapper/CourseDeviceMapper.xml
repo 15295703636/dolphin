@@ -11,17 +11,29 @@
     <sql id="Base_Column_List">
     id, course_id, device_id,type,state
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from course_device
-        where id = #{id,jdbcType=INTEGER}
+    <select id="selectByCourseId" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.CourseResBean">
+        SELECT
+            cd.device_id,
+	        cd.device_type as isDevice,
+	        cd.state,
+	        cd.type as isMain,
+            d.name,
+            d.device_type as type,
+            u.user_id,
+            u.role_id,
+            u.user_qname,
+            u.user_name
+        FROM
+            course_device cd
+        LEFT JOIN device d ON cd.device_id = d.device_id
+        LEFT JOIN user u ON cd.device_id = u.user_id
+        where course_id = #{id,jdbcType=INTEGER}
     </select>
 
-    <select id="selectByCondition" resultMap="BaseResultMap">
+    <select id="selectByScheduleId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from course_device
+        from course_device where course_id = #{id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -37,8 +49,10 @@
         </foreach>
     </insert>
 
-    <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
-
+    <insert id="insertByScheduleId" parameterType="java.lang.Integer">
+        insert into course_device(course_id,device_id,device_type,type)
+            SELECT #{courseId}, device_id, type as device_type,state as type FROM schedule_device
+            WHERE schedule_id = #{scheduleId}
     </insert>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">

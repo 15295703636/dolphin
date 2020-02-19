@@ -19,7 +19,7 @@ public interface ICourseDeviceService {
 
     ReturnInfo editCourseDevice(CourseDeviceEntity param);
 
-    ReturnInfo getCourseDevice(RequestPage<SplitPageInfo, Object> param);
+    ReturnInfo getCourseDevice(Integer id);
 
     ReturnInfo mute(Integer id);
 
