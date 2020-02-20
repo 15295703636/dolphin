@@ -51,7 +51,7 @@ public class ServerController {
     }*/
     @PostMapping("get")
     @ApiOperation(value = "查询服务管理", notes = "服务管理")
-    public ReturnInfo getServer() {
-        return iServerService.getServer(null);
+    public ReturnInfo getServer(@RequestBody Map<String, Integer> param) {
+        return iServerService.getServer(param.get("type"));
     }
 }

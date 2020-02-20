@@ -44,6 +44,7 @@
         <result property="live_password" column="live_password" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="bandwidth" column="bandwidth" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="local_name" column="local_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
@@ -57,14 +58,29 @@
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id,
         from course
         where course_id = #{course_id,jdbcType=INTEGER}
     </select>
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetCourseReqBean" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id,
+        (select d.name as name  from device d where d.device_id=local_classroomId
+        UNION ALL
+        select u.user_name as name from user u where u.user_id=local_classroomId ) local_name
         from course
         where (org_id in(
         SELECT org_id FROM ( SELECT t1.org_id,
@@ -217,6 +233,9 @@
             <if test="bandwidth != null">
                 bandwidth,
             </if>
+            <if test="org_id !=null">
+                org_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="course_id != null">
@@ -335,6 +354,9 @@
             </if>
             <if test="bandwidth != null">
                 #{bandwidth,jdbcType=INTEGER},
+            </if>
+            <if test="org_id !=null">
+                #{org_id,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

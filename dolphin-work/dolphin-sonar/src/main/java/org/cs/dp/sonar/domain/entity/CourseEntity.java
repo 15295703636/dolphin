@@ -93,6 +93,9 @@ public class CourseEntity {
     @ApiModelProperty(value = "主教室id")
     private Integer local_classroomId;
 
+    @ApiModelProperty(value = "主教室名称")
+    private String local_name;
+
     @ApiModelProperty(value = "远程教室id")
     private String remote_classroomIds;
 
