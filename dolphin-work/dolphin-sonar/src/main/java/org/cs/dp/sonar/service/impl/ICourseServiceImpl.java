@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,12 +75,17 @@ public class ICourseServiceImpl implements ICourseService {
         CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
 
         List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
+        List<CourseResBean> courseDeviceList = new ArrayList<>();
         if (courseDevices.size() > 0) {
             CourseResBean courseRes = courseDevices.stream().filter(
                     e -> e.getIsMain().equals(0)).collect(Collectors.toList()).get(0);
             courseDevices.remove(courseRes);
-
-            courseGetByIdRes.setRemote(courseDevices);
+            courseDevices.forEach(e -> {
+                if (!e.getDevice_id().equals(courseRes.getDevice_id())) {
+                    courseDeviceList.add(e);
+                }
+            });
+            courseGetByIdRes.setRemote(courseDeviceList);
             courseGetByIdRes.setMain(courseRes);
         }
 
@@ -109,7 +115,7 @@ public class ICourseServiceImpl implements ICourseService {
                 null, null, res.getResolving_power(), null, null, null, null, 1000,
                 null, res.getDevice_id(), res.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
-                res.getBandwidth());
+                res.getBandwidth(), res.getOrg_id());
         courseMapper.insertSelective(course);
 
         //端控制

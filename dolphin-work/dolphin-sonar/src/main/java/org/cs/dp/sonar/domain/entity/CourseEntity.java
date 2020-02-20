@@ -144,7 +144,8 @@ public class CourseEntity {
                         String course_fontType, String teacher_fontType,
                         String label_fontType, String label_fontColor,
                         String label_wordSize, String forward_state,
-                        String live_password, Integer bandwidth) {
+                        String live_password, Integer bandwidth,
+                        Integer org_id) {
         this.course_id = course_id;
         this.course_name = course_name;
         this.course_type = course_type;
@@ -184,5 +185,6 @@ public class CourseEntity {
         this.forward_state = forward_state;
         this.live_password = live_password;
         this.bandwidth = bandwidth;
+        this.org_id = org_id;
     }
 }
