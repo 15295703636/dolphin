@@ -118,6 +118,7 @@ public class ICustomerServiceImpl implements ICustomerService {
         user.setOrg_id(orgs.get(0).getOrg_id());
         user.setUser_name(param.getUser_name());
         user.setUser_pwd(param.getUser_pwd());
+        user.setCustomer_id(orgs.get(0).getCustomer_id());
         ReturnInfo returnInfo = iUserService.add(user, true);
         if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
             throw new BaseException(null, returnInfo.getMsg());

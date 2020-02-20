@@ -1,19 +1,27 @@
 package org.cs.dp.ucenter.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.base.UserInfo;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.SHA1Util;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.feign.IMruClient;
+import org.cs.dp.sonar.api.feign.IServerClient;
 import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.domain.entity.CustomerEntity;
+import org.cs.dp.ucenter.mapper.CustomerMapper;
+import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +37,40 @@ public class ISoMruServiceImpl implements ISoMruService {
 
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private IServerClient iServerClient;
 
     @Override
-    public ReturnInfo getService(String method, Object obj) {
+    public ReturnInfo getService(String method, Integer customer_id, Object obj) {
         log.info("云视讯：入参：{}——{}", method, JSONObject.toJSONString(obj));
         ReturnInfo returnInfo = null;
         RestWebLoginReq restWebLoginReq = new RestWebLoginReq();
-        restWebLoginReq.setAccount("bizconf");
-        restWebLoginReq.setPassword("biz@conf");
+
+        String url = null;
+
+        Map reqPamra = new HashMap();
+        reqPamra.put("type", 15);
+        ReturnInfo serverInfo = iServerClient.getServer(reqPamra);
+        if (serverInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+            url = (String) JSONArray.parseArray(JSONObject.toJSONString(serverInfo.getReturnData()), Map.class).get(0).get("server_ip");
+        }
+        UserInfo userInfo = ThreadLocalUserInfoUtil.get();
+        //如果当前用户信息为空，说明是添加租户时添加的系统管理员，用维护的云视讯用户，密码
+        if (null != userInfo.getUser_type()) {
+            CustomerEntity customer = customerMapper.selectByPrimaryKey(customer_id);
+            restWebLoginReq.setAccount(customer.getOut_name());
+            restWebLoginReq.setPassword(customer.getOut_pwd());
+        } else {
+            restWebLoginReq.setAccount(userInfo.getUser_name());
+            restWebLoginReq.setPassword(
+                    userMapper.selectByUserName(userInfo.getUser_name()).getUser_pwd()
+            );
+        }
         restWebLoginReq.setIntranet("true");
-        String url = "39.107.143.46";//TODO 查询数据获取云视讯地址
 
         returnInfo = login(restWebLoginReq, url);
 

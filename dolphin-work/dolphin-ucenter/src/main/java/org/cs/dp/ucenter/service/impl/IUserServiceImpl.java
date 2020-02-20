@@ -168,35 +168,48 @@ public class IUserServiceImpl implements IUserService {
             //用户组织关系维护
             userOrgMapper.insertSelective(new UserOrgEntity(null, record.getOrg_id(), record.getUser_id()));
         }
-        ReturnInfo res = new ReturnInfo();
-        /*try {
-            res = addYSX(record);
+        try {
+            if (!addYSX(record)) {
+                throw new BaseException("业务异常", "调用云视讯服务异常");
+            }
         } catch (Exception e) {
             log.error("调用云视讯服务异常", e);
             throw new BaseException(e.getMessage(), "调用云视讯服务异常");
-        }*/
-        return res;
+        }
+        return new ReturnInfo();
     }
 
-    private ReturnInfo addYSX(AddUserBean record) throws NoSuchAlgorithmException {
+    private boolean addYSX(AddUserBean record) throws NoSuchAlgorithmException {
+        boolean result = false;
         RestOrgUserReq restOrgUserReq = new RestOrgUserReq();
-        restOrgUserReq.setCellphone(record.getUser_tel());
-        restOrgUserReq.setDisplayName(record.getUser_qname());
-        restOrgUserReq.setEmail(record.getUser_email());
         restOrgUserReq.setName(record.getUser_name());
         restOrgUserReq.setPassword(SHA1Util.sha1(record.getUser_pwd()));
-        restOrgUserReq.setRole("USER");
-        restOrgUserReq.setDescription("测试");
+        UserInfo userInfo = ThreadLocalUserInfoUtil.get();
+        //添加租户管理员
+        if (null != userInfo.getUser_type()) {
+            restOrgUserReq.setCellphone("18211111119");
+            restOrgUserReq.setDisplayName("testZh");
+            restOrgUserReq.setEmail("testAdmin9@qq.com");
+            restOrgUserReq.setRole("USER");//TODO 租户管理员是什么角色
+        } else {
+            restOrgUserReq.setCellphone(record.getUser_tel());
+            restOrgUserReq.setDisplayName(record.getUser_qname());
+            restOrgUserReq.setEmail(record.getUser_email());
+            restOrgUserReq.setRole("USER");
+        }
+        restOrgUserReq.setDescription("testZh");
         //restOrgUserReq.setDeptId(30);
-        ReturnInfo res = iSoMruService.getService(iSoMruService.ADDUSER_NAME, restOrgUserReq);
+        ReturnInfo res = iSoMruService.getService(iSoMruService.ADDUSER_NAME, record.getCustomer_id(), restOrgUserReq);
 
         if (MessageCode.COMMON_SUCCEED_FLAG == res.getReturnCode()) {
             RestUser restUser = (RestUser) res.getReturnData();
             UserEntity userEntity = new UserEntity();
             userEntity.setYsx_id(restUser.getId());
+            userEntity.setUser_id(record.getUser_id());
             userMapper.updateByPrimaryKeySelective(userEntity);
+            result = true;
         }
-        return res;
+        return result;
     }
 
     @Override

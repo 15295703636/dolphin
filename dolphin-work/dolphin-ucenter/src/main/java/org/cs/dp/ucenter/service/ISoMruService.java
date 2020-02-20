@@ -7,11 +7,11 @@ import org.cs.dp.radar.api.entity.RestWebLoginReq;
 import java.util.List;
 
 public interface ISoMruService<T> {
-    String ADDUSER_NAME =  "addUser";
-    String UPDATEUSER_NAME =  "updateUser";
-    String GETUSERS_NAME =  "getUsers";
-    String GETUSER_NAME =  "getUser";
-    String DELETEUSER_NAME =  "deleteUser";
+    String ADDUSER_NAME = "addUser";
+    String UPDATEUSER_NAME = "updateUser";
+    String GETUSERS_NAME = "getUsers";
+    String GETUSER_NAME = "getUser";
+    String DELETEUSER_NAME = "deleteUser";
 
     ReturnInfo login(RestWebLoginReq restWebLoginReq, String url);
 
@@ -25,5 +25,5 @@ public interface ISoMruService<T> {
 
     ReturnInfo deleteUser(String token, String url, String userId);
 
-    ReturnInfo getService(String method, T obj);
+    ReturnInfo getService(String method, Integer customer_id, T obj);
 }

@@ -2,22 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.CustomerMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CustomerEntity">
-        <constructor>
-            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_start_time" javaType="java.util.Date" jdbcType="DATE"/>
-            <arg column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
-            <arg column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        </constructor>
+        <result property ="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_id" column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="manage_id" column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_name" column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="customer_type" column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_start_time" column="customer_start_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property ="customer_end_time" column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property ="customer_status" column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="out_name" column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="out_pwd" column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="customer_address" column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="remark" column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="create_time" column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property ="update_time" column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, customer_id, manage_id, customer_name, customer_type,customer_start_time, customer_end_time, customer_status,

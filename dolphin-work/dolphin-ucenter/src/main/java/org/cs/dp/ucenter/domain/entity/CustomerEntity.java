@@ -46,7 +46,7 @@ public class CustomerEntity {
     private String customer_end_time_str;
 
     @ApiModelProperty(value = "租户状态")
-    private String customer_status;
+    private Integer customer_status;
 
     @ApiModelProperty(value = "云视讯登录名")
     private String out_name;
@@ -65,37 +65,5 @@ public class CustomerEntity {
 
     @ApiModelProperty(value = "更新时间")
     private Date update_time;
-
-    public CustomerEntity() {
-    }
-
-    public CustomerEntity(Integer id, String customer_id, Integer manage_id,
-                          String customer_name, Integer customer_type, Date customer_end_time,
-                          Date customer_start_time,
-                          String customer_status, String out_name, String out_pwd,
-                          String customer_address, String remark,
-                          Date create_time, Date update_time,
-                          String user_qname, String user_tel, String customer_start_time_str,
-                          String customer_end_time_str
-    ) {
-        this.id = id;
-        this.user_qname = user_qname;
-        this.user_tel = user_tel;
-        this.customer_id = customer_id;
-        this.manage_id = manage_id;
-        this.customer_name = customer_name;
-        this.customer_type = customer_type;
-        this.customer_end_time = customer_end_time;
-        this.customer_status = customer_status;
-        this.out_name = out_name;
-        this.out_pwd = out_pwd;
-        this.customer_address = customer_address;
-        this.remark = remark;
-        this.create_time = create_time;
-        this.update_time = update_time;
-        this.customer_start_time = customer_start_time;
-        this.customer_end_time_str = customer_end_time_str;
-        this.customer_start_time_str = customer_start_time_str;
-    }
 
 }

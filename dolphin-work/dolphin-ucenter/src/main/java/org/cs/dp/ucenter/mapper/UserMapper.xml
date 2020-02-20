@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.UserMapper">
     <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.UserEntity">
-        <id column="user_id" property ="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property ="user_name" column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_qname" column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_pwd" column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_email" column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="role_id" column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property ="user_statu" column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
-        <result property ="user_number" column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_tel" column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_code" column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property ="user_desc" column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        <id column="user_id" property="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="user_name" column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_qname" column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_pwd" column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_email" column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="role_id" column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="user_statu" column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        <result property="user_number" column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_tel" column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_code" column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_desc" column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number,
@@ -178,6 +178,9 @@
             </if>
             <if test="user_desc != null">
                 user_desc = #{user_desc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ysx_id !=null">
+                ysx_id = #{ysx_id,jdbcType=LONGVARCHAR},
             </if>
         </set>
         where user_id = #{user_id,jdbcType=INTEGER}
