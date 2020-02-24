@@ -14,6 +14,7 @@ import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.feign.IMruClient;
 import org.cs.dp.sonar.api.feign.IServerClient;
 import org.cs.dp.ucenter.common.RedisUtil;
+import org.cs.dp.ucenter.domain.SoMruUpUserReqBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.mapper.CustomerMapper;
 import org.cs.dp.ucenter.mapper.UserMapper;
@@ -52,12 +53,14 @@ public class ISoMruServiceImpl implements ISoMruService {
 
         String url = null;
 
+        //获取云视讯服务地址
         Map reqPamra = new HashMap();
         reqPamra.put("type", 15);
         ReturnInfo serverInfo = iServerClient.getServer(reqPamra);
         if (serverInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
             url = (String) JSONArray.parseArray(JSONObject.toJSONString(serverInfo.getReturnData()), Map.class).get(0).get("server_ip");
         }
+
         UserInfo userInfo = ThreadLocalUserInfoUtil.get();
         //如果当前用户信息为空，说明是添加租户时添加的系统管理员，用维护的云视讯用户，密码
         if (null != userInfo.getUser_type()) {
@@ -80,13 +83,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         if (ADDUSER_NAME.equals(method)) {
             returnInfo = addUser(token, url, (RestOrgUserReq) obj);
         } else if (UPDATEUSER_NAME.equals(method)) {
-            returnInfo = updateUser(token, url, "userId", new RestOrgUserReq());
+            SoMruUpUserReqBean soMruUpUserReqBean = (SoMruUpUserReqBean) obj;
+            returnInfo = updateUser(token, url, String.valueOf(soMruUpUserReqBean.getId()), soMruUpUserReqBean);
         } else if (GETUSERS_NAME.equals(method)) {
             returnInfo = getUsers(token, url);
         } else if (GETUSER_NAME.equals(method)) {
             returnInfo = getUser(token, url, "userId");
         } else if (DELETEUSER_NAME.equals(method)) {
-            returnInfo = deleteUser(token, url, "userId");
+            returnInfo = deleteUser(token, url, String.valueOf(obj));
         }
         log.info("云视讯：返回：{}——{}", method, JSONObject.toJSONString(returnInfo));
         return returnInfo;

@@ -22,7 +22,7 @@ public class ScheduleArrayBean extends ScheduleEntity {
     @ApiModelProperty(value = "远程端ID")
     private List<Integer> deviceIds;
 
-    @ApiModelProperty(value = "远程端名称")
+    @ApiModelProperty(value = "远程端名称(新增修改忽略)")
     private List<String> deviceNames;
 
     @ApiModelProperty(value = "主讲软终端名称(新增修改忽略)")

@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,20 +120,20 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ReturnInfo resetPwd(ResetPwdBean param) {
-        UserEntity userEntity = userMapper.selectByPrimaryKey(param.getUser_id());
-        if (null == userEntity) {
+        List<UserEntity> userEntity = userMapper.selectByPrimaryKey(Arrays.asList(param.getUser_id()));
+        if (0 == userEntity.size()) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_NO_EXIST_MSG);
         }
         if (null == ThreadLocalUserInfoUtil.get().getUser_type()) {
             if (StringUtils.isEmpty(param.getUser_pwd())) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_NULL_MSG);
             }
-            if (!param.getUser_pwd().equals(MD5Util.MD5(userEntity.getUser_pwd()))) {
+            if (!param.getUser_pwd().equals(MD5Util.MD5(userEntity.get(0).getUser_pwd()))) {
                 return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PWD_ERROR_MSG);
             }
         }
-        userEntity.setUser_pwd(param.getNew_pwd());
-        int res = userMapper.updateByPrimaryKeySelective(userEntity);
+        userEntity.get(0).setUser_pwd(param.getNew_pwd());
+        int res = userMapper.updateByPrimaryKeySelective(userEntity.get(0));
         return new ReturnInfo();
     }
 
@@ -217,14 +218,49 @@ public class IUserServiceImpl implements IUserService {
         if (0 == userIds.size()) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "请选择用户!");
         }
+
+        if (dealDel(userIds).length() > 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "调用云视讯接口异常!");
+        }
+
         userMapper.deleteByPrimaryKey(userIds);
         return new ReturnInfo();
     }
 
+    //删除云视讯用户
+    private String dealDel(List<Integer> userIds) {
+        List<UserEntity> users = userMapper.selectByPrimaryKey(userIds);
+        String result = "";
+        users.forEach(e -> {
+            ReturnInfo returnInfo = iSoMruService.getService(iSoMruService.DELETEUSER_NAME, null, e.getYsx_id());
+            if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                result.concat("false");
+                return;
+            }
+        });
+        return result;
+    }
+
     @Override
     public ReturnInfo edit(UserEntity record) {
+        dealEdit(record);
         userMapper.updateByPrimaryKeySelective(record);
         return new ReturnInfo();
+    }
+
+    //更新云视讯用户
+    private void dealEdit(UserEntity record) {
+        SoMruUpUserReqBean soMruUpUserReq = new SoMruUpUserReqBean();
+        soMruUpUserReq.setId(userMapper.selectByPrimaryKey(Arrays.asList(record.getUser_id())).get(0).getYsx_id());
+        soMruUpUserReq.setCellphone(record.getUser_tel());
+        soMruUpUserReq.setEmail(record.getUser_email());
+        soMruUpUserReq.setPassword(record.getUser_pwd());
+        soMruUpUserReq.setDisplayName(record.getUser_qname());
+        soMruUpUserReq.setName(record.getUser_name());
+        soMruUpUserReq.setRole("USER");
+        soMruUpUserReq.setStatus(0);
+
+        iSoMruService.getService(iSoMruService.UPDATEUSER_NAME, null, soMruUpUserReq);
     }
 
     @Override

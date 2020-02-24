@@ -17,7 +17,7 @@ public interface UserMapper {
 
     int insertSelective(UserEntity record);
 
-    UserEntity selectByPrimaryKey(Integer user_id);
+    List<UserEntity> selectByPrimaryKey(@Param(value = "userIds") List<Integer> userIds);
 
     UserInfo selectByUserName(String userName);
 

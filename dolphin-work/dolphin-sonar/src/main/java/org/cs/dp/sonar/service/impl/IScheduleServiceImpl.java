@@ -73,8 +73,12 @@ public class IScheduleServiceImpl implements IScheduleService {
             //处理端/软终端数据
             List<ScheduleDeviceEntity> scheduleDevices = new ArrayList<>();
             if (!param.getType().equals(3)) {
-                param.getDeviceIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 1)));
-                param.getUserIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 1)));
+                if (null != param.getDeviceIds()) {
+                    param.getDeviceIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 1)));
+                }
+                if (null != param.getUserIds()) {
+                    param.getUserIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 1)));
+                }
             }
             if (null != param.getDevice_id()) {
                 scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 0));

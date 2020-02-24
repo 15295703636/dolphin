@@ -13,10 +13,11 @@
         <result property="user_tel" column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="user_code" column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="user_desc" column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number,
-    user_tel, user_code
+    user_tel, user_code,ysx_id
   </sql>
     <sql id="Blob_Column_List">
     user_desc
@@ -27,7 +28,10 @@
         ,
         <include refid="Blob_Column_List"/>
         from user
-        where user_id = #{user_id,jdbcType=INTEGER}
+        where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
     <select id="selectByUserName" parameterType="java.lang.String" resultType="org.cs.dolphin.common.base.UserInfo">
