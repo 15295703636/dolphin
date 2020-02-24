@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.SonarMapper">
+    <select id="getServerByType" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.entity.ServerEntity">
+        select
+        server_id, server_name, server_type, server_ip, server_port, server_nat_ip, server_nat_port,
+        server_desc, serial_number
+        from server
+        where server_type = #{server_type}
+    </select>
+</mapper>

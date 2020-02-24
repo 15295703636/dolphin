@@ -16,7 +16,9 @@ import org.cs.dp.sonar.api.feign.IServerClient;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.domain.SoMruUpUserReqBean;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
+import org.cs.dp.ucenter.domain.entity.ServerEntity;
 import org.cs.dp.ucenter.mapper.CustomerMapper;
+import org.cs.dp.ucenter.mapper.SonarMapper;
 import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private IServerClient iServerClient;
+    private SonarMapper sonarMapper;
 
     @Override
     public ReturnInfo getService(String method, Integer customer_id, Object obj) {
@@ -54,11 +56,9 @@ public class ISoMruServiceImpl implements ISoMruService {
         String url = null;
 
         //获取云视讯服务地址
-        Map reqPamra = new HashMap();
-        reqPamra.put("type", 15);
-        ReturnInfo serverInfo = iServerClient.getServer(reqPamra);
-        if (serverInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
-            url = (String) JSONArray.parseArray(JSONObject.toJSONString(serverInfo.getReturnData()), Map.class).get(0).get("server_ip");
+        ServerEntity server = sonarMapper.getServerByType(15);
+        if (null == server) {
+            url = server.getServer_ip();
         }
 
         UserInfo userInfo = ThreadLocalUserInfoUtil.get();
@@ -80,17 +80,22 @@ public class ISoMruServiceImpl implements ISoMruService {
         RestWebLoginResp restWebLoginResp = (RestWebLoginResp) returnInfo.getReturnData();
         String token = restWebLoginResp.getToken();
 
-        if (ADDUSER_NAME.equals(method)) {
-            returnInfo = addUser(token, url, (RestOrgUserReq) obj);
-        } else if (UPDATEUSER_NAME.equals(method)) {
-            SoMruUpUserReqBean soMruUpUserReqBean = (SoMruUpUserReqBean) obj;
-            returnInfo = updateUser(token, url, String.valueOf(soMruUpUserReqBean.getId()), soMruUpUserReqBean);
-        } else if (GETUSERS_NAME.equals(method)) {
-            returnInfo = getUsers(token, url);
-        } else if (GETUSER_NAME.equals(method)) {
-            returnInfo = getUser(token, url, "userId");
-        } else if (DELETEUSER_NAME.equals(method)) {
-            returnInfo = deleteUser(token, url, String.valueOf(obj));
+        switch (method) {
+            case ADDUSER_NAME:
+                returnInfo = addUser(token, url, (RestOrgUserReq) obj);
+                break;
+            case UPDATEUSER_NAME:
+                SoMruUpUserReqBean soMruUpUserReqBean = (SoMruUpUserReqBean) obj;
+                returnInfo = updateUser(token, url, String.valueOf(soMruUpUserReqBean.getId()), soMruUpUserReqBean);
+                break;
+            case GETUSERS_NAME:
+                returnInfo = getUsers(token, url);
+                break;
+            case DELETEUSER_NAME:
+                returnInfo = deleteUser(token, url, String.valueOf(obj));
+                break;
+            default:
+                returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
         }
         log.info("云视讯：返回：{}——{}", method, JSONObject.toJSONString(returnInfo));
         return returnInfo;
