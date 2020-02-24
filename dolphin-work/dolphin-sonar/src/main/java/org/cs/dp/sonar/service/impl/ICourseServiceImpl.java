@@ -101,7 +101,7 @@ public class ICourseServiceImpl implements ICourseService {
      */
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
-    public ReturnInfo startSchedule(Integer id) {
+    public ReturnInfo startSchedule(Integer id, Long ysx_id) {
         ScheduleArrayBean res = scheduleMapper.selectById(id);
         if (null == res) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "选择日程不能在!");
@@ -115,7 +115,7 @@ public class ICourseServiceImpl implements ICourseService {
                 null, null, res.getResolving_power(), null, null, null, null, 1000,
                 null, res.getDevice_id(), res.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
-                res.getBandwidth(), res.getOrg_id());
+                res.getBandwidth(), res.getOrg_id(),ysx_id);
         courseMapper.insertSelective(course);
 
         //端控制

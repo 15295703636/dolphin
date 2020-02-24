@@ -82,7 +82,7 @@ public class IUserServiceImpl implements IUserService {
         try {
             redisUtil.set(RedisConstant.USER_TOKEN_PATH + token, JSON.toJSONString(user), RedisConstant.USER_TOKEN_EXPIRED_TIME);
         } catch (Exception e) {
-            throw new BaseException(null, Constant.EXCEPTION_MSG);
+            throw new BaseException("redis服务异常", Constant.EXCEPTION_MSG);
         }
         /*ReturnInfo returnInfo = iSuperUserService.getSuperUserByUserId(user.getUser_id());
         if(MessageCode.COMMON_SUCCEED_FLAG == returnInfo.getReturnCode()){

@@ -21,5 +21,5 @@ public interface IServerService {
 
     //ReturnInfo getServer(RequestPage<SplitPageInfo, Object> param);
 
-    ReturnInfo getServer(Integer server_type);
+    ReturnInfo getServerUrl(Integer server_type);
 }

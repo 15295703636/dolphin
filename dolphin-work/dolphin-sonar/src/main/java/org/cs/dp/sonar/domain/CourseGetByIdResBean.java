@@ -20,6 +20,7 @@ public class CourseGetByIdResBean {
     private Integer course_id;
     private String course_type;
     private String course_name;
+    private Long ysx_id;
 
     @ApiModelProperty(value = "开始时间")
     private String start_time;

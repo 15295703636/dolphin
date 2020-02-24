@@ -14,7 +14,7 @@ import org.cs.dp.sonar.domain.entity.CourseEntity;
  **/
 public interface ICourseService {
 
-    ReturnInfo startSchedule(Integer id);
+    ReturnInfo startSchedule(Integer id,Long ysx_id);
 
     ReturnInfo delCourse(Integer param);
 

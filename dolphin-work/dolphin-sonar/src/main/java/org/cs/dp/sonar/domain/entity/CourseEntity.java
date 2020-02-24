@@ -129,6 +129,9 @@ public class CourseEntity {
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;
 
+    @ApiModelProperty(value = "会议开启云视讯返回的ID")
+    private Long ysx_id;
+
     public CourseEntity() {
     }
 
@@ -148,7 +151,8 @@ public class CourseEntity {
                         String label_fontType, String label_fontColor,
                         String label_wordSize, String forward_state,
                         String live_password, Integer bandwidth,
-                        Integer org_id) {
+                        Integer org_id,
+                        Long ysx_id) {
         this.course_id = course_id;
         this.course_name = course_name;
         this.course_type = course_type;
@@ -189,5 +193,6 @@ public class CourseEntity {
         this.live_password = live_password;
         this.bandwidth = bandwidth;
         this.org_id = org_id;
+        this.ysx_id = ysx_id;
     }
 }

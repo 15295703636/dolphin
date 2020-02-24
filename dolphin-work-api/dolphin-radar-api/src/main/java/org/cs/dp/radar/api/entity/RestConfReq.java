@@ -4,25 +4,45 @@ import java.util.List;
 
 public class RestConfReq {
     private String name;
-    private long startTime;
-    private long duration;
-    private long lecturerEpId;
-    private long lecturerUserId;
+    //会议的开始时刻（以毫秒为单位的Unix时间戳），0表示该会议立即开始
+    private Long startTime;
+    //会议的持续时长（单位为毫秒）,建议值为3600000，即一个小时
+    private Long duration;
+    //被设置为主会场的某个终端的id
+    private Long lecturerEpId;
+    //被设置为主会场的某个用户的id
+    private Long lecturerUserId;
+    //取值见常量：会议的分屏模式
     private String layout;
+    //会议质量，"SVC"表示质量优先，"SVC_ECO"表示带宽优先，建议值为"SVC".
     private String profile;
+    //	会议密码
     private String password;
+    //会议备注
     private String description;
+    //与会终端id的列表
     private List<Long> endpointIds;
+    //与会用户id的列表
     private List<Long> userIds;
-    private long roomId;
+    //指定的云会议室的id
+    private Long roomId;
+    //最大入会方数
     private int maxPartyCount;
+    //使用随机号码作为会议号码
     private boolean useRandomNumericId;
+    //自动重拨
     private boolean redialingEnabled;
+    //录制
     private boolean recordingEnabled;
+    //取值见常量：录制/直播类型,建议值为"GW_WEBCAST".
     private String recordingProfile;
+    //取值见常量：双流分屏，建议值为"oneByOne".
     private String recordingLayout;
+    //推流地址
     private String liveStreamingUrl;
-    private long adminUserId;
+    //备选会控者的id
+    private Long adminUserId;
+    //字幕
     private RestSubtitle subtitle;
 
     public String getName() {
@@ -33,35 +53,35 @@ public class RestConfReq {
         this.name = name;
     }
 
-    public long getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public long getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 
-    public long getLecturerEpId() {
+    public Long getLecturerEpId() {
         return lecturerEpId;
     }
 
-    public void setLecturerEpId(long lecturerEpId) {
+    public void setLecturerEpId(Long lecturerEpId) {
         this.lecturerEpId = lecturerEpId;
     }
 
-    public long getLecturerUserId() {
+    public Long getLecturerUserId() {
         return lecturerUserId;
     }
 
-    public void setLecturerUserId(long lecturerUserId) {
+    public void setLecturerUserId(Long lecturerUserId) {
         this.lecturerUserId = lecturerUserId;
     }
 
@@ -113,11 +133,11 @@ public class RestConfReq {
         this.userIds = userIds;
     }
 
-    public long getRoomId() {
+    public Long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(long roomId) {
+    public void setRoomId(Long roomId) {
         this.roomId = roomId;
     }
 
@@ -177,11 +197,11 @@ public class RestConfReq {
         this.liveStreamingUrl = liveStreamingUrl;
     }
 
-    public long getAdminUserId() {
+    public Long getAdminUserId() {
         return adminUserId;
     }
 
-    public void setAdminUserId(long adminUserId) {
+    public void setAdminUserId(Long adminUserId) {
         this.adminUserId = adminUserId;
     }
 
