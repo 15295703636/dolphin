@@ -46,7 +46,7 @@ public class CustomerEntity {
     private String customer_end_time_str;
 
     @ApiModelProperty(value = "租户状态")
-    private Integer customer_status;
+    private String customer_status;
 
     @ApiModelProperty(value = "云视讯登录名")
     private String out_name;

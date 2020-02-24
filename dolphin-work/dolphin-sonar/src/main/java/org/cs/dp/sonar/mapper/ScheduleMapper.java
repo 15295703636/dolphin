@@ -20,5 +20,7 @@ public interface ScheduleMapper<T> {
 
     ScheduleOneDeviceBean selectById(@Param(value = "id") Integer id);
 
+    ScheduleOneDeviceBean getStartInfoById(@Param(value = "id") Integer id);
+
     int updateByPrimaryKeySelective(ScheduleEntity record);
 }

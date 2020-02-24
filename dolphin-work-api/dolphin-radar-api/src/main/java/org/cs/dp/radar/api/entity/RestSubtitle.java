@@ -1,7 +1,7 @@
 package org.cs.dp.radar.api.entity;
 
 public class RestSubtitle {
-    private boolean on;
+    private boolean on=false;
     private String content;
     private int displaySpeed;
     private int displayRepetitions;

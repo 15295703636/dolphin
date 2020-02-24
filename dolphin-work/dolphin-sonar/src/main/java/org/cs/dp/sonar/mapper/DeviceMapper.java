@@ -17,7 +17,7 @@ public interface DeviceMapper {
 
     List<DeviceEntity> selectByPrimaryKey(@Param(value = "ids") List<Integer> ids);
 
-    //TODO 更改调用ucnter模块
+    //
     List<UserEntity> selectUserById(@Param(value = "ids") List<Integer> ids);
 
     List<DeviceEntity> selectByCondition(GetDeviceBean param);

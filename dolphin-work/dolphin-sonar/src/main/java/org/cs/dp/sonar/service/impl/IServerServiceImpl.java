@@ -24,7 +24,7 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public ReturnInfo addServer(ServerEntity param) {
-        if (((List) getServer(param.getServer_type()).getReturnData()).size() > 0) {
+        if (((List) getServerUrl(param.getServer_type()).getReturnData()).size() > 0) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.SERVER_EXIT_MSG);
         }
         serverMapper.insertSelective(param);
@@ -39,7 +39,7 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public ReturnInfo editServer(ServerEntity param) {
-        if (((List) getServer(param.getServer_type()).getReturnData()).size() > 1) {
+        if (((List) getServerUrl(param.getServer_type()).getReturnData()).size() > 1) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.SERVER_EXIT_MSG);
         }
         serverMapper.updateByPrimaryKeySelective(param);
@@ -47,7 +47,7 @@ public class IServerServiceImpl implements IServerService {
     }
 
     @Override
-    public ReturnInfo<List<ServerEntity>> getServer(Integer server_type) {
+    public ReturnInfo<List<ServerEntity>> getServerUrl(Integer server_type) {
         List<ServerEntity> resList = serverMapper.selectAll(server_type);
         return new ReturnInfo(resList);
     }

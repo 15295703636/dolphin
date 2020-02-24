@@ -45,6 +45,7 @@
         <result property="bandwidth" column="bandwidth" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="local_name" column="local_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     </resultMap>
     <sql id="Base_Column_List">
     course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
@@ -53,18 +54,12 @@
     teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img, 
     createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType, 
     teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state, 
-    live_password, bandwidth,org_id
+    live_password, bandwidth,org_id,ysx_id
   </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
-        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
-        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
-        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
-        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
-        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
-        live_password, bandwidth,org_id,
+        <include refid="Base_Column_List"/>
         from course
         where course_id = #{course_id,jdbcType=INTEGER}
     </select>
@@ -77,8 +72,8 @@
         teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
         createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
         teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
-        live_password, bandwidth,org_id,
-        (select d.name as name  from device d where d.device_id=local_classroomId
+        live_password, bandwidth,org_id,ysx_id,
+        (select d.name as name from device d where d.device_id=local_classroomId
         UNION ALL
         select u.user_name as name from user u where u.user_id=local_classroomId ) local_name
         from course
@@ -236,6 +231,9 @@
             <if test="org_id !=null">
                 org_id,
             </if>
+            <if test="ysx_id !=null">
+                ysx_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="course_id != null">
@@ -357,6 +355,9 @@
             </if>
             <if test="org_id !=null">
                 #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="ysx_id !=null">
+                #{ysx_id},
             </if>
         </trim>
     </insert>

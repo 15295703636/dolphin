@@ -3,6 +3,7 @@ package org.cs.dp.sonar.domain.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -11,6 +12,9 @@ import java.util.Date;
 public class DeviceEntity {
     @ApiModelProperty(value = "")
     private Integer device_id;
+
+    @ApiModelProperty(value = "云视讯端ID")
+    private Long ysx_id;
 
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;

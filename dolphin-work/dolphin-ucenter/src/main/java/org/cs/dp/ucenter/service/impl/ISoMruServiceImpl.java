@@ -57,7 +57,7 @@ public class ISoMruServiceImpl implements ISoMruService {
 
         //获取云视讯服务地址
         ServerEntity server = sonarMapper.getServerByType(15);
-        if (null == server) {
+        if (null != server) {
             url = server.getServer_ip();
         }
 

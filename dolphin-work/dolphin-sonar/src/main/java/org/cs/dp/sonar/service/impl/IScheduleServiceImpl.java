@@ -9,7 +9,12 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.radar.api.entity.RestConf;
+import org.cs.dp.radar.api.entity.RestConfReq;
+import org.cs.dp.radar.api.entity.RestError;
+import org.cs.dp.radar.api.entity.RestSubtitle;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.ScheduleArrayBean;
 import org.cs.dp.sonar.domain.ScheduleOneDeviceBean;
@@ -19,6 +24,7 @@ import org.cs.dp.sonar.mapper.ScheduleDeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
 import org.cs.dp.sonar.service.IScheduleService;
+import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +49,8 @@ public class IScheduleServiceImpl implements IScheduleService {
     private ScheduleDeviceMapper scheduleDeviceMapper;
     @Autowired
     private DeviceMapper deviceMapper;
+    @Autowired
+    private ISoMruService iSoMruService;
 
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
@@ -62,7 +70,7 @@ public class IScheduleServiceImpl implements IScheduleService {
         dealDevice(param, true);
 
         if (param.isNew_start()) {
-            iCourseService.startSchedule(param.getId());
+            start(param.getId());
         }
         return new ReturnInfo();
     }
@@ -174,6 +182,65 @@ public class IScheduleServiceImpl implements IScheduleService {
 
     @Override
     public ReturnInfo start(Integer id) {
-        return iCourseService.startSchedule(id);
+        Object ysxRes[] = dealStart(id);
+        if (!(boolean) ysxRes[0]) {
+            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
+        }
+        return iCourseService.startSchedule(id,(Long)ysxRes[1]);
+    }
+
+
+    /**
+     * @param id
+     * @return
+     */
+    private Object[] dealStart(Integer id) {
+        ScheduleOneDeviceBean res = scheduleMapper.getStartInfoById(id);
+        List<Long> userIds = new ArrayList<>();
+        List<Long> deviceIds = new ArrayList<>();
+        if (!res.getType().equals(3)) {
+            if (null != res.getDevice_ids()) {
+                deviceIds = JSONArray.parseArray("[" + res.getDevice_ids() + "]", Long.class);
+            }
+            if (null != res.getUser_ids()) {
+                userIds = JSONArray.parseArray("[" + res.getUser_ids() + "]", Long.class);
+            }
+        }
+        String duration[] = res.getDuration().split(",");
+        Integer hourInt = Integer.valueOf(duration[0]);
+        Integer minuteInt = Integer.valueOf(duration[1]);
+
+        RestConfReq restConfReq = new RestConfReq();
+        restConfReq.setName(res.getName());
+        restConfReq.setStartTime(new Long(0));//DateUtil.StringToDate(res.getDate(), DateUtil.YMDHMS).getTime()
+        restConfReq.setDuration(new Integer(hourInt * 3600000 + minuteInt + 60000).longValue());
+        restConfReq.setLecturerEpId(null == res.getDevice_id() ? null : res.getDevice_id().longValue());//22172  21554
+        restConfReq.setLecturerUserId(null == res.getUser_id() ? null : res.getUser_id().longValue());
+        restConfReq.setLayout("auto");//会议的分屏模式
+        restConfReq.setProfile("SVC");//会议质量
+        restConfReq.setEndpointIds(deviceIds);
+        restConfReq.setUserIds(userIds);
+        restConfReq.setMaxPartyCount(res.getUser_number());
+        restConfReq.setRecordingLayout("oneByOne");
+        restConfReq.setSubtitle(new RestSubtitle());
+        //restConfReq.setPassword("123456");
+        //restConfReq.setDescription("测试开启会议");
+        //restConfReq.setRoomId(null);
+        //restConfReq.setUseRandomNumericId();
+        //restConfReq.setRedialingEnabled();
+        //restConfReq.setRecordingEnabled();
+        //restConfReq.setRecordingProfile();
+        //restConfReq.setLiveStreamingUrl();
+        //restConfReq.setAdminUserId();
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_START, restConfReq);
+        Object obj[] = new Object[2];
+        if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+            obj[0] = true;
+            obj[1] = ((RestConf) returnInfo.getReturnData()).getId();
+        } else {
+            obj[0] = false;
+            obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+        }
+        return obj;
     }
 }
