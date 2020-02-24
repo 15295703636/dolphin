@@ -3,10 +3,15 @@ package org.cs.dolphin.common.base;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class UserInfo {
     @ApiModelProperty(value = "ID")
     private Integer user_id;
+
+    @ApiModelProperty(value = "用户类型(只有运维人员登录字段才会有值)")
+    private Integer user_type;
 
     @ApiModelProperty(value = "用户登录名")
     private String user_name;
@@ -49,6 +54,9 @@ public class UserInfo {
 
     @ApiModelProperty(value = "组织上级类型")
     private String org_preid;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date create_time;
 
 
 }

@@ -47,6 +47,22 @@
         </if>
     </delete>
 
+    <select id="getChildIdByParentId" resultType="java.lang.Integer">
+        SELECT org_id FROM
+            ( SELECT t1.org_id,
+                IF (
+                    find_in_set(org_preid, @pids) > 0,
+                    @pids := concat(@pids, ',', org_id),
+                    0
+                ) AS ischild
+                FROM ( SELECT org_id, org_preid
+                        FROM organization t
+                        ORDER BY org_id, org_preid
+                    ) t1, ( SELECT  @pids := #{org_id} ) t2
+            ) t3
+        WHERE ischild != 0
+    </select>
+
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="org_id"
             parameterType="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
         insert into organization

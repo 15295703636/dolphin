@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +47,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo addOrg(OrganizationEntity param) {
+        param.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         organizationMapper.insertSelective(param);
         return new ReturnInfo();
     }
@@ -64,12 +66,17 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         treeNodeBean = treeNodeBean.getChild().get(0);
 
         if (null != treeNodeBean) {
-            organizationMapper.deleteByPrimaryKey(null, 20);//TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+            organizationMapper.deleteByPrimaryKey(null, ThreadLocalUserInfoUtil.get().getCustomer_id());
             OrganizationEntity org = organizationMapper.getList(new OrganizationEntity(20)).get(0);
             saveTreeOrg(Arrays.asList(treeNodeBean), org.getOrg_id());
             log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
         }
         return new ReturnInfo();
+    }
+
+    @Override
+    public void export(HttpServletResponse response) {
+        //TODO 组织导出接口
     }
 
     private static TreeNodeBean tree(Workbook wb) {
@@ -145,7 +152,7 @@ public class IOrganizationServiceImpl implements IOrganizationService {
         if (treeNodeBean.size() > 0) {
             for (TreeNodeBean item : treeNodeBean) {
                 org = new OrganizationEntity(
-                        null, item.getName(), null, periodId, 20// TODO ThreadLocalUserInfoUtil.get().getCustomer_id()
+                        null, item.getName(), null, periodId, ThreadLocalUserInfoUtil.get().getCustomer_id()
                 );
                 //插入数据库
                 organizationMapper.insertSelective(org);
@@ -166,7 +173,9 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo delOrg(List<Integer> id) {
-        organizationMapper.deleteByPrimaryKey(id, null);
+        List<Integer> childId =  organizationMapper.getChildIdByParentId(id.get(0));
+        childId.add(id.get(0));
+        organizationMapper.deleteByPrimaryKey(childId, null);
         return new ReturnInfo();
     }
 
@@ -184,7 +193,9 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ReturnInfo getOrg() {
-        return new ReturnInfo(organizationMapper.getList(null));
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+        return new ReturnInfo(organizationMapper.getList(organization));
     }
 
     @Override

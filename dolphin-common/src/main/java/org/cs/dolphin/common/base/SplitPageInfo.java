@@ -112,7 +112,7 @@ public class SplitPageInfo implements Serializable {
      * @return int 当前页码
      */
     public int getCurrPage() {
-        if (currPage == 0) {
+        if (currPage <= 0) {
             currPage = 1;
         }
         return currPage;

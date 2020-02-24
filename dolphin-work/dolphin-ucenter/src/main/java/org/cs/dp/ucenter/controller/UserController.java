@@ -4,10 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.*;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.OrgIdAndTokenBean;
-import org.cs.dp.ucenter.domain.ResetPwdBean;
-import org.cs.dp.ucenter.domain.UPBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +55,16 @@ public class UserController {
         return iUserService.resetPwd(param);
     }
 
+    @PostMapping("checkUserInfo")
+    @ApiOperation(value = "校验用户名信息", notes = "用户信息")
+    public ReturnInfo checkUserInfo(@Validated @RequestBody UserCheckNameReqBean param, BindingResult result) {
+        return iUserService.checkUserInfo(param.getUser_name(), param.getId());
+    }
+
     @ParamValid
     @PostMapping("add")
     @ApiOperation(value = "添加用户信息", notes = "用户信息")
-    public ReturnInfo add(@Validated @RequestBody AddUserBean param, BindingResult result) {
+    public ReturnInfo add(@Validated @RequestBody AddUserBean param, BindingResult result) throws BaseException {
         return iUserService.add(param, false);
     }
 
@@ -77,10 +80,16 @@ public class UserController {
         return iUserService.edit(param);
     }
 
-    @PostMapping("getUsersByOrgId")
+    /*@PostMapping("getUsersByOrgId")
     @ApiOperation(value = "组织Id查询用户列表", notes = "用户信息")
     public ReturnInfo getUsersByOrgId(@RequestBody RequestPage<SplitPageInfo, OrgIdAndTokenBean> param) {
         return iUserService.getUsersByOrgId(param);
+    }*/
+
+    @PostMapping("getUsersList")
+    @ApiOperation(value = "查询用户列表", notes = "用户信息")
+    public ReturnInfo getUsersList(@RequestBody RequestPage<SplitPageInfo, GetUserReqBean> param) {
+        return iUserService.getUsersList(param);
     }
 
     @PostMapping("upload")

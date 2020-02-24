@@ -26,4 +26,6 @@ public class Constant {
 
     public static final String WEBSOCKET_TOPIC = "groupSend";
 
+    public static final String SERVER_EXIT_MSG = "服务已存在！";
+
 }

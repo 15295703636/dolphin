@@ -2,27 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.CustomerMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CustomerEntity">
-        <constructor>
-            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_start_time" javaType="java.util.Date" jdbcType="DATE"/>
-            <arg column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
-            <arg column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="effective_time" javaType="java.lang.String" jdbcType="CHAR"/>
-            <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        </constructor>
+        <result property ="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_id" column="customer_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="manage_id" column="manage_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_name" column="customer_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="customer_type" column="customer_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="customer_start_time" column="customer_start_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property ="customer_end_time" column="customer_end_time" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property ="customer_status" column="customer_status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property ="out_name" column="out_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="out_pwd" column="out_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="customer_address" column="customer_address" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="remark" column="remark" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property ="create_time" column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property ="update_time" column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, customer_id, manage_id, customer_name, customer_type,customer_start_time, customer_end_time, customer_status,
-    out_name, out_pwd, customer_address, effective_time, remark, create_time, update_time
+    out_name, out_pwd, customer_address,  remark, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -39,25 +36,77 @@
         </foreach>
     </delete>
 
-    <select id="selectByObj" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from customer
+    <select id="selectByObj" resultType="org.cs.dp.ucenter.domain.entity.CustomerEntity">
+        SELECT
+        id,
+        customer_id,
+        suser.user_qname,
+        suser.user_tel,
+        manage_id,
+        customer_name,
+        customer_type,
+        customer_end_time,
+        out_name,
+        out_pwd,
+        customer_address,
+        customer_start_time,
+        remark,
+        cus.create_time,
+        cus.update_time,
+        (
+        CASE
+        <![CDATA[ WHEN customer_end_time > NOW() THEN '已启用'
+        WHEN customer_end_time < NOW() THEN
+        '已停用'
+        ELSE
+        '已停用'
+        END ]]>
+        ) customer_status,
+        date_format( customer_start_time, '%Y-%m-%d %H:%i:%s' ) customer_start_time_str,
+        date_format( customer_end_time, '%Y-%m-%d %H:%i:%s' ) customer_end_time_str
+        FROM customer cus
+        LEFT JOIN super_user suser ON cus.manage_id = suser.user_id
         where 1=1
         <if test="name != null and name !='' ">
             and customer_name like CONCAT('%',#{name},'%')
         </if>
+        <if test='state == "1"'>
+            and <![CDATA[ customer_end_time > NOW() ]]>
+        </if>
+        <if test='state == "2"'>
+            and <![CDATA[ customer_end_time < NOW() ]]>
+        </if>
     </select>
 
+    <select id="getCusAdminInfo" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+        SELECT
+            u.user_name,
+            u.user_pwd,
+            u.user_id
+            FROM
+                user u,
+                organization org,
+                customer cus,
+                user2org uo
+            WHERE
+                u.user_id = uo.user_id
+            AND uo.org_id = org.org_id
+            and org.customer_id = cus.id
+            AND u.role_id = 1
+            AND org.customer_id = #{id,jdbcType=INTEGER}
+    </select>
 
-    <select id="selectByManageId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByManageId" resultType="java.lang.String">
         select
-        <include refid="Base_Column_List"/>
-        from customer where and manage_id = #{manageId}
+        customer_name
+        from customer where manage_id = #{manageId}
     </select>
 
-    <select id="selectByUserNameCou" parameterType="java.lang.String" resultType="java.lang.Integer">
+    <select id="selectByUserNameCou" resultType="java.lang.Integer">
         select count(1) from customer where customer_name = #{name,jdbcType=VARCHAR}
+        <if test="id != null">
+            and id != #{id,jdbcType=INTEGER}
+        </if>
     </select>
 
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
@@ -97,9 +146,6 @@
             <if test="customer_address != null">
                 customer_address,
             </if>
-            <if test="effective_time != null">
-                effective_time,
-            </if>
             <if test="remark != null">
                 remark,
             </if>
@@ -127,10 +173,10 @@
                 #{customer_type,jdbcType=INTEGER},
             </if>
             <if test="customer_start_time != null">
-                #{customer_start_time,jdbcType=DATE}
+                #{customer_start_time,jdbcType=TIMESTAMP}
             </if>
             <if test="customer_end_time != null">
-                #{customer_end_time,jdbcType=DATE},
+                #{customer_end_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_status != null">
                 #{customer_status,jdbcType=INTEGER},
@@ -143,9 +189,6 @@
             </if>
             <if test="customer_address != null">
                 #{customer_address,jdbcType=VARCHAR},
-            </if>
-            <if test="effective_time != null">
-                #{effective_time,jdbcType=CHAR},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -174,10 +217,10 @@
                 customer_type = #{customer_type,jdbcType=INTEGER},
             </if>
             <if test="customer_start_time != null">
-                customer_start_time = #{customer_start_time,jdbcType=DATE},
+                customer_start_time = #{customer_start_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_end_time != null">
-                customer_end_time = #{customer_end_time,jdbcType=DATE},
+                customer_end_time = #{customer_end_time,jdbcType=TIMESTAMP},
             </if>
             <if test="customer_status != null">
                 customer_status = #{customer_status,jdbcType=INTEGER},
@@ -190,9 +233,6 @@
             </if>
             <if test="customer_address != null">
                 customer_address = #{customer_address,jdbcType=VARCHAR},
-            </if>
-            <if test="effective_time != null">
-                effective_time = #{effective_time,jdbcType=CHAR},
             </if>
             <if test="remark != null">
                 remark = #{remark,jdbcType=VARCHAR},

@@ -1,11 +1,10 @@
 package org.cs.dp.sonar.mapper;
 
-import org.apache.ibatis.annotations.Param;
-import org.cs.dp.sonar.domain.GetCourseReqBean;
-import org.cs.dp.sonar.domain.UserConditionBean;
-import org.cs.dp.sonar.domain.entity.CourseEntity;
-
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.cs.dp.sonar.domain.CourseGetByIdResBean;
+import org.cs.dp.sonar.domain.GetCourseReqBean;
+import org.cs.dp.sonar.domain.entity.CourseEntity;
 
 import java.util.List;
 
@@ -15,7 +14,9 @@ public interface CourseMapper {
 
     int insertSelective(CourseEntity record);
 
-    List<CourseEntity> selectByCondition(@Param(value = "reqCon")GetCourseReqBean getCourseReqBean, @Param(value = "userCon") UserConditionBean user);
+    List<CourseEntity> selectByCondition(@Param(value = "reqCon")GetCourseReqBean getCourseReqBean);
+
+    CourseGetByIdResBean selectById(Integer id);
 
     int updateByPrimaryKeySelective(CourseEntity record);
 

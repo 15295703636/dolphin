@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.GetCourseHistoryReqBean;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 import org.cs.dp.sonar.service.ICourseHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class CourseHistoryController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询日程历史管理", notes = "日程历史管理")
-    public ReturnInfo getCourseHistory(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getCourseHistory(@RequestBody RequestPage<SplitPageInfo, GetCourseHistoryReqBean> param){
         return iCourseHistoryService.getCourseHistory(param);
     }
 }

@@ -7,17 +7,12 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddCustomerBean;
-import org.cs.dp.ucenter.domain.AddCustomerUserBean;
-import org.cs.dp.ucenter.domain.EditStatusBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,6 +38,19 @@ public class CustomerController {
     }
 
     @ParamValid
+    @PostMapping("checkName")
+    @ApiOperation(value = "校验租户名称", notes = "租户管理")
+    public ReturnInfo checkName(@Valid @RequestBody CustomerCheckNameReqBean param, BindingResult bindingResult) {
+        return iCustomerService.checkAddInfo(param.getCustomer_name(), param.getId());
+    }
+
+    @PostMapping("getCusAdminInfo")
+    @ApiOperation(value = "查询租户Admin用户信息", notes = "租户管理")
+    public ReturnInfo getCusAdminInfo(@RequestBody GetCusAdminInfoBean param) {
+        return iCustomerService.getCusAdminInfo(param.getId());
+    }
+
+    @ParamValid
     @PostMapping("addCustomerUser")
     @ApiOperation(value = "添加租户管理员用户", notes = "租户管理")
     public ReturnInfo addCustomerUser(@Valid @RequestBody AddCustomerUserBean param, BindingResult result) throws BaseException {
@@ -61,16 +69,23 @@ public class CustomerController {
         return iCustomerService.editCustomer(param);
     }
 
+    @ParamValid
+    @PostMapping("author")
+    @ApiOperation(value = "授权租户管理", notes = "租户管理")
+    public ReturnInfo author(@RequestBody CustomerAuthorBean param,BindingResult bindingResult) {
+        return iCustomerService.author(param);
+    }
+
     @PostMapping("getByName")
     @ApiOperation(value = "根据用户名称模糊分页查询租户管理", notes = "租户管理")
-    public ReturnInfo getCustomer(@RequestBody RequestPage<SplitPageInfo, String> param) {
+    public ReturnInfo getCustomer(@RequestBody RequestPage<SplitPageInfo, CustomerByNameAndStateReqBean> param) {
         return iCustomerService.getCustomer(param);
     }
 
     @PostMapping("getByManageId")
     @ApiOperation(value = "客户代表Id查询租户管理", notes = "租户管理")
-    public ReturnInfo getCustomerByManageId(@RequestBody Integer manageId) {
-        return iCustomerService.getCustomerByManageId(manageId);
+    public ReturnInfo getCustomerByManageId(@RequestBody GetCustomerByManIdReqBean manageId) {
+        return iCustomerService.getCustomerByManageId(manageId.getManger_id());
     }
 
     @PostMapping("editStatus")

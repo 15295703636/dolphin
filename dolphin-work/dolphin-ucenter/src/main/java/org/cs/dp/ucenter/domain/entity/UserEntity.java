@@ -54,23 +54,10 @@ public class UserEntity {
     @ApiModelProperty(value = "身份证号")
     private String user_code;
 
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value = "所属")
     private String user_desc;
 
-    public UserEntity() {
-    }
+    @ApiModelProperty(value = "云视讯UserId")
+    private Long ysx_id;
 
-    public UserEntity(Integer user_id, String user_name, String user_qname, String user_pwd, String user_email, Integer role_id, Boolean user_statu, String user_number, String user_tel, String user_code, String user_desc) {
-        this.user_id = user_id;
-        this.user_name = user_name;
-        this.user_qname = user_qname;
-        this.user_pwd = user_pwd;
-        this.user_email = user_email;
-        this.role_id = role_id;
-        this.user_statu = user_statu;
-        this.user_number = user_number;
-        this.user_tel = user_tel;
-        this.user_code = user_code;
-        this.user_desc = user_desc;
-    }
 }

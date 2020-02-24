@@ -20,14 +20,14 @@ public class ResetPwdBean {
 
     @ApiModelProperty(value = "用户id", required = true)
     @NotNull(message = Constant.RESET_PWD_ID_MSG)
-    private Integer userId;
+    private Integer user_id;
 
-    @ApiModelProperty(value = "当前密码", required = true)
-    @NotBlank(message = Constant.RESET_PWD_OLD_MSG)
-    private String oldPwd;
+    @ApiModelProperty(value = "当前密码(客户代表更改不需要传)", required = true)
+    //@NotBlank(message = Constant.RESET_PWD_OLD_MSG)
+    private String user_pwd;
 
     @ApiModelProperty(value = "新密码", required = true)
     @NotBlank(message = Constant.RESET_PWD_NEW_MSG)
-    private String newPwd;
+    private String new_pwd;
 
 }

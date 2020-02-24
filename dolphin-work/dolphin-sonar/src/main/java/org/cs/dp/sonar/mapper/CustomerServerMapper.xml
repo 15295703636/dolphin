@@ -16,14 +16,19 @@
     server_id, server_name, server_ip, server_port, server_nat_ip, server_nat_port,serial_number, org_id, customer_id
   </sql>
 
-    <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
+    <select id="selectByOrgId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
         <include refid="Base_Column_List"/>
-        from customer_server
-        where 1=1
-        <if test="server_id != null">
-            server_id = #{server_id,jdbcType=INTEGER}
-        </if>
+        FROM customer_server c WHERE
+        c.org_id IN ( SELECT org_id FROM
+        ( SELECT t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0,
+        @pids := concat(@pids, ',', org_id),
+        0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t
+        WHERE t.customer_id =#{customer_id} ORDER BY org_id, org_preid ) t1,
+        (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0 ) OR c.org_id =#{org_id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

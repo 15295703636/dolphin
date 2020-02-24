@@ -4,9 +4,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.ucenter.domain.AddCustomerBean;
-import org.cs.dp.ucenter.domain.AddCustomerUserBean;
-import org.cs.dp.ucenter.domain.EditStatusBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 
 import java.util.List;
@@ -19,6 +17,8 @@ import java.util.List;
 **/
 public interface ICustomerService {
 
+    ReturnInfo checkAddInfo(String param,Integer id);
+
     ReturnInfo addCustomer(AddCustomerBean param) throws BaseException;
 
     ReturnInfo addAdminUser(AddCustomerUserBean param) throws BaseException;
@@ -27,9 +27,13 @@ public interface ICustomerService {
 
     ReturnInfo editCustomer(CustomerEntity param);
 
-    ReturnInfo getCustomer(RequestPage<SplitPageInfo, String> param);
+    ReturnInfo author(CustomerAuthorBean param);
+
+    ReturnInfo getCustomer(RequestPage<SplitPageInfo, CustomerByNameAndStateReqBean> param);
 
     ReturnInfo getCustomerByManageId(Integer manageId);
 
     ReturnInfo editStatus(EditStatusBean param);
+
+    ReturnInfo getCusAdminInfo(Integer id);
 }

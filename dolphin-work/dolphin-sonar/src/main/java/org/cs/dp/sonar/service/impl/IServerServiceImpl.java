@@ -1,18 +1,14 @@
 package org.cs.dp.sonar.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.cs.dolphin.common.base.RequestPage;
-import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dp.sonar.common.Constant;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.ServerMapper;
 import org.cs.dp.sonar.service.IServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,6 +24,9 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public ReturnInfo addServer(ServerEntity param) {
+        if (((List) getServer(param.getServer_type()).getReturnData()).size() > 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.SERVER_EXIT_MSG);
+        }
         serverMapper.insertSelective(param);
         return new ReturnInfo();
     }
@@ -40,13 +39,16 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public ReturnInfo editServer(ServerEntity param) {
+        if (((List) getServer(param.getServer_type()).getReturnData()).size() > 1) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.SERVER_EXIT_MSG);
+        }
         serverMapper.updateByPrimaryKeySelective(param);
         return new ReturnInfo();
     }
 
     @Override
-    public ReturnInfo getServer() {
-        List<ServerEntity> resList = serverMapper.selectAll();
+    public ReturnInfo<List<ServerEntity>> getServer(Integer server_type) {
+        List<ServerEntity> resList = serverMapper.selectAll(server_type);
         return new ReturnInfo(resList);
     }
 

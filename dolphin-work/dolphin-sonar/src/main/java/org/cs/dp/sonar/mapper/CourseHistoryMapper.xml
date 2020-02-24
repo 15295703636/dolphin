@@ -14,8 +14,10 @@
         <result property="createTime" column="createTime" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="createrId" column="createrId" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="provenance" column="provenance" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="local_classroomId" column="local_classroomId" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="remote_classroomIds" column="remote_classroomIds" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="local_classroomId" column="local_classroomId" javaType="java.lang.Integer"
+                jdbcType="INTEGER"/>
+        <result property="remote_classroomIds" column="remote_classroomIds" javaType="java.lang.String"
+                jdbcType="VARCHAR"/>
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="media_id" column="media_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
     </resultMap>
@@ -23,11 +25,24 @@
     id, name, type, state, teacher_name, isRecord, isLive, start_time, end_time, createTime, 
     createrId, provenance, local_classroomId, remote_classroomIds, org_id, media_id
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+    <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from course_history
-        where id = #{id,jdbcType=INTEGER}
+        where (org_id in(
+        SELECT org_id FROM ( SELECT
+        t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0) or org_id = #{org_id})
+        <if test="name != null">
+            and name like  concat('%',#{name},'%')
+        </if>
+        <if test="course_type != null">
+            and type =  #{course_type}
+        </if>
     </select>
 
     <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
@@ -57,20 +72,6 @@
     delete from course_history
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
-    insert into course_history (id, name, type, 
-      state, teacher_name, isRecord, 
-      isLive, start_time, end_time, 
-      createTime, createrId, provenance, 
-      local_classroomId, remote_classroomIds, 
-      org_id, media_id)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{state,jdbcType=VARCHAR}, #{teacher_name,jdbcType=VARCHAR}, #{isRecord,jdbcType=CHAR}, 
-      #{isLive,jdbcType=CHAR}, #{start_time,jdbcType=VARCHAR}, #{end_time,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=VARCHAR}, #{createrId,jdbcType=INTEGER}, #{provenance,jdbcType=VARCHAR}, 
-      #{local_classroomId,jdbcType=INTEGER}, #{remote_classroomIds,jdbcType=VARCHAR}, 
-      #{org_id,jdbcType=INTEGER}, #{media_id,jdbcType=INTEGER})
-  </insert>
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
         insert into course_history
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -225,23 +226,4 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
-    update course_history
-    set name = #{name,jdbcType=VARCHAR},
-      type = #{type,jdbcType=INTEGER},
-      state = #{state,jdbcType=VARCHAR},
-      teacher_name = #{teacher_name,jdbcType=VARCHAR},
-      isRecord = #{isRecord,jdbcType=CHAR},
-      isLive = #{isLive,jdbcType=CHAR},
-      start_time = #{start_time,jdbcType=VARCHAR},
-      end_time = #{end_time,jdbcType=VARCHAR},
-      createTime = #{createTime,jdbcType=VARCHAR},
-      createrId = #{createrId,jdbcType=INTEGER},
-      provenance = #{provenance,jdbcType=VARCHAR},
-      local_classroomId = #{local_classroomId,jdbcType=INTEGER},
-      remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
-      org_id = #{org_id,jdbcType=INTEGER},
-      media_id = #{media_id,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

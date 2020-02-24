@@ -6,10 +6,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.ucenter.domain.entity.CodeEntity;
 import org.cs.dp.ucenter.service.ICodeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
 * @ClassName CodeController
@@ -42,9 +39,9 @@ public class CodeController {
         return iCodeService.editCode(param);
     }
 
-    @PostMapping("get")
+    @GetMapping("get")
     @ApiOperation(value = "查询代码信息维护", notes = "代码信息维护")
-    public ReturnInfo getCode(@RequestBody String tableName){
+    public ReturnInfo getCode(@RequestParam(name = "tableName") String tableName){
         return iCodeService.getCode(tableName);
     }
 }

@@ -6,6 +6,7 @@
         <result column="org_id" jdbcType="INTEGER" property="org_id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="call_protocol" jdbcType="VARCHAR" property="call_protocol"/>
+        <result column="call_num" jdbcType="VARCHAR" property="VARCHAR"/>
         <result column="sip" jdbcType="VARCHAR" property="sip"/>
         <result column="ip" jdbcType="VARCHAR" property="ip"/>
         <result column="e_code" jdbcType="VARCHAR" property="e_code"/>
@@ -16,26 +17,48 @@
         <result column="create_user_id" jdbcType="INTEGER" property="create_user_id"/>
     </resultMap>
     <sql id="Base_Column_List">
-    device_id, org_id, name, call_protocol, sip, ip, e_code, device_type, device_state, 
+    device_id, org_id, name, call_protocol,call_num, sip, ip, e_code, device_type, device_state,
     device_serial_number, create_time, create_user_id
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from device
-        where device_id = #{device_id,jdbcType=INTEGER}
+        where device_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectUserById" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.entity.UserEntity">
+        select
+        user_id, user_name, user_qname, user_email, role_id, user_desc, user_statu, user_number, user_tel, user_code, create_time
+        from user where user_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
     </select>
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetDeviceBean" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"/>
-        from device
-        where 1=1
-        <if test="device_id != null">
+        FROM device d WHERE (d.org_id IN (
+        SELECT org_id FROM ( SELECT
+        t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0 ) OR d.org_id = #{org_id})
+        <if test="id != null">
             and id = #{id,jdbcType=INTEGER}
         </if>
-        <if test="device_name != null">
-            and name like CONCAT('%',#{name},'%')
+        <if test="name != null">
+            and (
+            name like CONCAT('%',#{name},'%')
+            or
+            call_protocol = (select code_id from code where table_name = 'deviceAgreement' and code_name like
+            CONCAT('%',#{name},'%'))
+            )
         </if>
         <if test="device_type != null">
             and device_type = #{device_type,jdbcType=INTEGER}
@@ -43,12 +66,19 @@
         <if test="device_state != null">
             and device_state = #{device_state,jdbcType=INTEGER}
         </if>
+        <if test="call_protocol != null">
+            and call_protocol = #{call_protocol,jdbcType=INTEGER}
+        </if>
+
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from device
-    where device_id = #{device_id,jdbcType=INTEGER}
-  </delete>
+        delete from device
+        where device_id in
+        <foreach collection="device_id" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
         insert into device

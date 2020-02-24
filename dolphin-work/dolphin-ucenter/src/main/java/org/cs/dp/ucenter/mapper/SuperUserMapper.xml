@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.SuperUserMapper">
-    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
-        <constructor>
-            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
-            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        </constructor>
-    </resultMap>
     <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         <constructor>
             <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
@@ -28,14 +14,14 @@
             <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
             <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="DATE"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
     user_tel, user_code,user_type,create_time
   </sql>
-    <select id="selectManage" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    <select id="selectManage" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         from super_user
@@ -43,8 +29,17 @@
         <if test="manageId != null">
             and user_id = #{manageId,jdbcType=INTEGER}
         </if>
+        <if test="user_name != null">
+            and (user_name like CONCAT('%',#{user_name},'%') or user_qname like CONCAT('%',#{user_name},'%'))
+        </if>
     </select>
 
+    <select id="selectByUserId" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from super_user
+        where user_id = #{user_id,jdbcType=VARCHAR}
+    </select>
 
     <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
         select
@@ -57,10 +52,34 @@
         select count(1) from super_user where user_name = #{userName,jdbcType=VARCHAR}
     </select>
 
+    <select id="checkAddInfo" parameterType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean"
+            resultType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean">
+        select user_name,user_tel from super_user
+        where
+        <if test="user_id != null and user_id != ''">
+            user_id != #{user_id,jdbcType=INTEGER} and
+        </if>
+        (user_name = #{user_name,jdbcType=VARCHAR}
+        or user_tel = #{user_tel,jdbcType=VARCHAR})
+
+    </select>
+
+    <select id="getSuperUserByCusId" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM super_user su
+        WHERE su.user_id = (
+        SELECT c.manage_id FROM customer c WHERE c.id =#{customer_id}
+        )
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from super_user
-    where user_id = #{user_id,jdbcType=INTEGER}
-  </delete>
+        delete from super_user
+        where user_id in
+        <foreach collection="user_ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
     <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
         insert into super_user

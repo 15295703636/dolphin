@@ -44,6 +44,7 @@
         <result property="live_password" column="live_password" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="bandwidth" column="bandwidth" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="local_name" column="local_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
@@ -57,19 +58,53 @@
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id,
         from course
         where course_id = #{course_id,jdbcType=INTEGER}
     </select>
 
-    <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetCourseReqBean" resultMap="BaseResultMap">
+        select
+        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id,
+        (select d.name as name  from device d where d.device_id=local_classroomId
+        UNION ALL
+        select u.user_name as name from user u where u.user_id=local_classroomId ) local_name
+        from course
+        where (org_id in(
+        SELECT org_id FROM ( SELECT t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{reqCon.customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{reqCon.org_id}) t2 ) t3
+        WHERE ischild != 0) or org_id = #{reqCon.org_id})
+        <if test="reqCon.name != null and reqCon.name != ''">
+            and (course_id IN (select course_id from course_device where device_id in(
+            select u.user_id as id FROM user u where u.user_name like CONCAT('%',#{reqCon.name},'%')
+            union ALL
+            select d.device_id as id FROM device d where d.name like CONCAT('%',#{reqCon.name},'%')
+            )) or course_name like concat('%',#{reqCon.name},'%') or teacher_name like
+            concat('%',#{reqCon.name},'%'))
+        </if>
+        <if test="reqCon.type != null and reqCon.type !=''">
+            and course_type = #{reqCon.type,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="selectById" resultType="org.cs.dp.sonar.domain.CourseGetByIdResBean">
         select
         <include refid="Base_Column_List"/>
-        from course
-        where org_id = #{userCon.orgId,jdbcType=INTEGER}
-        <if test="reqCon.content != null and reqCon.content != ''">
-            and course_name like concat('%',#{reqCon.content},'%')
-        </if>
+        FROM course where course_id = #{id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -77,7 +112,8 @@
     where course_id = #{course_id,jdbcType=INTEGER}
   </delete>
 
-    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity" useGeneratedKeys="true"
+            keyProperty="course_id">
         insert into course
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="course_id != null">
@@ -197,6 +233,9 @@
             <if test="bandwidth != null">
                 bandwidth,
             </if>
+            <if test="org_id !=null">
+                org_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="course_id != null">
@@ -315,6 +354,9 @@
             </if>
             <if test="bandwidth != null">
                 #{bandwidth,jdbcType=INTEGER},
+            </if>
+            <if test="org_id !=null">
+                #{org_id,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

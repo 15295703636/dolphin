@@ -12,8 +12,6 @@ import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +20,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
+@SuppressWarnings("all")
 public class ISoMruServiceImpl implements ISoMruService {
     @Autowired
     IMruClient iMruClient;
@@ -50,6 +49,13 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 预约会议
+     * @param restConfReq
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo startConference(RestConfReq restConfReq, String token, String url) {
         ReturnInfo returnInfo = iMruClient.startConference(restConfReq, token, url);
@@ -64,6 +70,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 获取会议列表
+     * @param token
+     * @param url
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public ReturnInfo getConferences(String token, String url, String startTime, String endTime) {
         ReturnInfo returnInfo = iMruClient.getConferences(token, url, startTime, endTime);
@@ -78,6 +92,13 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 结束会议
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo stopConference(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.stopConference(confId, token, url);
@@ -192,7 +213,7 @@ public class ISoMruServiceImpl implements ISoMruService {
 
     @Override
     public ReturnInfo startLiveStreaming(String confId, RestLiveStreamingReq restLiveStreamingReq, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.startLiveStreaming(confId, restLiveStreamingReq, token, url);
+        ReturnInfo returnInfo = iMruClient.startLiveStreaming(restLiveStreamingReq, confId, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if(returnInfo.getReturnCode()== MessageCode.COMMON_SUCCEED_FLAG){
             Map restConf = JSON.parseObject(s, Map.class);
@@ -218,9 +239,18 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 静音、取消静音部分终端
+     * @param confId
+     * @param muteAudio
+     * @param peers
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.muteMultipleParties(confId, muteAudio, peers, token, url);
+        ReturnInfo returnInfo = iMruClient.muteMultipleParties(peers, confId, muteAudio, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if(returnInfo.getReturnCode()== MessageCode.COMMON_SUCCEED_FLAG){
             Map restConf = JSON.parseObject(s, Map.class);
@@ -336,76 +366,6 @@ public class ISoMruServiceImpl implements ISoMruService {
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
             RestEndpoint list = JSON.parseObject(s,RestEndpoint.class);
-            returnInfo.setReturnData(list);
-        }else{
-            RestError restWebLoginResp = JSON.parseObject(s,RestError.class);
-            returnInfo.setReturnData(restWebLoginResp);
-        }
-        return returnInfo;
-    }
-
-    @Override
-    public ReturnInfo addUser(String token, String url, RestOrgUserReq restOrgUserReq) {
-        ReturnInfo returnInfo = iMruClient.addUser(token, url, restOrgUserReq);
-        String s = JSON.toJSONString(returnInfo.getReturnData());
-        if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
-            RestUser list = JSON.parseObject(s,RestUser.class);
-            returnInfo.setReturnData(list);
-        }else{
-            RestError restWebLoginResp = JSON.parseObject(s,RestError.class);
-            returnInfo.setReturnData(restWebLoginResp);
-        }
-        return returnInfo;
-    }
-
-    @Override
-    public ReturnInfo updateUser(String token, String url, String userId, RestOrgUserReq restOrgUserReq) {
-        ReturnInfo returnInfo = iMruClient.updateUser(token, url, userId, restOrgUserReq);
-        String s = JSON.toJSONString(returnInfo.getReturnData());
-        if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
-            RestUser list = JSON.parseObject(s,RestUser.class);
-            returnInfo.setReturnData(list);
-        }else{
-            RestError restWebLoginResp = JSON.parseObject(s,RestError.class);
-            returnInfo.setReturnData(restWebLoginResp);
-        }
-        return returnInfo;
-    }
-
-    @Override
-    public ReturnInfo getUsers(String token, String url) {
-        ReturnInfo returnInfo = iMruClient.getUsers(token,url);
-        String s = JSON.toJSONString(returnInfo.getReturnData());
-        if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
-            List<RestUser> list = JSON.parseArray(s,RestUser.class);
-            returnInfo.setReturnData(list);
-        }else{
-            RestError restWebLoginResp = JSON.parseObject(s,RestError.class);
-            returnInfo.setReturnData(restWebLoginResp);
-        }
-        return returnInfo;
-    }
-
-    @Override
-    public ReturnInfo getUser(String token, String userId, String url) {
-        ReturnInfo returnInfo = iMruClient.getUser(token, url, userId);
-        String s = JSON.toJSONString(returnInfo.getReturnData());
-        if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
-            RestUser list = JSON.parseObject(s,RestUser.class);
-            returnInfo.setReturnData(list);
-        }else{
-            RestError restWebLoginResp = JSON.parseObject(s,RestError.class);
-            returnInfo.setReturnData(restWebLoginResp);
-        }
-        return returnInfo;
-    }
-
-    @Override
-    public ReturnInfo deleteUser(String token, String url, String userId) {
-        ReturnInfo returnInfo = iMruClient.deleteUser(token, url, userId);
-        String s = JSON.toJSONString(returnInfo.getReturnData());
-        if(returnInfo.getReturnCode()==MessageCode.COMMON_SUCCEED_FLAG){
-            Map list = JSON.parseObject(s,Map.class);
             returnInfo.setReturnData(list);
         }else{
             RestError restWebLoginResp = JSON.parseObject(s,RestError.class);

@@ -4,7 +4,7 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.GetScheduleBean;
-import org.cs.dp.sonar.domain.entity.ScheduleEntity;
+import org.cs.dp.sonar.domain.ScheduleArrayBean;
 
 /**
 * @ClassName IScheduleService
@@ -14,11 +14,15 @@ import org.cs.dp.sonar.domain.entity.ScheduleEntity;
 **/
 public interface IScheduleService {
 
-    ReturnInfo addSchedule(ScheduleEntity param);
+    ReturnInfo addSchedule(ScheduleArrayBean param);
 
     ReturnInfo delSchedule(Integer param);
 
-    ReturnInfo editSchedule(ScheduleEntity param);
+    ReturnInfo editSchedule(ScheduleArrayBean param);
 
     ReturnInfo getSchedule(RequestPage<SplitPageInfo, GetScheduleBean> param);
+
+    ReturnInfo getById(Integer id);
+
+    ReturnInfo start(Integer id);
 }

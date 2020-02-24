@@ -31,9 +31,6 @@ public class Filter implements GlobalFilter, Ordered {
     @Value("${getWay.white.list}")
     private String whiteList;
 
-    @Value("${getWay.prefix}")
-    private String prefix;
-
     @Autowired
     private RedisUtil redisUtil;
 

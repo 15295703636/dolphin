@@ -5,15 +5,29 @@ package org.cs.dp.radar.api.entity;
  * @date ：Created in 2019/11/26 11:19
  */
 public class RestOrgUserReq {
-    private long id	;//	是	-	用户的id，添加用户时赋值为0，编辑用户时赋值为目标用户的id
-    private String name	;//	是	-	用户名
-    private String displayName	;//	是	-	用户昵称
-    private String description	;//	否	-	用户描述
-    private String password	;//	是	-	用户密码，须为用SHA-1方式加密的密文
-    private int status	;//	否	-	取值见常量：用户状态
-    private String email	;//	是	-	用户的邮箱账号
-    private String cellphone	;//	是	-	用户的手机号码
-    private String role	;//	是	-	取值见常量：用户角色
+    private long id = 0;//	是	-	用户的id，添加用户时赋值为0，编辑用户时赋值为目标用户的id
+    private String name;//	是	-	用户名
+    private String displayName;//	是	-	用户昵称
+    private String description;//	否	-	用户描述
+    private String password;//	是	-	用户密码，须为用SHA-1方式加密的密文
+    private int status;//	否	-	取值见常量：用户状态
+    private String email;//	是	-	用户的邮箱账号
+    private String cellphone;//	是	-	用户的手机号码
+    /*SYS_ADMIN	系统管理员
+    AGENT_USER	客服代表
+    ORG_ADMIN	公司管理员
+    DEPT_ADMIN	部门管理员
+    USER	普通用户*/
+    private String role;//	是	-	取值见常量：用户角色
+   // private Integer deptId;
+
+    /*public Integer getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Integer deptId) {
+        this.deptId = deptId;
+    }*/
 
     public long getId() {
         return id;

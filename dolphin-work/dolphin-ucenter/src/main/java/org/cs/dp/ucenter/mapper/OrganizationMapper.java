@@ -17,4 +17,6 @@ public interface OrganizationMapper {
     int updateByPrimaryKeySelective(OrganizationEntity record);
 
     List<OrganizationEntity> getList(OrganizationEntity param);
+
+    List<Integer> getChildIdByParentId(Integer org_id);
 }

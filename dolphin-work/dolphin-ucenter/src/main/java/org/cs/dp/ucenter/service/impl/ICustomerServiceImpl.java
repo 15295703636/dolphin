@@ -10,13 +10,13 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.DateUtil;
+import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.common.Constant;
-import org.cs.dp.ucenter.domain.AddCustomerBean;
-import org.cs.dp.ucenter.domain.AddCustomerUserBean;
-import org.cs.dp.ucenter.domain.AddUserBean;
-import org.cs.dp.ucenter.domain.EditStatusBean;
+import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.CustomerEntity;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
+import org.cs.dp.ucenter.domain.entity.UserEntity;
 import org.cs.dp.ucenter.domain.entity.UserOrgEntity;
 import org.cs.dp.ucenter.mapper.CustomerMapper;
 import org.cs.dp.ucenter.mapper.OrganizationMapper;
@@ -61,11 +61,13 @@ public class ICustomerServiceImpl implements ICustomerService {
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo addCustomer(AddCustomerBean param) throws BaseException {
-        if (0 < customerMapper.selectByUserNameCou(param.getCustomer_name())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.CUSTOMER_NAME_EXIST_MSG);
+        ReturnInfo checkRes = checkAddInfo(param.getCustomer_name(), null);
+        if (MessageCode.COMMON_SUCCEED_FLAG != checkRes.getReturnCode()) {
+            return checkRes;
         }
         //添加租户信息
         CustomerEntity customer = JSONObject.parseObject(JSON.toJSONString(param), CustomerEntity.class);
+        customer.setManage_id(ThreadLocalUserInfoUtil.get().getUser_id());
         customerMapper.insertSelective(customer);
 
         //如果存在，则不添加
@@ -80,11 +82,35 @@ public class ICustomerServiceImpl implements ICustomerService {
         return new ReturnInfo(customer.getId());
     }
 
+    @Override
+    public ReturnInfo checkAddInfo(String customer_name, Integer id) {
+        if (0 < customerMapper.selectByUserNameCou(customer_name, id)) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.CUSTOMER_NAME_EXIST_MSG);
+        }
+        return new ReturnInfo();
+    }
 
+    @Override
+    public ReturnInfo getCusAdminInfo(Integer id) {
+        UserEntity userEntity = customerMapper.getCusAdminInfo(id);
+        userEntity.setUser_pwd(null);
+        return new ReturnInfo(userEntity);
+    }
+
+    /**
+     * 添加租户管理员用户
+     *
+     * @param param
+     * @return
+     * @throws BaseException
+     */
     public ReturnInfo addAdminUser(AddCustomerUserBean param) throws BaseException {
+        if(!param.getUser_name().matches("[a-zA-Z0-9]+")){
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,Constant.USER_NAME_ERROR_MSG);
+        }
         List<OrganizationEntity> orgs = organizationMapper.getList(new OrganizationEntity(param.getCustomer_id()));
         if (1 != orgs.size()) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_NORMAL, "已存在多条组织信息,暂时无法添加管理员信息,如有疑问请联系管理员!");
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "已存在多条组织信息,暂时无法添加管理员信息,如有疑问请联系管理员!");
         }
         //添加用户
         AddUserBean user = new AddUserBean();
@@ -92,6 +118,7 @@ public class ICustomerServiceImpl implements ICustomerService {
         user.setOrg_id(orgs.get(0).getOrg_id());
         user.setUser_name(param.getUser_name());
         user.setUser_pwd(param.getUser_pwd());
+        user.setCustomer_id(orgs.get(0).getCustomer_id());
         ReturnInfo returnInfo = iUserService.add(user, true);
         if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
             throw new BaseException(null, returnInfo.getMsg());
@@ -119,10 +146,21 @@ public class ICustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public ReturnInfo getCustomer(RequestPage<SplitPageInfo, String> param) {
+    public ReturnInfo author(CustomerAuthorBean param) {
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setId(param.getId());
+        customerEntity.setCustomer_start_time(DateUtil.StringToDate(param.getCustomer_start_time(), DateUtil.YMDHMS));
+        customerEntity.setCustomer_end_time(DateUtil.StringToDate(param.getCustomer_end_time(), DateUtil.YMDHMS));
+        customerMapper.updateByPrimaryKeySelective(customerEntity);
+        return new ReturnInfo();
+    }
+
+    @Override
+    public ReturnInfo getCustomer(RequestPage<SplitPageInfo, CustomerByNameAndStateReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CustomerEntity> resList = customerMapper.selectByObj(param.getInfo());
+        List<CustomerEntity> resList = customerMapper.selectByObj(param.getInfo().getCustomer_name(),
+                param.getInfo().getCustomer_status());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

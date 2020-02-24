@@ -45,13 +45,10 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     }
 
     @Override
-    public ReturnInfo getCourseDevice(RequestPage<SplitPageInfo, Object> param) {
-        SplitPageInfo splitPageInfo = param.getPage();
-        PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CourseDeviceEntity> resList = courseDeviceMapper.selectByCondition();
-        PageInfo p = new PageInfo(resList);
-        splitPageInfo.setTotals((int) p.getTotal());
-        return new ReturnInfo(splitPageInfo, resList);
+    public ReturnInfo getCourseDevice(Integer id) {
+        //List<CourseDeviceEntity> resList = courseDeviceMapper.selectByCourseId(id);
+        int a = 1 / 0;
+        return new ReturnInfo();
     }
 
     @Override

@@ -8,10 +8,9 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.entity.CustomerServerEntity;
 import org.cs.dp.sonar.service.ICustomerServerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
 * @ClassName CustomerServerController
@@ -34,8 +33,8 @@ public class CustomerServerController {
 
     @PostMapping("del")
     @ApiOperation(value = "删除租户-服务管理", notes = "租户-服务管理")
-    public ReturnInfo delCustomerServer(@RequestBody Integer id){
-        return iCustomerServerService.delCustomerServer(id);
+    public ReturnInfo delCustomerServer(@RequestBody Map<String ,Integer> param){
+        return iCustomerServerService.delCustomerServer(param.get("server_id"));
     }
 
     @PostMapping("edit")
@@ -46,7 +45,7 @@ public class CustomerServerController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询租户-服务管理", notes = "租户-服务管理")
-    public ReturnInfo getCustomerServer(@RequestBody RequestPage<SplitPageInfo, Object> param){
+    public ReturnInfo getCustomerServer(@RequestBody RequestPage<SplitPageInfo, Integer> param){
         return iCustomerServerService.getCustomerServer(param);
     }
 }
