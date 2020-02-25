@@ -18,7 +18,7 @@ public interface CourseDeviceMapper {
 
     int insertByScheduleId(@Param(value = "courseId") Integer courseId, @Param(value = "scheduleId") Integer scheduleId);
 
-    int insertSelective(CourseDeviceEntity record);
+    int insertByDeviceId(@Param(value = "course_id")Integer course_id,@Param(value = "device_ids")List<Integer> device_ids);
 
     CourseDeviceEntity selectByPrimaryKey(Integer id);
 

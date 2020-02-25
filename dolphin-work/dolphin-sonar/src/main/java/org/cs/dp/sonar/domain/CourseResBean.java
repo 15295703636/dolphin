@@ -13,6 +13,9 @@ import lombok.Data;
 @Data
 @ApiModel(value = "进行中的端查询返回")
 public class CourseResBean {
+
+    private Integer id;
+
     private Integer device_id;
 
     @ApiModelProperty(value = "在线状态1在线 2离线(具体值可能会调整)")

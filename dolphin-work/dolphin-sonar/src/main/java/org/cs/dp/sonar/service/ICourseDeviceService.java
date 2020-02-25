@@ -1,8 +1,8 @@
 package org.cs.dp.sonar.service;
 
-import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceReqBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 
 /**
@@ -13,9 +13,9 @@ import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 **/
 public interface ICourseDeviceService {
 
-    ReturnInfo addCourseDevice(CourseDeviceEntity param);
+    ReturnInfo addCourseDevice(CourseDeviceAddReqBean param);
 
-    ReturnInfo delCourseDevice(Integer param);
+    ReturnInfo delCourseDevice(CourseDeviceReqBean param);
 
     ReturnInfo editCourseDevice(CourseDeviceEntity param);
 
@@ -25,9 +25,7 @@ public interface ICourseDeviceService {
 
     ReturnInfo cancelMute(Integer id);
 
-    ReturnInfo connect(Integer id);
-
-    ReturnInfo hangUp(Integer id);
+    ReturnInfo connect(CourseDeviceReqBean param);
 
     ReturnInfo sidelines(Integer id);
 

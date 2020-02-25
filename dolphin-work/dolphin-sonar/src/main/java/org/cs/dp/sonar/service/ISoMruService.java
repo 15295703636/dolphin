@@ -16,6 +16,15 @@ public interface ISoMruService {
 
     //预约会议
     String CONFERENCE_START = "startConference";
+    String CONFERENCE_STOP = "stopConference";
+    //进行中的会议添加终端
+    String CONFERENCE_ADDPEER = "addPeer";
+    //进行中的会议删除终端
+    String CONFERENCE_REMOVEPEER = "removePeer";
+    //进行中的会议呼叫终端
+    String CONFERENCE_CALLPEER = "callPeer";
+    //进行中的会议挂断终端
+    String CONFERENCE_HANGUPPEER="hangupPeer";
 
     ReturnInfo getServer(String method, Object obj);
 

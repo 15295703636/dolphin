@@ -1,5 +1,6 @@
 package org.cs.dp.sonar.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
@@ -42,7 +43,8 @@ public class IDeviceServiceImpl implements IDeviceService {
         param.setCreate_user_id(ThreadLocalUserInfoUtil.get().getUser_id());
         Object ysxRes[] = dealAdd(param);
         if ((boolean) ysxRes[0]) {
-            param.setYsx_id((Long) ysxRes[1]);
+            param.setYsx_id(((RestEndpoint) ysxRes[1]).getId());
+            param.setYsx_info(JSON.toJSONString(ysxRes[1]));
         } else {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
         }
@@ -62,7 +64,7 @@ public class IDeviceServiceImpl implements IDeviceService {
         Object obj[] = new Object[2];
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
             obj[0] = true;
-            obj[1] = ((RestEndpoint) returnInfo.getReturnData()).getId();
+            obj[1] = returnInfo.getReturnData();
         } else {
             obj[0] = false;
             obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());

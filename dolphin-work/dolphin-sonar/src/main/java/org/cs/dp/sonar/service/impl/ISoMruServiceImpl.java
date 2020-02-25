@@ -11,7 +11,9 @@ import org.cs.dolphin.common.utils.SHA1Util;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.feign.IMruClient;
+import org.cs.dp.sonar.domain.CourseDeviceReqBean;
 import org.cs.dp.sonar.domain.EndpointReqBean;
+import org.cs.dp.sonar.domain.RestPartyReqBean;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.ServerMapper;
 import org.cs.dp.sonar.mapper.UcenterMapper;
@@ -80,6 +82,28 @@ public class ISoMruServiceImpl implements ISoMruService {
             case CONFERENCE_START:
                 returnInfo = startConference((RestConfReq) obj, token, url);
                 break;
+            case CONFERENCE_STOP:
+                returnInfo = stopConference((String) obj, token, url);
+                break;
+            case CONFERENCE_ADDPEER:
+                RestPartyReqBean restPartyReq = (RestPartyReqBean) obj;
+                returnInfo = addPeer(restPartyReq, String.valueOf(restPartyReq.getYxs_id()), token, url);
+                break;
+            case CONFERENCE_REMOVEPEER:
+                CourseDeviceReqBean courseDeviceReq = (CourseDeviceReqBean) obj;
+                returnInfo = removePeer(String.valueOf(courseDeviceReq.getCourse_ysx_id()),
+                        String.valueOf(courseDeviceReq.getYsx_device_id()), token, url);
+                break;
+            case CONFERENCE_CALLPEER:
+                CourseDeviceReqBean courseDeviceReq2 = (CourseDeviceReqBean) obj;
+                returnInfo = callPeer(String.valueOf(courseDeviceReq2.getCourse_ysx_id()),
+                        String.valueOf(courseDeviceReq2.getYsx_device_id()), token, url);
+                break;
+            case CONFERENCE_HANGUPPEER:
+                CourseDeviceReqBean courseDeviceReq3 = (CourseDeviceReqBean) obj;
+                returnInfo = hangupPeer(String.valueOf(courseDeviceReq3.getCourse_ysx_id()),
+                        String.valueOf(courseDeviceReq3.getYsx_device_id()), token, url);
+                break;
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
                 break;
@@ -103,7 +127,8 @@ public class ISoMruServiceImpl implements ISoMruService {
         ReturnInfo returnInfo = iMruClient.login(restWebLoginReq, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
-            RestWebLoginResp restWebLoginResp = JSON.parseObject(s, new TypeReference<RestWebLoginResp>() {});
+            RestWebLoginResp restWebLoginResp = JSON.parseObject(s, new TypeReference<RestWebLoginResp>() {
+            });
             returnInfo.setReturnData(restWebLoginResp);
         } else {
             RestError restWebLoginResp = JSON.parseObject(s, new TypeReference<RestError>() {
@@ -183,6 +208,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 会议——添加终端
+     *
+     * @param restPartyReq
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo addPeer(RestPartyReq restPartyReq, String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.addPeer(restPartyReq, confId, token, url);
@@ -198,6 +232,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 会议——删除终端
+     *
+     * @param confId
+     * @param partyId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo removePeer(String confId, String partyId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.removePeer(confId, partyId, token, url);
@@ -213,6 +256,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 会议——呼叫终端
+     *
+     * @param confId
+     * @param partyId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo callPeer(String confId, String partyId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.callPeer(confId, partyId, token, url);
@@ -228,6 +280,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 会议——挂断终端
+     *
+     * @param confId
+     * @param partyId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo hangupPeer(String confId, String partyId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.hangupPeer(confId, partyId, token, url);
@@ -243,6 +304,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 获取会议信息
+     *
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo getConfInfo(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.getConfInfo(confId, token, url);
@@ -258,6 +327,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 切换至讨论模式
+     *
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo switch2discussionMode(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.switch2discussionMode(confId, token, url);
@@ -273,6 +350,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 设置发言者
+     *
+     * @param confId
+     * @param partyId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo setLecturer(String confId, String partyId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.setLecturer(confId, partyId, token, url);
@@ -288,6 +374,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 开启直播
+     *
+     * @param confId
+     * @param restLiveStreamingReq
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo startLiveStreaming(String confId, RestLiveStreamingReq restLiveStreamingReq, String token, String url) {
         ReturnInfo returnInfo = iMruClient.startLiveStreaming(restLiveStreamingReq, confId, token, url);
@@ -303,6 +398,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 结束直播
+     *
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo stopLiveStreaming(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.stopLiveStreaming(confId, token, url);
@@ -343,6 +446,14 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 获取与会终端信息
+     *
+     * @param confId
+     * @param token
+     * @param url
+     * @return
+     */
     @Override
     public ReturnInfo getConferencePeers(String confId, String token, String url) {
         ReturnInfo returnInfo = iMruClient.getConferencePeers(confId, token, url);
@@ -358,6 +469,15 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 设置直播分屏
+     *
+     * @param confId
+     * @param token
+     * @param url
+     * @param restPartyLayout
+     * @return
+     */
     @Override
     public ReturnInfo setLivingStreamLayout(String confId, String token, String url, RestPartyLayout restPartyLayout) {
         ReturnInfo returnInfo = iMruClient.setLivingStreamLayout(confId, token, url, restPartyLayout);
@@ -373,6 +493,16 @@ public class ISoMruServiceImpl implements ISoMruService {
         return returnInfo;
     }
 
+    /**
+     * 设置与会终端分屏
+     *
+     * @param confId
+     * @param peerId
+     * @param token
+     * @param url
+     * @param restPartyLayout
+     * @return
+     */
     @Override
     public ReturnInfo setPeerLayout(String confId, String peerId, String token, String url, RestPartyLayout restPartyLayout) {
         ReturnInfo returnInfo = iMruClient.setPeerLayout(confId, peerId, token, url, restPartyLayout);

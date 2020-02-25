@@ -13,6 +13,7 @@
   </sql>
     <select id="selectByCourseId" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.CourseResBean">
         SELECT
+            cd.id,
             cd.device_id,
 	        cd.device_type as isDevice,
 	        cd.state,
@@ -53,6 +54,15 @@
         insert into course_device(course_id,device_id,device_type,type)
             SELECT #{courseId}, device_id, type as device_type,state as type FROM schedule_device
             WHERE schedule_id = #{scheduleId}
+    </insert>
+
+    <insert id="insertByDeviceId">
+        insert into course_device(course_id,device_id,device_type,type)
+        SELECT #{course_id}, device_id, 0 as device_type,2 as type FROM device
+        WHERE device_id in
+        <foreach collection="device_ids" item="device_id" open="(" separator="," close=")">
+            #{device_id}
+        </foreach>
     </insert>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">

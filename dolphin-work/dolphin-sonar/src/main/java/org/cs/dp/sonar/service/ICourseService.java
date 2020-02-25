@@ -3,8 +3,12 @@ package org.cs.dp.sonar.service;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.BaseException;
+import org.cs.dp.sonar.domain.CourseEndReqBean;
 import org.cs.dp.sonar.domain.GetCourseReqBean;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
+
+import java.util.Map;
 
 /**
  * @ClassName ICourseService
@@ -28,5 +32,5 @@ public interface ICourseService {
 
     ReturnInfo share(Integer id);
 
-    ReturnInfo end(Integer id);
+    ReturnInfo end(CourseEndReqBean param) throws BaseException;
 }
