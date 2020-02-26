@@ -1,34 +1,53 @@
 package org.cs.dp.radar.api.entity;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author ：mzy
- * @date ：Created in 2019/11/26 10:32
+ * @date ：Created in 2019/11/26 10=32
  */
 public class RestEndpoint {
-    private long id	;//	ID	-
-    private String name	;//	名称	-
-    private String ip	;//	IP地址	-
-    private boolean available	;//	是否可用，即在指定的时间段内不在任何会议中	-
-    private String callProtocol	;//	呼叫协议	取值见常量：呼叫协议
-    private String sipUrl	;//	SIP号码	-
-    private String deviceStatus	;//	终端状态	取值见常量：终端状态
-    private String description	;//	对终端的备注	-
-    private long userId	;//	对应用户的id	-
-    private String userName	;//	对应用户的用户名	-
-    private String deviceSn	;//	终端的序列号	-
-    private String endpointType	;//	终端类型	取值见常量：终端类型
-    private String e164	;//	E.164号	-
-    private long orgId	;//	终端所属公司的id	-
-    private String orgName	;//	公司的名称	-
-    private long deptId	;//	终端所属部门的id	-
-    private String depShortName	;//	部门的简称	-
-    private String zoneName	;//	终端所属可用区的名称	-
+    @ApiModelProperty(required = true)
+    private Long id;//= new Long(23272);
+    @ApiModelProperty(required = true)
+    private String name;//= "南京研发小黑屋1";
+    @ApiModelProperty(required = true)
+    private String deviceSn;//"SXYTJYS20191126000037";
+    @ApiModelProperty(required = true)
+    private String callProtocol;//= "SVC";
 
-    public long getId() {
+    private String ip = "";
+    private boolean available = true;
+    private boolean pollEndpointList = false;
+    private Integer sortIndex = 0;
+    private String callNumber = null;
+    private String sipUrl = "";
+    private String sipPassword = "";
+    private String deviceStatus = "ONLINE";
+    private String description = "";
+    private Integer callSpeed = 0;
+    private Integer userId = 0;
+    private String userName = null;
+    private String platform = "PC";
+    private String netType = "intranet";
+    private String endpointType = "OTHER";
+    private String cascadeRoleType = null;
+    private String dialDirection = "Dial-out";
+    private String e164 = "";
+    private Integer agentUserId = null;
+    private String agentUserDisplayName = "agentadmin";
+    private Integer orgId = null;//22;
+    private String orgName = "";//""会畅教育学院";
+    private Integer deptId = 0;
+    private String deptShortName = null;
+    private String zoneName = "";
+    private String gateway = "";
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,6 +75,22 @@ public class RestEndpoint {
         this.available = available;
     }
 
+    public boolean isPollEndpointList() {
+        return pollEndpointList;
+    }
+
+    public void setPollEndpointList(boolean pollEndpointList) {
+        this.pollEndpointList = pollEndpointList;
+    }
+
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
+
     public String getCallProtocol() {
         return callProtocol;
     }
@@ -64,12 +99,28 @@ public class RestEndpoint {
         this.callProtocol = callProtocol;
     }
 
+    public String getCallNumber() {
+        return callNumber;
+    }
+
+    public void setCallNumber(String callNumber) {
+        this.callNumber = callNumber;
+    }
+
     public String getSipUrl() {
         return sipUrl;
     }
 
     public void setSipUrl(String sipUrl) {
         this.sipUrl = sipUrl;
+    }
+
+    public String getSipPassword() {
+        return sipPassword;
+    }
+
+    public void setSipPassword(String sipPassword) {
+        this.sipPassword = sipPassword;
     }
 
     public String getDeviceStatus() {
@@ -88,11 +139,19 @@ public class RestEndpoint {
         this.description = description;
     }
 
-    public long getUserId() {
+    public Integer getCallSpeed() {
+        return callSpeed;
+    }
+
+    public void setCallSpeed(Integer callSpeed) {
+        this.callSpeed = callSpeed;
+    }
+
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -104,12 +163,28 @@ public class RestEndpoint {
         this.userName = userName;
     }
 
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
     public String getDeviceSn() {
         return deviceSn;
     }
 
     public void setDeviceSn(String deviceSn) {
         this.deviceSn = deviceSn;
+    }
+
+    public String getNetType() {
+        return netType;
+    }
+
+    public void setNetType(String netType) {
+        this.netType = netType;
     }
 
     public String getEndpointType() {
@@ -120,6 +195,22 @@ public class RestEndpoint {
         this.endpointType = endpointType;
     }
 
+    public String getCascadeRoleType() {
+        return cascadeRoleType;
+    }
+
+    public void setCascadeRoleType(String cascadeRoleType) {
+        this.cascadeRoleType = cascadeRoleType;
+    }
+
+    public String getDialDirection() {
+        return dialDirection;
+    }
+
+    public void setDialDirection(String dialDirection) {
+        this.dialDirection = dialDirection;
+    }
+
     public String getE164() {
         return e164;
     }
@@ -128,11 +219,27 @@ public class RestEndpoint {
         this.e164 = e164;
     }
 
-    public long getOrgId() {
+    public Integer getAgentUserId() {
+        return agentUserId;
+    }
+
+    public void setAgentUserId(Integer agentUserId) {
+        this.agentUserId = agentUserId;
+    }
+
+    public String getAgentUserDisplayName() {
+        return agentUserDisplayName;
+    }
+
+    public void setAgentUserDisplayName(String agentUserDisplayName) {
+        this.agentUserDisplayName = agentUserDisplayName;
+    }
+
+    public Integer getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(long orgId) {
+    public void setOrgId(Integer orgId) {
         this.orgId = orgId;
     }
 
@@ -144,20 +251,20 @@ public class RestEndpoint {
         this.orgName = orgName;
     }
 
-    public long getDeptId() {
+    public Integer getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(long deptId) {
+    public void setDeptId(Integer deptId) {
         this.deptId = deptId;
     }
 
-    public String getDepShortName() {
-        return depShortName;
+    public String getDeptShortName() {
+        return deptShortName;
     }
 
-    public void setDepShortName(String depShortName) {
-        this.depShortName = depShortName;
+    public void setDeptShortName(String deptShortName) {
+        this.deptShortName = deptShortName;
     }
 
     public String getZoneName() {
@@ -166,5 +273,13 @@ public class RestEndpoint {
 
     public void setZoneName(String zoneName) {
         this.zoneName = zoneName;
+    }
+
+    public String getGateway() {
+        return gateway;
+    }
+
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
     }
 }

@@ -2,28 +2,59 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.sonar.mapper.CourseHistoryMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
-        <id column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="name" column="name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-        <result property="type" column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="state" column="state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <id property="course_id" column="course_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="course_name" column="course_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="course_type" column="course_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="course_state" column="course_state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="teacher_name" column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isRecord" column="isRecord" javaType="java.lang.String" jdbcType="CHAR"/>
         <result property="isLive" column="isLive" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="record_state" column="record_state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="live_state" column="live_state" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="isSubtitle" column="isSubtitle" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="isAutoSubmit" column="isAutoSubmit" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="isPublish" column="isPublish" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="isComment" column="isComment" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="isRate" column="isRate" javaType="java.lang.String" jdbcType="CHAR"/>
         <result property="start_time" column="start_time" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="end_time" column="end_time" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="createTime" column="createTime" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="course_fontColor" column="course_fontColor" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="course_wordSize" column="course_wordSize" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="teacher_fontColor" column="teacher_fontColor" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="teacher_wordSize" column="teacher_wordSize" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="resolving_power" column="resolving_power" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="encode_quality" column="encode_quality" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="otherParamStr" column="otherParamStr" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="epilogue_img" column="epilogue_img" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="prologue_img" column="prologue_img" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="createrId" column="createrId" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="provenance" column="provenance" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="local_classroomId" column="local_classroomId" javaType="java.lang.Integer"
                 jdbcType="INTEGER"/>
         <result property="remote_classroomIds" column="remote_classroomIds" javaType="java.lang.String"
                 jdbcType="VARCHAR"/>
+        <result property="isDual" column="isDual" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="course_fontType" column="course_fontType" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="teacher_fontType" column="teacher_fontType" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="label_fontType" column="label_fontType" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="label_fontColor" column="label_fontColor" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="label_wordSize" column="label_wordSize" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="forward_state" column="forward_state" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="live_password" column="live_password" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="bandwidth" column="bandwidth" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        <result property="media_id" column="media_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="local_name" column="local_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, type, state, teacher_name, isRecord, isLive, start_time, end_time, createTime, 
-    createrId, provenance, local_classroomId, remote_classroomIds, org_id, media_id
+        course_id,course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id
   </sql>
 
     <select id="selectByCondition" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -41,31 +72,27 @@
             and name like  concat('%',#{name},'%')
         </if>
         <if test="course_type != null">
-            and type =  #{course_type}
+            and course_type =  #{course_type}
         </if>
     </select>
 
     <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
-    INSERT INTO course_history (name, type, state, teacher_name, isRecord, isLive,
-    start_time, end_time, createTime,createrId, provenance, local_classroomId,
-     remote_classroomIds, org_id )
-            SELECT
-            course_name,
-            course_type,
-            course_state,
-            teacher_name,
-            isRecord,
-            isLive,
-            start_time,
-            end_time,
-            createTime,
-            createrId,
-            provenance,
-            local_classroomId,
-            remote_classroomIds,
-            org_id
-         FROM course ua where id = #{id}
-
+    INSERT INTO course_history
+        ( course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id)
+    SELECT course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+        live_password, bandwidth,org_id
+         FROM course ua where ua.course_id = #{id}
   </insert>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

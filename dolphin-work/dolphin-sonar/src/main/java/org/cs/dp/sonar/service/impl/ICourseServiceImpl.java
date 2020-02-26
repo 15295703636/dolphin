@@ -8,7 +8,9 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.DateUtil;
+import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.radar.api.entity.RestError;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
@@ -16,6 +18,7 @@ import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.mapper.CourseMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
 import org.cs.dp.sonar.service.ICourseService;
+import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +43,8 @@ public class ICourseServiceImpl implements ICourseService {
     private CourseDeviceMapper courseDeviceMapper;
     @Autowired
     private CourseHistoryMapper courseHistory;
+    @Autowired
+    private ISoMruService iSoMruService;
 
     @Override
     public ReturnInfo delCourse(Integer param) {
@@ -71,14 +76,12 @@ public class ICourseServiceImpl implements ICourseService {
     }
 
     public ReturnInfo getById(Integer id) {
-
         CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
-
         List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
         List<CourseResBean> courseDeviceList = new ArrayList<>();
         if (courseDevices.size() > 0) {
             CourseResBean courseRes = courseDevices.stream().filter(
-                    e -> e.getIsMain().equals(0)).collect(Collectors.toList()).get(0);
+                    e -> e.getIsMain().equals(1)).collect(Collectors.toList()).get(0);
             courseDevices.remove(courseRes);
             courseDevices.forEach(e -> {
                 if (!e.getDevice_id().equals(courseRes.getDevice_id())) {
@@ -115,7 +118,7 @@ public class ICourseServiceImpl implements ICourseService {
                 null, null, res.getResolving_power(), null, null, null, null, 1000,
                 null, res.getDevice_id(), res.getDevice_ids(), null, null,
                 null, null, null, null, null, null,
-                res.getBandwidth(), res.getOrg_id(),ysx_id);
+                res.getBandwidth(), res.getOrg_id(), ysx_id);
         courseMapper.insertSelective(course);
 
         //端控制
@@ -137,12 +140,36 @@ public class ICourseServiceImpl implements ICourseService {
     /**
      * 1.将此条数据插入到历史表，并删除该条信息
      *
-     * @param id
+     * @param param
      * @return
      */
     @Override
-    public ReturnInfo end(Integer id) {
-        courseHistory.insertSelectCurrent(id);
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
+    public ReturnInfo end(CourseEndReqBean param) throws BaseException {
+        Object ysx_res[] = dealEnd(param.getYsx_id());
+        if (!(boolean) ysx_res[0]) {
+            throw new BaseException("云视讯通讯异常", String.valueOf(ysx_res[1]));
+        }
+        courseHistory.insertSelectCurrent(param.getCourse_id());
+        courseMapper.deleteByPrimaryKey(param.getCourse_id());
         return new ReturnInfo();
+    }
+
+    /**
+     * 结束会议
+     *
+     * @param ysx_id
+     * @return
+     */
+    private Object[] dealEnd(Long ysx_id) {
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STOP, String.valueOf(ysx_id));
+        Object obj[] = new Object[2];
+        if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+            obj[0] = true;
+        } else {
+            obj[0] = false;
+            obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+        }
+        return obj;
     }
 }

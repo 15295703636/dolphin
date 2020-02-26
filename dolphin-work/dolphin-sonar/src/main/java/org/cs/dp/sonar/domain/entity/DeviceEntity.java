@@ -16,6 +16,9 @@ public class DeviceEntity {
     @ApiModelProperty(value = "云视讯端ID")
     private Long ysx_id;
 
+    @ApiModelProperty(value = "调用云视讯返回的端信息(用于进行中会议添加端操作)", hidden = true)
+    private String ysx_info;
+
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;
 

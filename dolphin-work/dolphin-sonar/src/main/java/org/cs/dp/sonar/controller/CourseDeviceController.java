@@ -3,6 +3,8 @@ package org.cs.dp.sonar.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceReqBean;
 import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,14 +29,14 @@ public class CourseDeviceController {
 
     @PostMapping("add")
     @ApiOperation(value = "添加日程-端管理", notes = "日程-端管理")
-    public ReturnInfo addCourseDevice(@RequestBody Map param) {
-        return new ReturnInfo();//iCourseDeviceService.addCourseDevice(param);
+    public ReturnInfo addCourseDevice(@RequestBody CourseDeviceAddReqBean param) {
+        return iCourseDeviceService.addCourseDevice(param);
     }
 
     @PostMapping("del")
     @ApiOperation(value = "删除日程-端管理", notes = "日程-端管理")
-    public ReturnInfo delCourseDevice(@RequestBody Map id) {
-        return new ReturnInfo();//iCourseDeviceService.delCourseDevice(id);
+    public ReturnInfo delCourseDevice(@RequestBody CourseDeviceReqBean param) {
+        return iCourseDeviceService.delCourseDevice(param);
     }
 
     @PostMapping("edit")
@@ -63,20 +65,14 @@ public class CourseDeviceController {
 
     @PostMapping("connect")
     @ApiOperation(value = "连接", notes = "日程-端管理")
-    public ReturnInfo connect(@RequestBody Map id) {
-        return new ReturnInfo();//iCourseDeviceService.connect(id);
-    }
-
-    @PostMapping("hangUp")
-    @ApiOperation(value = "挂断", notes = "日程-端管理")
-    public ReturnInfo hangUp(@RequestBody Map id) {
-        return new ReturnInfo();//iCourseDeviceService.hangUp(id);
+    public ReturnInfo connect(@RequestBody CourseDeviceReqBean param) {
+        return iCourseDeviceService.connect(param);
     }
 
     @PostMapping("sidelines")
     @ApiOperation(value = "旁观", notes = "日程-端管理")
     public ReturnInfo sidelines(@RequestBody Map id) {
-        return new ReturnInfo();//iCourseDeviceService.sidelines(id);
+        return null;//iCourseDeviceService.sidelines(id);
     }
 
 }

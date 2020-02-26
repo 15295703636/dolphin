@@ -113,6 +113,9 @@ public class IScheduleServiceImpl implements IScheduleService {
         param.setUser_ids(JSONArray.toJSONString(param.getUserIds()));
         scheduleMapper.updateByPrimaryKeySelective(param);
         dealDevice(param, true);
+        if (param.isNew_start()) {
+            start(param.getId());
+        }
         return new ReturnInfo();
     }
 
@@ -186,7 +189,7 @@ public class IScheduleServiceImpl implements IScheduleService {
         if (!(boolean) ysxRes[0]) {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
         }
-        return iCourseService.startSchedule(id,(Long)ysxRes[1]);
+        return iCourseService.startSchedule(id, (Long) ysxRes[1]);
     }
 
 
