@@ -112,11 +112,18 @@ public class MruClient implements IMruClient {
     }
 
     @Override
-    @PostMapping(API_PREFIX + "/conferences/muteAudioMultipleParties")
-    public ReturnInfo muteMultipleParties(
-            @RequestBody List<String> peers, @RequestParam String confId, @RequestParam boolean muteAudio,
-            @RequestParam String token, @RequestParam String url) {
-        return iMruService.muteMultipleParties(confId, muteAudio, peers, token, url);
+    @PostMapping(API_PREFIX + "/conferences/muteAudioAll")
+    public ReturnInfo muteAudioAll(@RequestParam String confId, @RequestParam boolean muteAudio,
+                                   @RequestParam String token, @RequestParam String url) {
+        return iMruService.muteAudioAll(confId, muteAudio, token, url);
+    }
+
+
+    @Override
+    @PostMapping(API_PREFIX + "/conferences/muteAudio")
+    public ReturnInfo muteAudio(@RequestParam String peer, @RequestParam String confId, @RequestParam boolean muteAudio,
+                                @RequestParam String token, @RequestParam String url) {
+        return iMruService.muteAudio(peer, confId, muteAudio, token, url);
     }
 
     @Override

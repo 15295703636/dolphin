@@ -19,6 +19,7 @@
 	        cd.state,
 	        cd.type as isMain,
             d.name,
+            d.ysx_id,
             d.device_type as type,
             u.user_id,
             u.role_id,
@@ -31,6 +32,30 @@
         where course_id = #{id,jdbcType=INTEGER}
     </select>
 
+    <select id="selectByCourseDeviceId" resultType="java.lang.Integer">
+        SELECT
+        device_id
+        FROM
+        course_device
+        where course_id = #{course_id,jdbcType=INTEGER} and device_type = 0
+        and device_id in
+        <foreach collection="device_ids" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectByCourseDeviceId2" resultMap="BaseResultMap">
+        SELECT
+        id, course_id, device_id,type,state
+        FROM
+        course_device
+        where course_id = #{course_id,jdbcType=INTEGER} and device_type = 0
+        and device_id not in
+        <foreach collection="device_ids" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
     <select id="selectByScheduleId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -41,6 +66,16 @@
     delete from course_device
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+    <update id="updateType">
+        <if test="updateType == '1'.toString()">
+            update course_device set type=2 where course_id=#{course_id} and id != #{id}
+        </if>
+        <if test="updateType == '2'.toString()">
+            update course_device set type=1 where course_id=#{course_id} and id=#{id}
+        </if>
+    </update>
+
 
     <insert id="insertBatch" parameterType="java.util.List">
         insert into course_device (id, course_id, device_id,type,state) values

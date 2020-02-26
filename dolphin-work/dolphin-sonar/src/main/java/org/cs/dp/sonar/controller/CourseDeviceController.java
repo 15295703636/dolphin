@@ -4,7 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceMuteReqBean;
 import org.cs.dp.sonar.domain.CourseDeviceReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceSetLecturerReqBean;
 import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,15 +55,15 @@ public class CourseDeviceController {
 
     @PostMapping("mute")
     @ApiOperation(value = "静音", notes = "日程-端管理")
-    public ReturnInfo mute(@RequestBody Map id) {
-        return new ReturnInfo();//return iCourseDeviceService.mute(id);
+    public ReturnInfo mute(@RequestBody CourseDeviceMuteReqBean param) {
+        return iCourseDeviceService.mute(param);
     }
 
-    @PostMapping("cancelMute")
+    /*@PostMapping("cancelMute")
     @ApiOperation(value = "取消", notes = "日程-端管理")
     public ReturnInfo cancelMute(@RequestBody Map id) {
         return new ReturnInfo();//iCourseDeviceService.cancelMute(id);
-    }
+    }*/
 
     @PostMapping("connect")
     @ApiOperation(value = "连接", notes = "日程-端管理")
@@ -73,6 +75,12 @@ public class CourseDeviceController {
     @ApiOperation(value = "旁观", notes = "日程-端管理")
     public ReturnInfo sidelines(@RequestBody Map id) {
         return null;//iCourseDeviceService.sidelines(id);
+    }
+
+    @PostMapping("setLecturer")
+    @ApiOperation(value = "设置主讲", notes = "日程-端管理")
+    public ReturnInfo setLecturer(@RequestBody CourseDeviceSetLecturerReqBean param) {
+        return iCourseDeviceService.setLecturer(param);
     }
 
 }

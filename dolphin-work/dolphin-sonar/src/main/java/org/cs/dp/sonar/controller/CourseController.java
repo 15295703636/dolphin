@@ -7,6 +7,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.CourseEndReqBean;
+import org.cs.dp.sonar.domain.CourseGetByIdResBean;
 import org.cs.dp.sonar.domain.GetCourseReqBean;
 import org.cs.dp.sonar.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class CourseController {
 
     @PostMapping("getById")
     @ApiOperation(value = "查询日程ID查询教学列表数据", notes = "进行中日程管理")
-    public ReturnInfo getById(@RequestBody Map<String, Integer> param) {
+    public ReturnInfo<CourseGetByIdResBean> getById(@RequestBody Map<String, Integer> param) {
         return iCourseService.getById(param.get("id"));
     }
 

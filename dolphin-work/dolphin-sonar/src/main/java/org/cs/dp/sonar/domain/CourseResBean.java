@@ -18,6 +18,8 @@ public class CourseResBean {
 
     private Integer device_id;
 
+    private Long ysx_id;
+
     @ApiModelProperty(value = "在线状态1在线 2离线(具体值可能会调整)")
     private Integer status;
 
@@ -38,11 +40,11 @@ public class CourseResBean {
 
     private String user_name;
 
-    @ApiModelProperty(value = "设备静音")
-    private Integer isMute;//静音
+    @ApiModelProperty(value = "设备静音 false未静音 true静音")
+    private boolean mute;//静音
 
-    @ApiModelProperty(value = "设备旁观")
-    private Integer isSideLines;//旁观
+    @ApiModelProperty(value = "设备旁观 false未旁观状态 true已旁观状态")
+    private boolean sideLines;//旁观
 
     private Integer isMain;
 }

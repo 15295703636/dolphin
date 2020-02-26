@@ -201,18 +201,33 @@ public interface IMruClient {
                                  @RequestParam(name = "url") String url);
 
     /**
-     * 静音、取消静音部分终端
+     * 静音、取消静音全部终端
      *
      * @param confId
      * @param muteAudio
-     * @param peers
      * @param token
      * @param url       /api/rest/v2.0/ongoingConferences/{confId}/control/{controlType}
      * @return
      */
-    @PostMapping(API_PREFIX + "/conferences/muteAudioMultipleParties")
-    ReturnInfo muteMultipleParties(
-            @RequestBody List<String> peers,
+    @PostMapping(API_PREFIX + "/conferences/muteAudioAll")
+    ReturnInfo muteAudioAll(
+            @RequestParam(name = "confId") String confId,
+            @RequestParam(name = "muteAudio") boolean muteAudio,
+            @RequestParam(name = "token") String token,
+            @RequestParam(name = "url") String url);
+
+    /**
+     * 静音、取消静音单个终端
+     *
+     * @param confId
+     * @param muteAudio
+     * @param token
+     * @param url       /api/rest/v2.0/ongoingConferences/{confId}/control/{controlType}
+     * @return
+     */
+    @PostMapping(API_PREFIX + "/conferences/muteAudio")
+    ReturnInfo muteAudio(
+            @RequestParam(name = "peer") String peer,
             @RequestParam(name = "confId") String confId,
             @RequestParam(name = "muteAudio") boolean muteAudio,
             @RequestParam(name = "token") String token,
