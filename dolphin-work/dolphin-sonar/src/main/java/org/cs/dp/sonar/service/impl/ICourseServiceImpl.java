@@ -11,6 +11,9 @@ import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.radar.api.entity.RestError;
+import org.cs.dp.radar.api.entity.RestOngoingConf;
+import org.cs.dp.radar.api.entity.RestParty;
+import org.cs.dp.radar.api.entity.RestPartyMru;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -75,23 +79,44 @@ public class ICourseServiceImpl implements ICourseService {
         return new ReturnInfo(splitPageInfo, resList);
     }
 
-    public ReturnInfo getById(Integer id) {
+    public ReturnInfo<CourseGetByIdResBean> getById(Integer id) {
         CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
-        List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
-        List<CourseResBean> courseDeviceList = new ArrayList<>();
-        if (courseDevices.size() > 0) {
-            CourseResBean courseRes = courseDevices.stream().filter(
-                    e -> e.getIsMain().equals(1)).collect(Collectors.toList()).get(0);
-            courseDevices.remove(courseRes);
-            courseDevices.forEach(e -> {
-                if (!e.getDevice_id().equals(courseRes.getDevice_id())) {
-                    courseDeviceList.add(e);
-                }
-            });
-            courseGetByIdRes.setRemote(courseDeviceList);
-            courseGetByIdRes.setMain(courseRes);
-        }
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_GETCONFINFO, String.valueOf(courseGetByIdRes.getYsx_id()));
+        if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+            RestOngoingConf restOngoingConf = (RestOngoingConf) returnInfo.getReturnData();
+            List<RestParty> restPartyMrus = restOngoingConf.getPartyMrus().get(0).getParties();
+            //持续时长
+            Integer duration = restOngoingConf.getBasicInfo().getDuration();
+            Map<String, RestParty> map = restPartyMrus.stream().collect(Collectors.toMap(RestParty::getDeviceId, a -> a, (k1, k2) -> k1));
 
+            List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
+            List<CourseResBean> courseDeviceList = new ArrayList<>();
+            if (courseDevices.size() > 0) {
+                CourseResBean courseRes = courseDevices.stream().filter(
+                        e -> e.getIsMain().equals(1)).collect(Collectors.toList()).get(0);
+                courseDevices.remove(courseRes);
+                courseDevices.forEach(e -> {
+                    if (!e.getDevice_id().equals(courseRes.getDevice_id())) {
+                        RestParty restParty = map.get(String.valueOf(e.getYsx_id()));
+                        if (null != restParty) {
+                            e.setMute(restParty.isAudioMuted());
+                            e.setStatus("connected".equals(restParty.getConnectionStatus()) ? 1 : 2);
+                            e.setSideLines(restParty.isMonitor());
+                        }
+                        courseDeviceList.add(e);
+                    }
+                });
+                courseGetByIdRes.setRemote(courseDeviceList);
+                RestParty restParty = map.get(String.valueOf(courseRes.getYsx_id()));
+                if (null != restParty) {
+                    courseRes.setMute(restParty.isAudioMuted());
+                    courseRes.setStatus("connected".equals(restParty.getConnectionStatus()) ? 1 : 2);
+                    courseRes.setSideLines(restParty.isMonitor());
+                }
+                courseGetByIdRes.setDuration(DateUtil.secToTime(duration));
+                courseGetByIdRes.setMain(courseRes);
+            }
+        }
         return new ReturnInfo(courseGetByIdRes);
     }
 
@@ -167,8 +192,14 @@ public class ICourseServiceImpl implements ICourseService {
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
             obj[0] = true;
         } else {
-            obj[0] = false;
-            obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+            RestError restError = (RestError) returnInfo.getReturnData();
+            int errorCode = restError.getErrorCode();
+            if (1407 <= errorCode && errorCode <= 1409) {
+                obj[0] = true;
+            } else {
+                obj[0] = false;
+                obj[1] = GetNameByCode.getNameByCode(errorCode);
+            }
         }
         return obj;
     }

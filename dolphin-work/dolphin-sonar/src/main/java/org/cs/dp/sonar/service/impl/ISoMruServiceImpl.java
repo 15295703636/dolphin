@@ -11,9 +11,7 @@ import org.cs.dolphin.common.utils.SHA1Util;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.feign.IMruClient;
-import org.cs.dp.sonar.domain.CourseDeviceReqBean;
-import org.cs.dp.sonar.domain.EndpointReqBean;
-import org.cs.dp.sonar.domain.RestPartyReqBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.ServerMapper;
 import org.cs.dp.sonar.mapper.UcenterMapper;
@@ -104,6 +102,21 @@ public class ISoMruServiceImpl implements ISoMruService {
                 returnInfo = hangupPeer(String.valueOf(courseDeviceReq3.getCourse_ysx_id()),
                         String.valueOf(courseDeviceReq3.getYsx_device_id()), token, url);
                 break;
+            case CONFERENCE_MUTEAUDIO:
+                CourseDeviceMuteReqBean courseDeviceMuteReq = (CourseDeviceMuteReqBean) obj;
+                returnInfo = muteAudio(courseDeviceMuteReq.getYsx_device_id(), courseDeviceMuteReq.getYsx_course_id(), courseDeviceMuteReq.isMuteAudio(), token, url);
+                break;
+            case CONFERENCE_MUTEAUDIOALL:
+                CourseDeviceMuteReqBean courseDeviceMuteReq2 = (CourseDeviceMuteReqBean) obj;
+                returnInfo = muteAudioAll(courseDeviceMuteReq2.getYsx_course_id(), courseDeviceMuteReq2.isMuteAudio(), token, url);
+                break;
+            case CONFERENCE_GETCONFINFO:
+                returnInfo = getConfInfo((String) obj, token, url);
+                break;
+            case CONFERENCE_SETLECTURER:
+                CourseDeviceSetLecturerReqBean param = (CourseDeviceSetLecturerReqBean) obj;
+                returnInfo = setLecturer(param.getYsx_course_id(), param.getYsx_device_id(), token, url);
+                break;
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
                 break;
@@ -162,7 +175,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 获取会议列表
+     * 获取会议列表 TODO 未调用
      *
      * @param token
      * @param url
@@ -328,7 +341,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 切换至讨论模式
+     * 切换至讨论模式 TODO 未调用
      *
      * @param confId
      * @param token
@@ -351,7 +364,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 设置发言者
+     * 设置发言者(设置主讲)
      *
      * @param confId
      * @param partyId
@@ -375,7 +388,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 开启直播
+     * 开启直播 TODO 未调用
      *
      * @param confId
      * @param restLiveStreamingReq
@@ -399,7 +412,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 结束直播
+     * 结束直播 TODO 未调用
      *
      * @param confId
      * @param token
@@ -432,8 +445,8 @@ public class ISoMruServiceImpl implements ISoMruService {
      * @return
      */
     @Override
-    public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.muteMultipleParties(peers, confId, muteAudio, token, url);
+    public ReturnInfo muteAudioAll(String confId, boolean muteAudio, String token, String url) {
+        ReturnInfo returnInfo = iMruClient.muteAudioAll(confId, muteAudio, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
             Map restConf = JSON.parseObject(s, Map.class);
@@ -447,7 +460,32 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 获取与会终端信息
+     * 静音、取消静音部分终端
+     *
+     * @param confId
+     * @param muteAudio
+     * @param peers
+     * @param token
+     * @param url
+     * @return
+     */
+    @Override
+    public ReturnInfo muteAudio(String peer, String confId, boolean muteAudio, String token, String url) {
+        ReturnInfo returnInfo = iMruClient.muteAudio(peer,confId, muteAudio, token, url);
+        String s = JSON.toJSONString(returnInfo.getReturnData());
+        if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+            Map restConf = JSON.parseObject(s, Map.class);
+            returnInfo.setReturnData(restConf);
+        } else {
+            RestError restWebLoginResp = JSON.parseObject(s, new TypeReference<RestError>() {
+            });
+            returnInfo.setReturnData(restWebLoginResp);
+        }
+        return returnInfo;
+    }
+
+    /**
+     * 获取与会终端信息 TODO 未调用
      *
      * @param confId
      * @param token
@@ -470,7 +508,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 设置直播分屏
+     * 设置直播分屏 TODO 未调用
      *
      * @param confId
      * @param token
@@ -494,7 +532,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 设置与会终端分屏
+     * 设置与会终端分屏 TODO 未调用
      *
      * @param confId
      * @param peerId
@@ -607,7 +645,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 查询终端
+     * 查询终端 TODO 未调用
      *
      * @param token
      * @param url

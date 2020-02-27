@@ -29,5 +29,12 @@ public class CourseDeviceReqBean {
     @ApiModelProperty(value = "挂断连接标志 true连接，false挂断")
     private boolean connect;
 
+    public CourseDeviceReqBean() {
+    }
 
+    public CourseDeviceReqBean(Long course_ysx_id, Integer id, Integer device_id) {
+        this.course_ysx_id = course_ysx_id;
+        this.id = id;
+        this.device_id = device_id;
+    }
 }

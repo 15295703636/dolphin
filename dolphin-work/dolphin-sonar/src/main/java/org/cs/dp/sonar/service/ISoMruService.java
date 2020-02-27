@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ISoMruService {
 
+    //添加端操作
     String POINT_GETS = "getEndpoints";
     String POINT_ADD = "addEndpoint";
     String POINT_UPDATE = "updateEndpoint";
@@ -17,14 +18,23 @@ public interface ISoMruService {
     //预约会议
     String CONFERENCE_START = "startConference";
     String CONFERENCE_STOP = "stopConference";
-    //进行中的会议添加终端
+    //获取会议信息
+    String CONFERENCE_GETCONFINFO = "getConfInfo";
+
+    //进行中的会议——添加终端
     String CONFERENCE_ADDPEER = "addPeer";
-    //进行中的会议删除终端
+    //删除终端
     String CONFERENCE_REMOVEPEER = "removePeer";
-    //进行中的会议呼叫终端
+    //呼叫终端
     String CONFERENCE_CALLPEER = "callPeer";
-    //进行中的会议挂断终端
-    String CONFERENCE_HANGUPPEER="hangupPeer";
+    //挂断终端
+    String CONFERENCE_HANGUPPEER = "hangupPeer";
+    //单个终端静音/接触静音
+    String CONFERENCE_MUTEAUDIO = "muteAudio";
+    //单个终端静音/接触静音
+    String CONFERENCE_MUTEAUDIOALL = "muteAudioAll";
+    //设置主讲
+    String CONFERENCE_SETLECTURER = "setLecturer";
 
     ReturnInfo getServer(String method, Object obj);
 
@@ -64,9 +74,11 @@ public interface ISoMruService {
     ReturnInfo stopLiveStreaming(String confId,
                                  String token, String url);
 
-    ReturnInfo muteMultipleParties(String confId, boolean muteAudio,
-                                   List<String> peers,
-                                   String token, String url);
+    ReturnInfo muteAudioAll(String confId, boolean muteAudio,
+                            String token, String url);
+
+    ReturnInfo muteAudio(String peer, String confId, boolean muteAudio,
+                         String token, String url);
 
     ReturnInfo getConferencePeers(String confId, String token, String url);
 

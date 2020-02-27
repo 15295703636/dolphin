@@ -111,6 +111,7 @@ public class IScheduleServiceImpl implements IScheduleService {
     public ReturnInfo editSchedule(ScheduleArrayBean param) {
         param.setDevice_ids(JSONArray.toJSONString(param.getDeviceIds()));
         param.setUser_ids(JSONArray.toJSONString(param.getUserIds()));
+        param.setDuration(param.getDuration_hour() + "," + param.getDuration_minute());
         scheduleMapper.updateByPrimaryKeySelective(param);
         dealDevice(param, true);
         if (param.isNew_start()) {

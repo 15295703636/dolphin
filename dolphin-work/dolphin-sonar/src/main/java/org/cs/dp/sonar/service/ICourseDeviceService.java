@@ -2,7 +2,9 @@ package org.cs.dp.sonar.service;
 
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceMuteReqBean;
 import org.cs.dp.sonar.domain.CourseDeviceReqBean;
+import org.cs.dp.sonar.domain.CourseDeviceSetLecturerReqBean;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 
 /**
@@ -21,7 +23,7 @@ public interface ICourseDeviceService {
 
     ReturnInfo getCourseDevice(Integer id);
 
-    ReturnInfo mute(Integer id);
+    ReturnInfo mute(CourseDeviceMuteReqBean param);
 
     ReturnInfo cancelMute(Integer id);
 
@@ -29,4 +31,5 @@ public interface ICourseDeviceService {
 
     ReturnInfo sidelines(Integer id);
 
+    ReturnInfo setLecturer(CourseDeviceSetLecturerReqBean id);
 }

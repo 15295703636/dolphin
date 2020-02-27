@@ -1,14 +1,14 @@
 package org.cs.dp.sonar.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.cs.dolphin.common.base.ReturnInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dp.radar.api.entity.RestEndpoint;
 import org.cs.dp.radar.api.entity.RestError;
-import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceReqBean;
-import org.cs.dp.sonar.domain.RestPartyReqBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
@@ -17,11 +17,13 @@ import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName ICourseDeviceServiceImpl
@@ -40,12 +42,62 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
 
     @Override
     public ReturnInfo addCourseDevice(CourseDeviceAddReqBean param) {
+        //端节点有数据
         if (null != param.getDevice_ids() && param.getDevice_ids().size() > 0) {
-            Object ysxRes[] = dealAddCourseDevice(param);
-            if (!(boolean) ysxRes[0]) {
-                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, (String) ysxRes[1]);
+            List<Integer> addList = new ArrayList<>();
+            List<Integer> delList = new ArrayList<>();
+            List<Integer> paramDeviceIds = param.getDevice_ids();
+            List<Integer> courses = courseDeviceMapper.selectByCourseDeviceId(param.getCourse_id(), param.getDevice_ids());
+            List<CourseDeviceEntity> courses2 = courseDeviceMapper.selectByCourseDeviceId2(param.getCourse_id(), param.getDevice_ids());
+
+            List<Integer> coursesInt = new ArrayList<>();
+            courses2.forEach(e -> {
+                if (1 != e.getType()) {//排除主讲端
+                    coursesInt.add(e.getDevice_id());
+                }
+            });
+            paramDeviceIds.forEach(e -> {
+                if (!courses.contains(e)) {
+                    addList.add(e);
+                }
+            });
+            coursesInt.forEach(a -> {
+                if (!paramDeviceIds.contains(a)) {
+                    delList.add(a);
+                }
+            });
+            if (addList.size() > 0) {
+                param.setDevice_ids(addList);
+                Object obj[] = dealAddCourseDevice(param);
+                if ((boolean) obj[0]) {
+                    courseDeviceMapper.insertByDeviceId(param.getCourse_id(), addList);
+                } else {
+                    return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, (String) obj[1]);
+                }
             }
-            courseDeviceMapper.insertByDeviceId(param.getCourse_id(), param.getDevice_ids());
+
+            if (delList.size() > 0) {
+                for (Integer deviceId : delList) {
+                    ReturnInfo returnInfo = delCourseDevice(new CourseDeviceReqBean(
+                            param.getYsx_id(),
+                            courses2.stream().filter(e -> e.getDevice_id() == deviceId).collect(Collectors.toList()).get(0).getId(),
+                            deviceId));
+                    if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                        return returnInfo;
+                    }
+                }
+            }
+        } else {
+            List<CourseResBean> courseResBeans = courseDeviceMapper.selectByCourseId(param.getCourse_id());
+            for (CourseResBean course : courseResBeans) {
+                ReturnInfo returnInfo = delCourseDevice(new CourseDeviceReqBean(
+                        param.getYsx_id(),
+                        course.getId(),
+                        course.getDevice_id()));
+                if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                    return returnInfo;
+                }
+            }
         }
         return new ReturnInfo();
     }
@@ -114,8 +166,18 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     }
 
     @Override
-    public ReturnInfo mute(Integer id) {
-        return new ReturnInfo();
+    public ReturnInfo mute(CourseDeviceMuteReqBean param) {
+        String serverName = null;
+        if (!StringUtils.isEmpty(param.getYsx_device_id())) {
+            serverName = iSoMruService.CONFERENCE_MUTEAUDIO;
+        } else {
+            serverName = iSoMruService.CONFERENCE_MUTEAUDIOALL;
+        }
+        ReturnInfo returnInfo = iSoMruService.getServer(serverName, param);
+        if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+            returnInfo = new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        }
+        return returnInfo;
     }
 
     @Override
@@ -141,6 +203,20 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
 
     @Override
     public ReturnInfo sidelines(Integer id) {
+        return new ReturnInfo();
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
+    public ReturnInfo setLecturer(CourseDeviceSetLecturerReqBean param) {
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETLECTURER, param);
+        if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        }
+
+        courseDeviceMapper.updateType(param.getId(), param.getCourse_id(), "1");
+        courseDeviceMapper.updateType(param.getId(), param.getCourse_id(), "2");
+
         return new ReturnInfo();
     }
 

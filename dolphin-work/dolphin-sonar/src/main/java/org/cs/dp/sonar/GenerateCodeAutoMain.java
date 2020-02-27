@@ -25,11 +25,11 @@ public class GenerateCodeAutoMain {
 
     //--------------------------------生成控制层，接口层，实现类配置--------------------------------
     //数据库表名
-    private static final String TABLE_NAME = "log";
+    private static final String TABLE_NAME = "course_history_device";
     //业务变量名
-    public static final String NAME = "Log";
+    public static final String NAME = "CourseHistoryDevice";
     //业务注释
-    public static final String EXPLAIN = "日志信息";
+    public static final String EXPLAIN = "日程历史设备";
     //--------------------------------以上信息每次生成代码必须要修改参数------------------------------
 
     //生成类的包头,一个工程设置1次
@@ -47,7 +47,7 @@ public class GenerateCodeAutoMain {
             //数据驱动
             put("location", "D:\\repository\\mysql\\mysql-connector-java\\5.1.47\\mysql-connector-java-5.1.47.jar");
             //数据地址
-            put("connectionURL", "jdbc:mysql://dbserver:3306/vmediax?serverTimezone=UTC");
+            put("connectionURL", "jdbc:mysql://127.0.0.1:3306/vmediax_rss2?serverTimezone=UTC");
             //数据用户名
             put("userId", "root");
             //数据密码

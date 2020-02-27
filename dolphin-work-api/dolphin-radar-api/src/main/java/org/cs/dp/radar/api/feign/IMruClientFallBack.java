@@ -81,7 +81,11 @@ public class IMruClientFallBack implements IMruClient {
     }
 
     @Override
-    public ReturnInfo muteMultipleParties(List<String> peers,String confId, boolean muteAudio,  String token, String url) {
+    public ReturnInfo muteAudioAll(String confId, boolean muteAudio,  String token, String url) {
+        return null;
+    }
+    @Override
+    public ReturnInfo muteAudio(String peer,String confId, boolean muteAudio,  String token, String url) {
         return null;
     }
 

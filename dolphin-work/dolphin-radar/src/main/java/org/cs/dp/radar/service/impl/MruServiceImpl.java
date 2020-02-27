@@ -177,8 +177,18 @@ public class MruServiceImpl implements IMruService {
     }
 
     @Override
-    public ReturnInfo muteMultipleParties(String confId, boolean muteAudio, List<String> peers, String token, String url) {
-        ResponseEntity<Object> resp = restful(peers, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/control/muteAudioMultipleParties?token=" + token + "&muteAudio=" + muteAudio, HttpMethod.PUT);
+    public ReturnInfo muteAudioAll(String confId, boolean muteAudio, String token, String url) {
+        ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/control/muteAudioAllParties?token=" + token + "&muteAudio=" + muteAudio, HttpMethod.PUT);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo muteAudio(String peer, String confId, boolean muteAudio, String token, String url) {
+        ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/parties/" + peer + "/control/muteAudio?token=" + token + "&muteAudio=" + muteAudio, HttpMethod.PUT);
         if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
             log.error("login error,error=" + resp.getBody().toString());
             return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
