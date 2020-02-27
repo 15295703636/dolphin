@@ -1,10 +1,7 @@
 package org.cs.dp.sonar.service;
 
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceMuteReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceSetLecturerReqBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 
 /**
@@ -32,4 +29,9 @@ public interface ICourseDeviceService {
     ReturnInfo sidelines(Integer id);
 
     ReturnInfo setLecturer(CourseDeviceSetLecturerReqBean id);
+
+    ReturnInfo setDiscMode(String ysx_course_id);
+
+    //设置分屏
+    ReturnInfo setPeerLayout(RestPartyLayoutReqBean param);
 }

@@ -243,10 +243,10 @@
                 #{type,jdbcType=INTEGER},
             </if>
             <if test="isLive != null">
-                #{isLive,jdbcType=CHAR},
+                #{isLive,jdbcType=VARCHAR},
             </if>
             <if test="isRecord != null">
-                #{isRecord,jdbcType=CHAR},
+                #{isRecord,jdbcType=VARCHAR},
             </if>
             <if test="resolving_power != null">
                 #{resolving_power,jdbcType=VARCHAR},
@@ -308,10 +308,10 @@
                 type = #{type,jdbcType=INTEGER},
             </if>
             <if test="isLive != null">
-                isLive = #{isLive,jdbcType=CHAR},
+                isLive = #{isLive,jdbcType=VARCHAR},
             </if>
             <if test="isRecord != null">
-                isRecord = #{isRecord,jdbcType=CHAR},
+                isRecord = #{isRecord,jdbcType=VARCHAR},
             </if>
             <if test="resolving_power != null">
                 resolving_power = #{resolving_power,jdbcType=VARCHAR},

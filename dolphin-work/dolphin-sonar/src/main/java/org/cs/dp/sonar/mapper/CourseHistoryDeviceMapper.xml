@@ -1,97 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.sonar.mapper.CourseHistoryDeviceMapper">
-  <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="course_id" jdbcType="INTEGER" property="course_id" />
-    <result column="device_id" jdbcType="INTEGER" property="device_id" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="device_type" jdbcType="INTEGER" property="device_type" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="course_id" jdbcType="INTEGER" property="course_id"/>
+        <result column="device_id" jdbcType="INTEGER" property="device_id"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="device_type" jdbcType="INTEGER" property="device_type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, course_id, device_id, type, state, device_type
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from course_history_device
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_history_device
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course_history_device
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
-    insert into course_history_device (id, course_id, device_id, 
-      type, state, device_type
-      )
-    values (#{id,jdbcType=INTEGER}, #{course_id,jdbcType=INTEGER}, #{device_id,jdbcType=INTEGER}, 
-      #{type,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{device_type,jdbcType=INTEGER}
-      )
+
+    <insert id="insertByCourseId">
+    insert  into course_history_device (course_id, device_id, type, state, device_type)
+    select #{newId}, device_id,type,state,device_type from course_device where course_id = #{course_id}
   </insert>
-  <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
-    insert into course_history_device
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="course_id != null">
-        course_id,
-      </if>
-      <if test="device_id != null">
-        device_id,
-      </if>
-      <if test="type != null">
-        type,
-      </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="device_type != null">
-        device_type,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="course_id != null">
-        #{course_id,jdbcType=INTEGER},
-      </if>
-      <if test="device_id != null">
-        #{device_id,jdbcType=INTEGER},
-      </if>
-      <if test="type != null">
-        #{type,jdbcType=INTEGER},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
-      </if>
-      <if test="device_type != null">
-        #{device_type,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
-    update course_history_device
-    <set>
-      <if test="course_id != null">
-        course_id = #{course_id,jdbcType=INTEGER},
-      </if>
-      <if test="device_id != null">
-        device_id = #{device_id,jdbcType=INTEGER},
-      </if>
-      <if test="type != null">
-        type = #{type,jdbcType=INTEGER},
-      </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
-      </if>
-      <if test="device_type != null">
-        device_type = #{device_type,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
+        insert into course_history_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="course_id != null">
+                course_id,
+            </if>
+            <if test="device_id != null">
+                device_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="device_type != null">
+                device_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="course_id != null">
+                #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="device_type != null">
+                #{device_type,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryDeviceEntity">
+        update course_history_device
+        <set>
+            <if test="course_id != null">
+                course_id = #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                device_id = #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="device_type != null">
+                device_type = #{device_type,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

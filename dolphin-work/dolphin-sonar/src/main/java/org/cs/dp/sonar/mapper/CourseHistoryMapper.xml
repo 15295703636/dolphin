@@ -6,6 +6,8 @@
         <result property="course_name" column="course_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="course_type" column="course_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="course_state" column="course_state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="duration" column="duration" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_number" column="user_number" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="teacher_name" column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isRecord" column="isRecord" javaType="java.lang.String" jdbcType="CHAR"/>
         <result property="isLive" column="isLive" javaType="java.lang.String" jdbcType="CHAR"/>
@@ -48,7 +50,7 @@
         <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     </resultMap>
     <sql id="Base_Column_List">
-        course_id,course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        course_id,course_name, course_type,duration,user_number,course_state, teacher_name, isRecord, isLive,
         record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
         start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
         teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
@@ -69,50 +71,100 @@
         ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
         WHERE ischild != 0) or org_id = #{org_id})
         <if test="name != null">
-            and name like  concat('%',#{name},'%')
+            and name like concat('%',#{name},'%')
         </if>
         <if test="course_type != null">
-            and course_type =  #{course_type}
+            and course_type = #{course_type}
         </if>
     </select>
 
-    <insert id="insertSelectCurrent" parameterType="java.lang.Integer">
-    INSERT INTO course_history
-        ( course_name, course_type, course_state, teacher_name, isRecord, isLive,
-        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
-        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
-        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
-        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
-        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
-        live_password, bandwidth,org_id)
-    SELECT course_name, course_type, course_state, teacher_name, isRecord, isLive,
-        record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
-        start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
-        teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
-        createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
-        teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
-        live_password, bandwidth,org_id
-         FROM course ua where ua.course_id = #{id}
+    <select id="selectByIdResYsx" resultType="org.cs.dp.sonar.domain.ScheduleOneDeviceBean">
+        SELECT
+        sc.course_id as id,
+        sc.course_name as name,
+        sc.course_state as state,
+        sc.duration,
+        sc.user_number,
+		(SELECT d.ysx_id FROM device d WHERE d.device_id =sc.local_classroomId) as device_id,
+        sc.course_type as type,
+        sc.isLive,
+        sc.isRecord,
+        sc.resolving_power,
+        sc.bandwidth,
+        sc.org_id,
+        sc.teacher_name,
+		/*(SELECT u.ysx_id FROM user u WHERE u.user_id =sc.createrId) as user_id,*/
+        ( SELECT group_concat(d.ysx_id SEPARATOR ",") FROM course_history_device sd,device d WHERE sd.device_id=d.device_id and sd.course_id = sc.course_id ) AS device_ids,
+        ( SELECT group_concat(u.ysx_id SEPARATOR ",") FROM course_history_device sd,user u WHERE sd.device_id =u.user_id and sd.course_id = sc.course_id) AS user_ids
+        FROM course_history sc where sc.course_id =#{id}
+    </select>
+
+    <select id="selectById" resultType="org.cs.dp.sonar.domain.ScheduleOneDeviceBean">
+        SELECT
+        sc.course_id as id,
+        sc.course_name as name,
+        sc.course_state as state,
+        sc.duration,
+        sc.user_number,
+		sc.local_classroomId as device_id,
+        sc.course_type as type,
+        sc.isLive,
+        sc.isRecord,
+        sc.resolving_power,
+        sc.bandwidth,
+        sc.org_id,
+        sc.teacher_name,
+		/*(SELECT u.ysx_id FROM user u WHERE u.user_id =sc.createrId) as user_id,*/
+        ( SELECT group_concat(d.ysx_id SEPARATOR ",") FROM course_history_device sd,device d WHERE sd.device_id=d.device_id and sd.course_id = sc.course_id ) AS device_ids,
+        ( SELECT group_concat(u.ysx_id SEPARATOR ",") FROM course_history_device sd,user u WHERE sd.device_id =u.user_id and sd.course_id = sc.course_id) AS user_ids
+        FROM course_history sc where sc.course_id =#{id}
+    </select>
+
+    <insert id="insertSelectCurrent" parameterType="org.cs.dp.sonar.domain.AddGetIdBean" useGeneratedKeys="true"
+            keyProperty="newId">
+        INSERT INTO course_history
+            ( course_name, course_type, course_state, teacher_name, isRecord, isLive,
+            record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+            start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+            teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+            createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+            teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+            live_password, bandwidth,org_id)(
+        SELECT course_name, course_type, course_state, teacher_name, isRecord, isLive,
+            record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
+            start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
+            teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
+            createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
+            teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
+            live_password, bandwidth,org_id
+             FROM course ua where ua.course_id = #{id})
   </insert>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course_history
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity" useGeneratedKeys="true"
+            keyProperty="course_id">
         insert into course_history
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
+            <if test="course_id != null">
+                course_id,
             </if>
-            <if test="name != null">
-                name,
+            <if test="course_name != null">
+                course_name,
             </if>
-            <if test="type != null">
-                type,
+            <if test="course_type != null">
+                course_type,
             </if>
-            <if test="state != null">
-                state,
+            <if test="duration != null">
+                duration,
+            </if>
+            <if test="user_number">
+                user_number,
+            </if>
+            <if test="course_state != null">
+                course_state,
             </if>
             <if test="teacher_name != null">
                 teacher_name,
@@ -123,6 +175,27 @@
             <if test="isLive != null">
                 isLive,
             </if>
+            <if test="record_state != null">
+                record_state,
+            </if>
+            <if test="live_state != null">
+                live_state,
+            </if>
+            <if test="isSubtitle != null">
+                isSubtitle,
+            </if>
+            <if test="isAutoSubmit != null">
+                isAutoSubmit,
+            </if>
+            <if test="isPublish != null">
+                isPublish,
+            </if>
+            <if test="isComment != null">
+                isComment,
+            </if>
+            <if test="isRate != null">
+                isRate,
+            </if>
             <if test="start_time != null">
                 start_time,
             </if>
@@ -131,6 +204,33 @@
             </if>
             <if test="createTime != null">
                 createTime,
+            </if>
+            <if test="course_fontColor != null">
+                course_fontColor,
+            </if>
+            <if test="course_wordSize != null">
+                course_wordSize,
+            </if>
+            <if test="teacher_fontColor != null">
+                teacher_fontColor,
+            </if>
+            <if test="teacher_wordSize != null">
+                teacher_wordSize,
+            </if>
+            <if test="resolving_power != null">
+                resolving_power,
+            </if>
+            <if test="encode_quality != null">
+                encode_quality,
+            </if>
+            <if test="otherParamStr != null">
+                otherParamStr,
+            </if>
+            <if test="epilogue_img != null">
+                epilogue_img,
+            </if>
+            <if test="prologue_img != null">
+                prologue_img,
             </if>
             <if test="createrId != null">
                 createrId,
@@ -144,25 +244,55 @@
             <if test="remote_classroomIds != null">
                 remote_classroomIds,
             </if>
-            <if test="org_id != null">
-                org_id,
+            <if test="isDual != null">
+                isDual,
             </if>
-            <if test="media_id != null">
-                media_id,
+            <if test="course_fontType != null">
+                course_fontType,
+            </if>
+            <if test="teacher_fontType != null">
+                teacher_fontType,
+            </if>
+            <if test="label_fontType != null">
+                label_fontType,
+            </if>
+            <if test="label_fontColor != null">
+                label_fontColor,
+            </if>
+            <if test="label_wordSize != null">
+                label_wordSize,
+            </if>
+            <if test="forward_state != null">
+                forward_state,
+            </if>
+            <if test="live_password != null">
+                live_password,
+            </if>
+            <if test="bandwidth != null">
+                bandwidth,
+            </if>
+            <if test="org_id !=null">
+                org_id,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
+            <if test="course_id != null">
+                #{course_id,jdbcType=INTEGER},
             </if>
-            <if test="name != null">
-                #{name,jdbcType=VARCHAR},
+            <if test="course_name != null">
+                #{course_name,jdbcType=VARCHAR},
             </if>
-            <if test="type != null">
-                #{type,jdbcType=INTEGER},
+            <if test="course_type != null">
+                #{course_type,jdbcType=INTEGER},
             </if>
-            <if test="state != null">
-                #{state,jdbcType=VARCHAR},
+            <if test="duration != null">
+                #{duration,jdbcType=VARCHAR},
+            </if>
+            <if test="user_number">
+                #{user_number,jdbcType=INTEGER},
+            </if>
+            <if test="course_state != null">
+                #{course_state,jdbcType=VARCHAR},
             </if>
             <if test="teacher_name != null">
                 #{teacher_name,jdbcType=VARCHAR},
@@ -173,6 +303,27 @@
             <if test="isLive != null">
                 #{isLive,jdbcType=CHAR},
             </if>
+            <if test="record_state != null">
+                #{record_state,jdbcType=VARCHAR},
+            </if>
+            <if test="live_state != null">
+                #{live_state,jdbcType=VARCHAR},
+            </if>
+            <if test="isSubtitle != null">
+                #{isSubtitle,jdbcType=CHAR},
+            </if>
+            <if test="isAutoSubmit != null">
+                #{isAutoSubmit,jdbcType=CHAR},
+            </if>
+            <if test="isPublish != null">
+                #{isPublish,jdbcType=CHAR},
+            </if>
+            <if test="isComment != null">
+                #{isComment,jdbcType=CHAR},
+            </if>
+            <if test="isRate != null">
+                #{isRate,jdbcType=CHAR},
+            </if>
             <if test="start_time != null">
                 #{start_time,jdbcType=VARCHAR},
             </if>
@@ -181,6 +332,33 @@
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test="course_fontColor != null">
+                #{course_fontColor,jdbcType=VARCHAR},
+            </if>
+            <if test="course_wordSize != null">
+                #{course_wordSize,jdbcType=VARCHAR},
+            </if>
+            <if test="teacher_fontColor != null">
+                #{teacher_fontColor,jdbcType=VARCHAR},
+            </if>
+            <if test="teacher_wordSize != null">
+                #{teacher_wordSize,jdbcType=VARCHAR},
+            </if>
+            <if test="resolving_power != null">
+                #{resolving_power,jdbcType=INTEGER},
+            </if>
+            <if test="encode_quality != null">
+                #{encode_quality,jdbcType=VARCHAR},
+            </if>
+            <if test="otherParamStr != null">
+                #{otherParamStr,jdbcType=VARCHAR},
+            </if>
+            <if test="epilogue_img != null">
+                #{epilogue_img,jdbcType=VARCHAR},
+            </if>
+            <if test="prologue_img != null">
+                #{prologue_img,jdbcType=VARCHAR},
             </if>
             <if test="createrId != null">
                 #{createrId,jdbcType=INTEGER},
@@ -194,63 +372,37 @@
             <if test="remote_classroomIds != null">
                 #{remote_classroomIds,jdbcType=VARCHAR},
             </if>
-            <if test="org_id != null">
-                #{org_id,jdbcType=INTEGER},
+            <if test="isDual != null">
+                #{isDual,jdbcType=CHAR},
             </if>
-            <if test="media_id != null">
-                #{media_id,jdbcType=INTEGER},
+            <if test="course_fontType != null">
+                #{course_fontType,jdbcType=VARCHAR},
+            </if>
+            <if test="teacher_fontType != null">
+                #{teacher_fontType,jdbcType=VARCHAR},
+            </if>
+            <if test="label_fontType != null">
+                #{label_fontType,jdbcType=VARCHAR},
+            </if>
+            <if test="label_fontColor != null">
+                #{label_fontColor,jdbcType=VARCHAR},
+            </if>
+            <if test="label_wordSize != null">
+                #{label_wordSize,jdbcType=VARCHAR},
+            </if>
+            <if test="forward_state != null">
+                #{forward_state,jdbcType=CHAR},
+            </if>
+            <if test="live_password != null">
+                #{live_password,jdbcType=VARCHAR},
+            </if>
+            <if test="bandwidth != null">
+                #{bandwidth,jdbcType=INTEGER},
+            </if>
+            <if test="org_id !=null">
+                #{org_id,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseHistoryEntity">
-        update course_history
-        <set>
-            <if test="name != null">
-                name = #{name,jdbcType=VARCHAR},
-            </if>
-            <if test="type != null">
-                type = #{type,jdbcType=INTEGER},
-            </if>
-            <if test="state != null">
-                state = #{state,jdbcType=VARCHAR},
-            </if>
-            <if test="teacher_name != null">
-                teacher_name = #{teacher_name,jdbcType=VARCHAR},
-            </if>
-            <if test="isRecord != null">
-                isRecord = #{isRecord,jdbcType=CHAR},
-            </if>
-            <if test="isLive != null">
-                isLive = #{isLive,jdbcType=CHAR},
-            </if>
-            <if test="start_time != null">
-                start_time = #{start_time,jdbcType=VARCHAR},
-            </if>
-            <if test="end_time != null">
-                end_time = #{end_time,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                createTime = #{createTime,jdbcType=VARCHAR},
-            </if>
-            <if test="createrId != null">
-                createrId = #{createrId,jdbcType=INTEGER},
-            </if>
-            <if test="provenance != null">
-                provenance = #{provenance,jdbcType=VARCHAR},
-            </if>
-            <if test="local_classroomId != null">
-                local_classroomId = #{local_classroomId,jdbcType=INTEGER},
-            </if>
-            <if test="remote_classroomIds != null">
-                remote_classroomIds = #{remote_classroomIds,jdbcType=VARCHAR},
-            </if>
-            <if test="org_id != null">
-                org_id = #{org_id,jdbcType=INTEGER},
-            </if>
-            <if test="media_id != null">
-                media_id = #{media_id,jdbcType=INTEGER},
-            </if>
-        </set>
-        where id = #{id,jdbcType=INTEGER}
-    </update>
+
 </mapper>

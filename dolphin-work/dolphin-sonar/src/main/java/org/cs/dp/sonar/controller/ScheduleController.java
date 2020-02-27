@@ -7,6 +7,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.ScheduleArrayBean;
+import org.cs.dp.sonar.domain.ScheduleStartReqBean;
 import org.cs.dp.sonar.service.IScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,8 +62,8 @@ public class ScheduleController {
 
     @PostMapping("start")
     @ApiOperation(value = "开会", notes = "日程配置管理")
-    public ReturnInfo start(@RequestBody Map<String,Integer> param) {
-        return iScheduleService.start(param.get("id"));
+    public ReturnInfo start(@RequestBody ScheduleStartReqBean param) {
+        return iScheduleService.start(param);
     }
 
 }

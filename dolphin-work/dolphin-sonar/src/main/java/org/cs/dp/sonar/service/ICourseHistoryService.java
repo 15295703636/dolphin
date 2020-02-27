@@ -22,4 +22,6 @@ public interface ICourseHistoryService {
 
     ReturnInfo getCourseHistory(RequestPage<SplitPageInfo, GetCourseHistoryReqBean> param);
 
+    ReturnInfo start(Integer id,Long ysx_id);
+
 }

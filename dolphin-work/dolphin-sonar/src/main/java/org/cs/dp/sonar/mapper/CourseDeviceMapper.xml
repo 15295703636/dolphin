@@ -63,9 +63,12 @@
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from course_device
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+        delete from course_device where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByCourseId" parameterType="java.lang.Integer">
+        delete from course_device where course_id = #{id,jdbcType=INTEGER}
+     </delete>
 
     <update id="updateType">
         <if test="updateType == '1'.toString()">
@@ -89,6 +92,12 @@
         insert into course_device(course_id,device_id,device_type,type)
             SELECT #{courseId}, device_id, type as device_type,state as type FROM schedule_device
             WHERE schedule_id = #{scheduleId}
+    </insert>
+
+    <insert id="insertByHistoryId" parameterType="java.lang.Integer">
+        insert into course_device(course_id,device_id,device_type,type)
+            SELECT #{courseId}, device_id,device_type,type FROM course_history_device
+            WHERE course_id = #{scheduleId}
     </insert>
 
     <insert id="insertByDeviceId">
