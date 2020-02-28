@@ -14,7 +14,7 @@ public class ScheduleDeviceEntity {
     @ApiModelProperty(value = "类型 0端，1软终端")
     private Integer type;
 
-    @ApiModelProperty(value = "状态0主讲，1远程")
+    @ApiModelProperty(value = "状态1主讲，2远程")
     private Integer state;
 
     public ScheduleDeviceEntity() {

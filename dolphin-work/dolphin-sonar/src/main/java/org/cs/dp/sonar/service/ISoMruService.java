@@ -35,6 +35,10 @@ public interface ISoMruService {
     String CONFERENCE_MUTEAUDIOALL = "muteAudioAll";
     //设置主讲
     String CONFERENCE_SETLECTURER = "setLecturer";
+    //设置讨论模式
+    String CONFERENCE_SETDISCMODE = "switch2discussionMode";
+    //设置分屏
+    String CONFERENCE_SETPEERLAYOUT = "setPeerLayout";
 
     ReturnInfo getServer(String method, Object obj);
 

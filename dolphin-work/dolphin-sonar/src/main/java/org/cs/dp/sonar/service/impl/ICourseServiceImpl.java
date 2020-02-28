@@ -1,5 +1,7 @@
 package org.cs.dp.sonar.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
@@ -16,10 +18,9 @@ import org.cs.dp.radar.api.entity.RestParty;
 import org.cs.dp.radar.api.entity.RestPartyMru;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
-import org.cs.dp.sonar.mapper.CourseDeviceMapper;
-import org.cs.dp.sonar.mapper.CourseHistoryMapper;
-import org.cs.dp.sonar.mapper.CourseMapper;
-import org.cs.dp.sonar.mapper.ScheduleMapper;
+import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
+import org.cs.dp.sonar.mapper.*;
+import org.cs.dp.sonar.service.ICourseHistoryDeviceService;
 import org.cs.dp.sonar.service.ICourseService;
 import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,9 @@ public class ICourseServiceImpl implements ICourseService {
     @Autowired
     private CourseDeviceMapper courseDeviceMapper;
     @Autowired
-    private CourseHistoryMapper courseHistory;
+    private CourseHistoryMapper courseHistoryMapper;
+    @Autowired
+    private CourseHistoryDeviceMapper courseHistoryDeviceMapper;
     @Autowired
     private ISoMruService iSoMruService;
 
@@ -135,15 +138,21 @@ public class ICourseServiceImpl implements ICourseService {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "选择日程不能在!");
         }
 
+        CourseEntity course = new CourseEntity();
+        course.setCourse_name(res.getName());
+        course.setCourse_type(res.getType());
+        course.setTeacher_name(res.getTeacher_name());
+        course.setDuration(res.getDuration());
+        course.setIsLive(res.getIsLive());
+        course.setIsRecord(res.getIsRecord());
+        course.setBandwidth(res.getBandwidth());
+        course.setCreaterId(ThreadLocalUserInfoUtil.get().getUser_id());
+        course.setOrg_id(res.getOrg_id());
+        course.setYsx_id(ysx_id);
         String currentDateStr = DateUtil.getCurrentDate(DateUtil.YMDHMS);
-        CourseEntity course = new CourseEntity(
-                null, res.getName(), res.getType(), res.getState(), res.getTeacher_name(),
-                res.getIsRecord(), res.getIsLive(), null, null, null, null,
-                null, null, null, currentDateStr, null, currentDateStr, null, null,
-                null, null, res.getResolving_power(), null, null, null, null, 1000,
-                null, res.getDevice_id(), res.getDevice_ids(), null, null,
-                null, null, null, null, null, null,
-                res.getBandwidth(), res.getOrg_id(), ysx_id);
+        course.setStart_time(currentDateStr);
+        course.setLocal_classroomId(res.getDevice_id());
+        course.setUser_number(res.getUser_number());
         courseMapper.insertSelective(course);
 
         //端控制
@@ -175,8 +184,13 @@ public class ICourseServiceImpl implements ICourseService {
         if (!(boolean) ysx_res[0]) {
             throw new BaseException("云视讯通讯异常", String.valueOf(ysx_res[1]));
         }
-        courseHistory.insertSelectCurrent(param.getCourse_id());
+        CourseHistoryEntity courseHistory = JSONObject.parseObject(JSON.toJSONString(courseMapper.selectByIdResAll(param.getCourse_id())), CourseHistoryEntity.class);
+        courseHistory.setCourse_id(null);
+        courseHistoryMapper.insertSelective(courseHistory);
+        courseHistoryDeviceMapper.insertByCourseId(courseHistory.getCourse_id(), param.getCourse_id());
+
         courseMapper.deleteByPrimaryKey(param.getCourse_id());
+        courseDeviceMapper.deleteByCourseId(param.getCourse_id());
         return new ReturnInfo();
     }
 

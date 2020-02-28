@@ -3,10 +3,7 @@ package org.cs.dp.sonar.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dp.sonar.domain.CourseDeviceAddReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceMuteReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceReqBean;
-import org.cs.dp.sonar.domain.CourseDeviceSetLecturerReqBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,15 +38,15 @@ public class CourseDeviceController {
         return iCourseDeviceService.delCourseDevice(param);
     }
 
-    @PostMapping("edit")
+   /* @PostMapping("edit")
     @ApiOperation(value = "修改日程-端管理", notes = "日程-端管理")
     public ReturnInfo editCourseDevice(@RequestBody Map param) {
-        return new ReturnInfo();//iCourseDeviceService.editCourseDevice(param);
-    }
+        return iCourseDeviceService.editCourseDevice(param);
+    }*/
 
     @PostMapping("get")
     @ApiOperation(value = "查询日程-端管理", notes = "日程-端管理")
-    public ReturnInfo getCourseDevice(@RequestBody Map<String,Integer> param) {
+    public ReturnInfo getCourseDevice(@RequestBody Map<String, Integer> param) {
         return iCourseDeviceService.getCourseDevice(param.get("id"));
     }
 
@@ -71,16 +68,28 @@ public class CourseDeviceController {
         return iCourseDeviceService.connect(param);
     }
 
-    @PostMapping("sidelines")
+    /*@PostMapping("sidelines")
     @ApiOperation(value = "旁观", notes = "日程-端管理")
     public ReturnInfo sidelines(@RequestBody Map id) {
-        return null;//iCourseDeviceService.sidelines(id);
-    }
+        return iCourseDeviceService.sidelines(id);
+    }*/
 
     @PostMapping("setLecturer")
     @ApiOperation(value = "设置主讲", notes = "日程-端管理")
     public ReturnInfo setLecturer(@RequestBody CourseDeviceSetLecturerReqBean param) {
         return iCourseDeviceService.setLecturer(param);
+    }
+
+    @PostMapping("setDiscMode")
+    @ApiOperation(value = "设置讨论模式", notes = "日程-端管理")
+    public ReturnInfo setDiscMode(@RequestBody Map<String, String> param) {
+        return iCourseDeviceService.setDiscMode(param.get("ysx_course_id"));
+    }
+
+    @PostMapping("setPeerLayout")
+    @ApiOperation(value = "设置分屏模式", notes = "日程-端管理")
+    public ReturnInfo setPeerLayout(@RequestBody RestPartyLayoutReqBean param) {
+        return iCourseDeviceService.setPeerLayout(param);
     }
 
 }

@@ -220,6 +220,24 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
         return new ReturnInfo();
     }
 
+    //设置讨论模式
+    public ReturnInfo setDiscMode(String ysx_course_id) {
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETDISCMODE, ysx_course_id);
+        if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        }
+        return new ReturnInfo();
+    }
+
+    //设置分屏
+    public ReturnInfo setPeerLayout(RestPartyLayoutReqBean param) {
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETPEERLAYOUT, param);
+        if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        }
+        return new ReturnInfo();
+    }
+
     private void getDeviceInfo(CourseDeviceReqBean param) {
         List<DeviceEntity> deviceEntity = deviceMapper.selectByPrimaryKey(Arrays.asList(param.getDevice_id()));
         if (deviceEntity.size() == 1) {

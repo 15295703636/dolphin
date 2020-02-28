@@ -21,6 +21,12 @@ public class CourseEntity {
     @ApiModelProperty(value = "主讲老师")
     private String teacher_name;
 
+    @ApiModelProperty(value = "时长")
+    private String duration;
+
+    @ApiModelProperty(value = "日程人数")
+    private Integer user_number;
+
     @ApiModelProperty(value = "是否录制")
     private String isRecord;
 
@@ -132,67 +138,4 @@ public class CourseEntity {
     @ApiModelProperty(value = "会议开启云视讯返回的ID")
     private Long ysx_id;
 
-    public CourseEntity() {
-    }
-
-    public CourseEntity(Integer course_id, String course_name, Integer course_type,
-                        Integer course_state, String teacher_name, String isRecord,
-                        String isLive, String record_state, String live_state,
-                        String isSubtitle,String isAutoSubmit, String isPublish,
-                        String isComment, String isRate, String start_time,
-                        String end_time, String createTime, String course_fontColor,
-                        String course_wordSize, String teacher_fontColor,
-                        String teacher_wordSize, Integer resolving_power,
-                        String encode_quality, String otherParamStr,
-                        String epilogue_img, String prologue_img, Integer createrId,
-                        String provenance, Integer local_classroomId,
-                        String remote_classroomIds, String isDual,
-                        String course_fontType, String teacher_fontType,
-                        String label_fontType, String label_fontColor,
-                        String label_wordSize, String forward_state,
-                        String live_password, Integer bandwidth,
-                        Integer org_id,
-                        Long ysx_id) {
-        this.course_id = course_id;
-        this.course_name = course_name;
-        this.course_type = course_type;
-        this.course_state = course_state;
-        this.teacher_name = teacher_name;
-        this.isRecord = isRecord;
-        this.isLive = isLive;
-        this.record_state = record_state;
-        this.live_state = live_state;
-        this.isSubtitle = isSubtitle;
-        this.isAutoSubmit = isAutoSubmit;
-        this.isPublish = isPublish;
-        this.isComment = isComment;
-        this.isRate = isRate;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.createTime = createTime;
-        this.course_fontColor = course_fontColor;
-        this.course_wordSize = course_wordSize;
-        this.teacher_fontColor = teacher_fontColor;
-        this.teacher_wordSize = teacher_wordSize;
-        this.resolving_power = resolving_power;
-        this.encode_quality = encode_quality;
-        this.otherParamStr = otherParamStr;
-        this.epilogue_img = epilogue_img;
-        this.prologue_img = prologue_img;
-        this.createrId = createrId;
-        this.provenance = provenance;
-        this.local_classroomId = local_classroomId;
-        this.remote_classroomIds = remote_classroomIds;
-        this.isDual = isDual;
-        this.course_fontType = course_fontType;
-        this.teacher_fontType = teacher_fontType;
-        this.label_fontType = label_fontType;
-        this.label_fontColor = label_fontColor;
-        this.label_wordSize = label_wordSize;
-        this.forward_state = forward_state;
-        this.live_password = live_password;
-        this.bandwidth = bandwidth;
-        this.org_id = org_id;
-        this.ysx_id = ysx_id;
-    }
 }

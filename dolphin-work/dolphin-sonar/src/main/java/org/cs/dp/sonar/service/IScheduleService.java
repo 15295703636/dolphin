@@ -5,6 +5,7 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.ScheduleArrayBean;
+import org.cs.dp.sonar.domain.ScheduleStartReqBean;
 
 /**
 * @ClassName IScheduleService
@@ -24,5 +25,5 @@ public interface IScheduleService {
 
     ReturnInfo getById(Integer id);
 
-    ReturnInfo start(Integer id);
+    ReturnInfo start(ScheduleStartReqBean param);
 }

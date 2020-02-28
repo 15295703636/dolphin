@@ -52,10 +52,10 @@ public class ScheduleEntity {
     @ApiModelProperty(value = "日程类型 1会议 2互动 3录播")
     private Integer type;
 
-    @ApiModelProperty(value = "是否直播")
+    @ApiModelProperty(value = "是否直播 1是 0否")
     private String isLive;
 
-    @ApiModelProperty(value = "是否录制")
+    @ApiModelProperty(value = "是否录制 1是 0否")
     private String isRecord;
 
     @ApiModelProperty(value = "分辨率")

@@ -117,6 +117,13 @@ public class ISoMruServiceImpl implements ISoMruService {
                 CourseDeviceSetLecturerReqBean param = (CourseDeviceSetLecturerReqBean) obj;
                 returnInfo = setLecturer(param.getYsx_course_id(), param.getYsx_device_id(), token, url);
                 break;
+            case CONFERENCE_SETDISCMODE:
+                returnInfo = switch2discussionMode((String) obj, token, url);
+                break;
+            case CONFERENCE_SETPEERLAYOUT:
+                RestPartyLayoutReqBean reqBean = (RestPartyLayoutReqBean) obj;
+                returnInfo = setPeerLayout(reqBean.getYsx_course_id(), reqBean.getYsx_device_id(),
+                        token, url, reqBean);
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
                 break;
@@ -341,7 +348,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 切换至讨论模式 TODO 未调用
+     * 切换至讨论模式
      *
      * @param confId
      * @param token
@@ -471,7 +478,7 @@ public class ISoMruServiceImpl implements ISoMruService {
      */
     @Override
     public ReturnInfo muteAudio(String peer, String confId, boolean muteAudio, String token, String url) {
-        ReturnInfo returnInfo = iMruClient.muteAudio(peer,confId, muteAudio, token, url);
+        ReturnInfo returnInfo = iMruClient.muteAudio(peer, confId, muteAudio, token, url);
         String s = JSON.toJSONString(returnInfo.getReturnData());
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
             Map restConf = JSON.parseObject(s, Map.class);
@@ -532,7 +539,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 设置与会终端分屏 TODO 未调用
+     * 设置与会终端分屏
      *
      * @param confId
      * @param peerId

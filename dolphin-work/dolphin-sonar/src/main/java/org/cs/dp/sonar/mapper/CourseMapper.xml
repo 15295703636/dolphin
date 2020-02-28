@@ -5,6 +5,8 @@
         <id property="course_id" column="course_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="course_name" column="course_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="course_type" column="course_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="duration" column="duration" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_number" column="user_number" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="course_state" column="course_state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="teacher_name" column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isRecord" column="isRecord" javaType="java.lang.String" jdbcType="CHAR"/>
@@ -48,7 +50,7 @@
         <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     </resultMap>
     <sql id="Base_Column_List">
-    course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, 
+    course_id, course_name, course_type,duration,user_number, course_state, teacher_name, isRecord, isLive,
     record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate, 
     start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor, 
     teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img, 
@@ -102,6 +104,12 @@
         FROM course where course_id = #{id}
     </select>
 
+    <select id="selectByIdResAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        FROM course where course_id = #{id}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course
     where course_id = #{course_id,jdbcType=INTEGER}
@@ -119,6 +127,12 @@
             </if>
             <if test="course_type != null">
                 course_type,
+            </if>
+            <if test="duration != null">
+                duration,
+            </if>
+            <if test="user_number">
+                user_number,
             </if>
             <if test="course_state != null">
                 course_state,
@@ -244,6 +258,12 @@
             </if>
             <if test="course_type != null">
                 #{course_type,jdbcType=INTEGER},
+            </if>
+            <if test="duration != null">
+                #{duration,jdbcType=VARCHAR},
+            </if>
+            <if test="user_number">
+                #{user_number,jdbcType=INTEGER},
             </if>
             <if test="course_state != null">
                 #{course_state,jdbcType=VARCHAR},

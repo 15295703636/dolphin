@@ -18,6 +18,12 @@ public class CourseHistoryEntity {
     @ApiModelProperty(value = "状态")
     private Integer course_state;
 
+    @ApiModelProperty(value = "时长")
+    private String duration;
+
+    @ApiModelProperty(value = "用户数量")
+    private Integer user_number;
+
     @ApiModelProperty(value = "主讲老师")
     private String teacher_name;
 

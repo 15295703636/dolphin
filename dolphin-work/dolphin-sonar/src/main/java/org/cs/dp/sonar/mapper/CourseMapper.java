@@ -18,6 +18,8 @@ public interface CourseMapper {
 
     CourseGetByIdResBean selectById(Integer id);
 
+    CourseEntity selectByIdResAll(Integer id);
+
     int updateByPrimaryKeySelective(CourseEntity record);
 
 }

@@ -18,10 +18,13 @@ import org.cs.dp.radar.api.entity.RestSubtitle;
 import org.cs.dp.sonar.domain.GetScheduleBean;
 import org.cs.dp.sonar.domain.ScheduleArrayBean;
 import org.cs.dp.sonar.domain.ScheduleOneDeviceBean;
+import org.cs.dp.sonar.domain.ScheduleStartReqBean;
 import org.cs.dp.sonar.domain.entity.ScheduleDeviceEntity;
+import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleDeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
+import org.cs.dp.sonar.service.ICourseHistoryService;
 import org.cs.dp.sonar.service.ICourseService;
 import org.cs.dp.sonar.service.IScheduleService;
 import org.cs.dp.sonar.service.ISoMruService;
@@ -44,9 +47,13 @@ public class IScheduleServiceImpl implements IScheduleService {
     @Autowired
     private ScheduleMapper scheduleMapper;
     @Autowired
+    private CourseHistoryMapper courseHistoryMapper;
+    @Autowired
     private ICourseService iCourseService;
     @Autowired
     private ScheduleDeviceMapper scheduleDeviceMapper;
+    @Autowired
+    private ICourseHistoryService iCourseHistoryService;
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
@@ -70,7 +77,7 @@ public class IScheduleServiceImpl implements IScheduleService {
         dealDevice(param, true);
 
         if (param.isNew_start()) {
-            start(param.getId());
+            start(new ScheduleStartReqBean(param.getId(), 0));
         }
         return new ReturnInfo();
     }
@@ -81,17 +88,25 @@ public class IScheduleServiceImpl implements IScheduleService {
             //处理端/软终端数据
             List<ScheduleDeviceEntity> scheduleDevices = new ArrayList<>();
             if (!param.getType().equals(3)) {
+                if (null != param.getDevice_id()) {
+                    scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 1));
+                } else {
+                    scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 1));
+                }
                 if (null != param.getDeviceIds()) {
-                    param.getDeviceIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 1)));
+                    param.getDeviceIds().forEach(e -> {
+                        if (null == param.getDevice_id() || !e.equals(param.getDevice_id())) {
+                            scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 2));
+                        }
+                    });
                 }
                 if (null != param.getUserIds()) {
-                    param.getUserIds().forEach(e -> scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 1)));
+                    param.getUserIds().forEach(e -> {
+                        if (null == param.getUser_id() || !e.equals(param.getUser_id())) {
+                            scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 2));
+                        }
+                    });
                 }
-            }
-            if (null != param.getDevice_id()) {
-                scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 0));
-            } else {
-                scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 0));
             }
             scheduleDeviceMapper.insertBatch(scheduleDevices);
         }
@@ -115,7 +130,7 @@ public class IScheduleServiceImpl implements IScheduleService {
         scheduleMapper.updateByPrimaryKeySelective(param);
         dealDevice(param, true);
         if (param.isNew_start()) {
-            start(param.getId());
+            start(new ScheduleStartReqBean(param.getId(), 0));
         }
         return new ReturnInfo();
     }
@@ -176,7 +191,6 @@ public class IScheduleServiceImpl implements IScheduleService {
 
         }
 
-
         String duration[] = res.getDuration().split(",");
         res.setDuration_hour(Integer.valueOf(duration[0]));
         res.setDuration_minute(Integer.valueOf(duration[1]));
@@ -185,65 +199,80 @@ public class IScheduleServiceImpl implements IScheduleService {
     }
 
     @Override
-    public ReturnInfo start(Integer id) {
-        Object ysxRes[] = dealStart(id);
+    public ReturnInfo start(ScheduleStartReqBean param) {
+        Object ysxRes[] = dealStart(param);
         if (!(boolean) ysxRes[0]) {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
         }
-        return iCourseService.startSchedule(id, (Long) ysxRes[1]);
+        ReturnInfo returnInfo;
+        if (1 == param.getHistorySign()) {
+            returnInfo = iCourseHistoryService.start(param.getId(), (Long) ysxRes[1]);
+        } else {
+            returnInfo = iCourseService.startSchedule(param.getId(), (Long) ysxRes[1]);
+        }
+        return returnInfo;
     }
 
 
     /**
-     * @param id
+     * @param param
      * @return
      */
-    private Object[] dealStart(Integer id) {
-        ScheduleOneDeviceBean res = scheduleMapper.getStartInfoById(id);
-        List<Long> userIds = new ArrayList<>();
-        List<Long> deviceIds = new ArrayList<>();
+    private Object[] dealStart(ScheduleStartReqBean param) {
+        ScheduleOneDeviceBean res = null;
+        if (1 == param.getHistorySign()) {
+            res = courseHistoryMapper.selectByIdResYsx(param.getId());
+        } else {
+            res = scheduleMapper.getStartInfoById(param.getId());
+        }
+        Object obj[] = new Object[2];
         if (!res.getType().equals(3)) {
+            List<Long> userIds = new ArrayList<>();
+            List<Long> deviceIds = new ArrayList<>();
             if (null != res.getDevice_ids()) {
                 deviceIds = JSONArray.parseArray("[" + res.getDevice_ids() + "]", Long.class);
             }
             if (null != res.getUser_ids()) {
                 userIds = JSONArray.parseArray("[" + res.getUser_ids() + "]", Long.class);
             }
-        }
-        String duration[] = res.getDuration().split(",");
-        Integer hourInt = Integer.valueOf(duration[0]);
-        Integer minuteInt = Integer.valueOf(duration[1]);
+            String duration[] = res.getDuration().split(",");
+            Integer hourInt = Integer.valueOf(duration[0]);
+            Integer minuteInt = Integer.valueOf(duration[1]);
 
-        RestConfReq restConfReq = new RestConfReq();
-        restConfReq.setName(res.getName());
-        restConfReq.setStartTime(new Long(0));//DateUtil.StringToDate(res.getDate(), DateUtil.YMDHMS).getTime()
-        restConfReq.setDuration(new Integer(hourInt * 3600000 + minuteInt + 60000).longValue());
-        restConfReq.setLecturerEpId(null == res.getDevice_id() ? null : res.getDevice_id().longValue());//22172  21554
-        restConfReq.setLecturerUserId(null == res.getUser_id() ? null : res.getUser_id().longValue());
-        restConfReq.setLayout("auto");//会议的分屏模式
-        restConfReq.setProfile("SVC");//会议质量
-        restConfReq.setEndpointIds(deviceIds);
-        restConfReq.setUserIds(userIds);
-        restConfReq.setMaxPartyCount(res.getUser_number());
-        restConfReq.setRecordingLayout("oneByOne");
-        restConfReq.setSubtitle(new RestSubtitle());
-        //restConfReq.setPassword("123456");
-        //restConfReq.setDescription("测试开启会议");
-        //restConfReq.setRoomId(null);
-        //restConfReq.setUseRandomNumericId();
-        //restConfReq.setRedialingEnabled();
-        //restConfReq.setRecordingEnabled();
-        //restConfReq.setRecordingProfile();
-        //restConfReq.setLiveStreamingUrl();
-        //restConfReq.setAdminUserId();
-        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_START, restConfReq);
-        Object obj[] = new Object[2];
-        if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
-            obj[0] = true;
-            obj[1] = ((RestConf) returnInfo.getReturnData()).getId();
+            RestConfReq restConfReq = new RestConfReq();
+            restConfReq.setName(res.getName());
+            restConfReq.setStartTime(new Long(0));//DateUtil.StringToDate(res.getDate(), DateUtil.YMDHMS).getTime()
+            restConfReq.setDuration(new Integer(hourInt * 3600000 + minuteInt + 60000).longValue());
+            restConfReq.setLecturerEpId(null == res.getDevice_id() ? null : res.getDevice_id().longValue());//22172  21554
+            restConfReq.setLecturerUserId(null == res.getUser_id() ? null : res.getUser_id().longValue());
+            restConfReq.setLayout("auto");//会议的分屏模式
+            restConfReq.setProfile("SVC");//会议质量
+            restConfReq.setEndpointIds(deviceIds);
+            restConfReq.setUserIds(userIds);
+            if (null != res.getUser_number()) {
+                restConfReq.setMaxPartyCount(res.getUser_number());
+            }
+            restConfReq.setRecordingLayout("oneByOne");
+            restConfReq.setSubtitle(new RestSubtitle());
+            //restConfReq.setPassword("123456");
+            //restConfReq.setDescription("测试开启会议");
+            //restConfReq.setRoomId(null);
+            //restConfReq.setUseRandomNumericId();
+            //restConfReq.setRedialingEnabled();
+            //restConfReq.setRecordingEnabled();
+            //restConfReq.setRecordingProfile();
+            //restConfReq.setLiveStreamingUrl();
+            //restConfReq.setAdminUserId();
+            ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_START, restConfReq);
+            if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
+                obj[0] = true;
+                obj[1] = ((RestConf) returnInfo.getReturnData()).getId();
+            } else {
+                obj[0] = false;
+                obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+            }
         } else {
-            obj[0] = false;
-            obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+            obj[0] = true;
         }
         return obj;
     }
