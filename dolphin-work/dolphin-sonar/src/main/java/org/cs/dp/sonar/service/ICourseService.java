@@ -6,6 +6,7 @@ import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.CourseEndReqBean;
 import org.cs.dp.sonar.domain.GetCourseReqBean;
+import org.cs.dp.sonar.domain.ScheduleStartReqBean;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
  **/
 public interface ICourseService {
 
-    ReturnInfo startSchedule(Integer id,Long ysx_id);
+    ReturnInfo startCourser(ScheduleStartReqBean param, Long ysx_id);
 
     ReturnInfo delCourse(Integer param);
 

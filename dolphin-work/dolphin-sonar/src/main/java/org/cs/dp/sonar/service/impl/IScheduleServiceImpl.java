@@ -15,16 +15,13 @@ import org.cs.dp.radar.api.entity.RestConf;
 import org.cs.dp.radar.api.entity.RestConfReq;
 import org.cs.dp.radar.api.entity.RestError;
 import org.cs.dp.radar.api.entity.RestSubtitle;
-import org.cs.dp.sonar.domain.GetScheduleBean;
-import org.cs.dp.sonar.domain.ScheduleArrayBean;
-import org.cs.dp.sonar.domain.ScheduleOneDeviceBean;
-import org.cs.dp.sonar.domain.ScheduleStartReqBean;
+import org.cs.dp.sonar.config.ThreadAsyncConfig;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.ScheduleDeviceEntity;
 import org.cs.dp.sonar.mapper.CourseHistoryMapper;
 import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleDeviceMapper;
 import org.cs.dp.sonar.mapper.ScheduleMapper;
-import org.cs.dp.sonar.service.ICourseHistoryService;
 import org.cs.dp.sonar.service.ICourseService;
 import org.cs.dp.sonar.service.IScheduleService;
 import org.cs.dp.sonar.service.ISoMruService;
@@ -33,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,15 +47,16 @@ public class IScheduleServiceImpl implements IScheduleService {
     @Autowired
     private CourseHistoryMapper courseHistoryMapper;
     @Autowired
-    private ICourseService iCourseService;
-    @Autowired
     private ScheduleDeviceMapper scheduleDeviceMapper;
-    @Autowired
-    private ICourseHistoryService iCourseHistoryService;
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
+    private ICourseService iCourseService;
+    @Autowired
     private ISoMruService iSoMruService;
+    @Autowired
+    private ThreadAsyncConfig threadAsyncConfig;
+
 
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
@@ -204,15 +203,8 @@ public class IScheduleServiceImpl implements IScheduleService {
         if (!(boolean) ysxRes[0]) {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
         }
-        ReturnInfo returnInfo;
-        if (1 == param.getHistorySign()) {
-            returnInfo = iCourseHistoryService.start(param.getId(), (Long) ysxRes[1]);
-        } else {
-            returnInfo = iCourseService.startSchedule(param.getId(), (Long) ysxRes[1]);
-        }
-        return returnInfo;
+        return iCourseService.startCourser(param, (Long) ysxRes[1]);
     }
-
 
     /**
      * @param param
@@ -267,13 +259,48 @@ public class IScheduleServiceImpl implements IScheduleService {
             if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
                 obj[0] = true;
                 obj[1] = ((RestConf) returnInfo.getReturnData()).getId();
+
+                //如果是互动课堂，调用设置直播分屏 1*1；听课教师1*1；主讲设3*3 所有听课禁言
+                if (res.getType().equals(2)) {
+                    dealPeerLayout(restConfReq, (Long) obj[1]);
+                }
             } else {
                 obj[0] = false;
                 obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
             }
+
         } else {
             obj[0] = true;
         }
         return obj;
     }
+
+    //如果是互动课堂，调用设置直播分屏 1*1；听课教室1*1；主讲设3*3 所有听课禁言
+    @Override
+    public void dealPeerLayout(RestConfReq restConfReq, long ysx_course_id) {
+        try {
+            //先设置主讲端
+            iSoMruService.getServer(
+                    iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                    new RestPartyLayoutReqBean(ysx_course_id, restConfReq.getLecturerEpId(), "3X3", restConfReq.getEndpointIds()));
+
+            //设置远程端
+            for (Long device_id : restConfReq.getEndpointIds()) {
+                threadAsyncConfig.getAsyncExecutor().submit(() -> {
+                    iSoMruService.getServer(
+                            iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                            new RestPartyLayoutReqBean(ysx_course_id, device_id, "1X1", Arrays.asList(restConfReq.getLecturerEpId())));
+                });
+            }
+
+            CourseDeviceMuteReqBean courseDeviceMuteReq = new CourseDeviceMuteReqBean();
+            courseDeviceMuteReq.setMuteAudio(true);
+            courseDeviceMuteReq.setYsx_course_id(String.valueOf(ysx_course_id));
+            //设置禁言
+            iSoMruService.getServer(iSoMruService.CONFERENCE_MUTEAUDIOALL, courseDeviceMuteReq);
+        } catch (Exception e) {
+            log.error("开课设置异常", e);
+        }
+    }
+
 }

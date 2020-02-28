@@ -40,4 +40,7 @@ public class CourseGetByIdResBean {
     private List<CourseResBean> remote;
 
     private CourseResBean main;
+
+    @ApiModelProperty(value = "互动课专用标志 1上课 2讨论 3发言")
+    private Integer class_state;
 }

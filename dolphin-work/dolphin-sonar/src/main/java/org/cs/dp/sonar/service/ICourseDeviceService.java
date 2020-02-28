@@ -30,8 +30,11 @@ public interface ICourseDeviceService {
 
     ReturnInfo setLecturer(CourseDeviceSetLecturerReqBean id);
 
-    ReturnInfo setDiscMode(String ysx_course_id);
+    ReturnInfo setDiscMode(CourseDeviceSpeakReqBean param);
 
     //设置分屏
     ReturnInfo setPeerLayout(RestPartyLayoutReqBean param);
+
+    //设置发言
+    ReturnInfo speak(CourseDeviceSpeakReqBean param);
 }

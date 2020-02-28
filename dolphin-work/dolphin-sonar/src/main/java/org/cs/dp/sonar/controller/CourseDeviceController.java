@@ -82,8 +82,8 @@ public class CourseDeviceController {
 
     @PostMapping("setDiscMode")
     @ApiOperation(value = "设置讨论模式", notes = "日程-端管理")
-    public ReturnInfo setDiscMode(@RequestBody Map<String, String> param) {
-        return iCourseDeviceService.setDiscMode(param.get("ysx_course_id"));
+    public ReturnInfo setDiscMode(@RequestBody CourseDeviceSpeakReqBean param) {
+        return iCourseDeviceService.setDiscMode(param);
     }
 
     @PostMapping("setPeerLayout")
@@ -91,5 +91,12 @@ public class CourseDeviceController {
     public ReturnInfo setPeerLayout(@RequestBody RestPartyLayoutReqBean param) {
         return iCourseDeviceService.setPeerLayout(param);
     }
+
+    @PostMapping("speak")
+    @ApiOperation(value = "设置发言", notes = "日程-端管理")
+    public ReturnInfo speak(@RequestBody CourseDeviceSpeakReqBean param) {
+        return iCourseDeviceService.speak(param);
+    }
+
 
 }
