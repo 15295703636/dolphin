@@ -31,10 +31,6 @@ import java.util.List;
 public class ICourseHistoryServiceImpl implements ICourseHistoryService {
 
     @Autowired
-    private CourseMapper courseMapper;
-    @Autowired
-    private CourseDeviceMapper courseDeviceMapper;
-    @Autowired
     private CourseHistoryMapper courseHistoryMapper;
 
     @Override
@@ -65,34 +61,4 @@ public class ICourseHistoryServiceImpl implements ICourseHistoryService {
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
     }
-
-    @Override
-    public ReturnInfo start(Integer id, Long ysx_id) {
-        ScheduleArrayBean res = courseHistoryMapper.selectById(id);
-        if (null == res) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "选择日程不能在!");
-        }
-
-        CourseEntity course = new CourseEntity();
-        course.setCourse_name(res.getName());
-        course.setCourse_type(res.getType());
-        course.setTeacher_name(res.getTeacher_name());
-        course.setIsLive(res.getIsLive());
-        course.setIsRecord(res.getIsRecord());
-        course.setBandwidth(res.getBandwidth());
-        course.setCreaterId(ThreadLocalUserInfoUtil.get().getUser_id());
-        course.setOrg_id(res.getOrg_id());
-        course.setYsx_id(ysx_id);
-        String currentDateStr = DateUtil.getCurrentDate(DateUtil.YMDHMS);
-        course.setStart_time(currentDateStr);
-        course.setUser_number(res.getUser_number());
-        course.setLocal_classroomId(res.getDevice_id());
-        course.setDuration(res.getDuration());
-        courseMapper.insertSelective(course);
-
-        //端控制
-        courseDeviceMapper.insertByHistoryId(course.getCourse_id(), id);
-        return new ReturnInfo();
-    }
-
 }

@@ -12,9 +12,11 @@ import java.util.List;
 public interface CourseMapper {
     int deleteByPrimaryKey(Integer course_id);
 
+    int updateClassState(@Param(value = "state") Integer state, @Param(value = "ysx_id") Integer ysx_id);
+
     int insertSelective(CourseEntity record);
 
-    List<CourseEntity> selectByCondition(@Param(value = "reqCon")GetCourseReqBean getCourseReqBean);
+    List<CourseEntity> selectByCondition(@Param(value = "reqCon") GetCourseReqBean getCourseReqBean);
 
     CourseGetByIdResBean selectById(Integer id);
 

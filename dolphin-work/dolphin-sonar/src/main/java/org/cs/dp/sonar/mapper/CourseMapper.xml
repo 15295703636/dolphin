@@ -48,6 +48,7 @@
         <result property="org_id" column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result property="local_name" column="local_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="class_state" column="class_state" javaType="java.lang.Integer" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
     course_id, course_name, course_type,duration,user_number, course_state, teacher_name, isRecord, isLive,
@@ -56,7 +57,7 @@
     teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img, 
     createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType, 
     teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state, 
-    live_password, bandwidth,org_id,ysx_id
+    live_password, bandwidth,org_id,ysx_id,class_state
   </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -74,7 +75,7 @@
         teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
         createrId, provenance, local_classroomId, remote_classroomIds, isDual, course_fontType,
         teacher_fontType, label_fontType, label_fontColor, label_wordSize, forward_state,
-        live_password, bandwidth,org_id,ysx_id,
+        live_password, bandwidth,org_id,ysx_id,class_state,
         (select d.name as name from device d where d.device_id=local_classroomId
         UNION ALL
         select u.user_name as name from user u where u.user_id=local_classroomId ) local_name
@@ -114,6 +115,10 @@
     delete from course
     where course_id = #{course_id,jdbcType=INTEGER}
   </delete>
+
+    <update id="updateClassState">
+        update course set class_state=#{state} where ysx_id=#{ysx_id}
+    </update>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity" useGeneratedKeys="true"
             keyProperty="course_id">
@@ -248,6 +253,9 @@
             <if test="ysx_id !=null">
                 ysx_id,
             </if>
+            <if test="class_state !=null">
+                class_state,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="course_id != null">
@@ -379,8 +387,12 @@
             <if test="ysx_id !=null">
                 #{ysx_id},
             </if>
+            <if test="class_state !=null">
+                #{class_state},
+            </if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity">
         update course
         <set>

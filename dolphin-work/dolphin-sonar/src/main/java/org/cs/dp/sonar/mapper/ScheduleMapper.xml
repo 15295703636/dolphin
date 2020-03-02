@@ -80,8 +80,8 @@
         sc.create_user_id,
         sc.teacher_name,
 		(SELECT u.ysx_id FROM user u WHERE u.user_id =sc.user_id) as user_id,
-        ( SELECT group_concat(d.ysx_id SEPARATOR ",") FROM schedule_device sd,device d WHERE sd.device_id=d.device_id and sd.schedule_id = sc.id and sd.type=0 and sd.state=1) AS device_ids,
-        ( SELECT group_concat(u.ysx_id SEPARATOR ",") FROM schedule_device sd,user u WHERE sd.device_id =u.user_id and sd.schedule_id = sc.id and sd.type=1 and sd.state=1) AS user_ids
+        ( SELECT group_concat(d.ysx_id SEPARATOR ",") FROM schedule_device sd,device d WHERE sd.device_id=d.device_id and sd.schedule_id = sc.id ) AS device_ids,
+        ( SELECT group_concat(u.ysx_id SEPARATOR ",") FROM schedule_device sd,user u WHERE sd.device_id =u.user_id and sd.schedule_id = sc.id ) AS user_ids
         FROM `schedule` sc where sc.id = #{id}
     </select>
 

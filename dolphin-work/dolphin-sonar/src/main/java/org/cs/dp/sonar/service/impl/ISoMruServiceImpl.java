@@ -124,6 +124,7 @@ public class ISoMruServiceImpl implements ISoMruService {
                 RestPartyLayoutReqBean reqBean = (RestPartyLayoutReqBean) obj;
                 returnInfo = setPeerLayout(reqBean.getYsx_course_id(), reqBean.getYsx_device_id(),
                         token, url, reqBean);
+                break;
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
                 break;

@@ -1,5 +1,6 @@
 package org.cs.dp.radar.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.exception.MessageCode;
@@ -218,7 +219,9 @@ public class MruServiceImpl implements IMruService {
 
     @Override
     public ReturnInfo setPeerLayout(String confId, String peerId, String token, String url, RestPartyLayout restPartyLayout) {
-        ResponseEntity<Object> resp = restful(restPartyLayout, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/parties/" + peerId + "/control/setLayout?token=" + token, HttpMethod.PUT);
+        String strParam = JSON.toJSONString(restPartyLayout);
+        strParam = strParam.replace("personal","isPersonal");
+        ResponseEntity<Object> resp = restful(strParam, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/parties/" + peerId + "/control/setLayout?token=" + token, HttpMethod.PUT);
         if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
             log.error("login error,error=" + resp.getBody().toString());
             return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());

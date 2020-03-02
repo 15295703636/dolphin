@@ -138,4 +138,7 @@ public class CourseEntity {
     @ApiModelProperty(value = "会议开启云视讯返回的ID")
     private Long ysx_id;
 
+    @ApiModelProperty(value = "互动课专用标志 1上课 2讨论 3发言")
+    private Integer class_state;
+
 }

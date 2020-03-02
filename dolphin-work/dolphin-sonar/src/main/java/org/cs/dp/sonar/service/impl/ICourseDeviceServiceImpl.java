@@ -6,14 +6,17 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.GetNameByCode;
+import org.cs.dp.radar.api.entity.RestConfReq;
 import org.cs.dp.radar.api.entity.RestEndpoint;
 import org.cs.dp.radar.api.entity.RestError;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
+import org.cs.dp.sonar.mapper.CourseMapper;
 import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.service.ICourseDeviceService;
+import org.cs.dp.sonar.service.IScheduleService;
 import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,9 +39,13 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     @Autowired
     private CourseDeviceMapper courseDeviceMapper;
     @Autowired
-    private ISoMruService iSoMruService;
+    private CourseMapper courseMapper;
     @Autowired
     private DeviceMapper deviceMapper;
+    @Autowired
+    private ISoMruService iSoMruService;
+    @Autowired
+    private IScheduleService iScheduleService;
 
     @Override
     public ReturnInfo addCourseDevice(CourseDeviceAddReqBean param) {
@@ -221,21 +228,112 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     }
 
     //设置讨论模式
-    public ReturnInfo setDiscMode(String ysx_course_id) {
-        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETDISCMODE, ysx_course_id);
-        if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
-            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+    @Override
+    public ReturnInfo setDiscMode(CourseDeviceSpeakReqBean param) {
+        ReturnInfo returnInfo;
+        int class_state = 2;
+        //开启讨论模式
+        if (param.isSign()) {
+            returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETDISCMODE, param.getYsx_course_id());
+            if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            }
+
+            Long ysx_course_id = Long.parseLong(param.getYsx_course_id());
+            Long ysx_device_id = Long.parseLong(param.getYsx_device_id());
+
+            //先设置主讲端分屏
+            iSoMruService.getServer(
+                    iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                    new RestPartyLayoutReqBean(ysx_course_id, ysx_device_id, "3X3", param.getYsx_device_ids()));
+
+            //设置远程端分屏
+            for (Long device_id : param.getYsx_device_ids()) {
+                iSoMruService.getServer(
+                        iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                        new RestPartyLayoutReqBean(ysx_course_id, ysx_device_id, "3X3",
+                                param.getYsx_device_ids().stream().filter(deviceId -> !param.getYsx_device_ids().contains(device_id)).collect(Collectors.toList())
+                        ));
+            }
+        } else {//取消讨论模式
+            returnInfo = speak(param);
+            if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            }
+            class_state = 1;
         }
-        return new ReturnInfo();
+        courseMapper.updateClassState(class_state, Integer.valueOf(param.getYsx_course_id()));
+        return returnInfo;
     }
 
     //设置分屏
+    @Override
     public ReturnInfo setPeerLayout(RestPartyLayoutReqBean param) {
         ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETPEERLAYOUT, param);
         if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
         }
         return new ReturnInfo();
+    }
+
+    /**
+     * 设置发言：直播分屏1*2；主讲看发言1*1；发言看主讲1*1；其他看主讲+发言1*2 其他教师禁言
+     * 取消发言：设置成开会时模式
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public ReturnInfo speak(CourseDeviceSpeakReqBean param) {
+        ReturnInfo returnInfo = new ReturnInfo();
+        int class_state = 3;
+        //发言设置
+        if (param.isSign()) {
+
+            //主讲看发言1*1
+            returnInfo = iSoMruService.getServer(
+                    iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                    new RestPartyLayoutReqBean(param.getYsx_course_id(), param.getYsx_device_id(), "1X1", Arrays.asList(param.getYsx_speak_device_id())));
+            if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            }
+
+            //发言看主讲1*1
+            iSoMruService.getServer(
+                    iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                    new RestPartyLayoutReqBean(param.getYsx_course_id(), param.getYsx_speak_device_id(), "1X1", Arrays.asList(Long.parseLong(param.getYsx_device_id()))));
+            if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            }
+
+            //其他看主讲+发言1*2
+            for (Long id : param.getYsx_device_ids()) {
+                ReturnInfo returnInfo2 = iSoMruService.getServer(iSoMruService.CONFERENCE_SETPEERLAYOUT,
+                        new RestPartyLayoutReqBean(param.getYsx_course_id(), id, "1X2", Arrays.asList(Long.parseLong(param.getYsx_device_id()), param.getYsx_speak_device_id())));
+                if (returnInfo2.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                    return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo2.getReturnData()).getErrorCode()));
+                }
+            }
+
+            //取消发言人静音
+            CourseDeviceMuteReqBean courseDeviceMute = new CourseDeviceMuteReqBean();
+            courseDeviceMute.setMuteAudio(false);
+            courseDeviceMute.setYsx_course_id(String.valueOf(param.getYsx_course_id()));
+            courseDeviceMute.setYsx_device_id(String.valueOf(param.getYsx_speak_device_id()));
+            returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_MUTEAUDIO, courseDeviceMute);
+            if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            }
+        } else {
+            //取消发言 还原成上课状态
+            RestConfReq restConfReq = new RestConfReq();
+            restConfReq.setLecturerEpId(Long.parseLong(param.getYsx_device_id()));
+            restConfReq.setEndpointIds(param.getYsx_device_ids());
+            iScheduleService.dealPeerLayout(restConfReq, Long.parseLong(param.getYsx_course_id()));
+            class_state = 1;
+        }
+        courseMapper.updateClassState(class_state, Integer.valueOf(param.getYsx_course_id()));
+        return returnInfo;
     }
 
     private void getDeviceInfo(CourseDeviceReqBean param) {
