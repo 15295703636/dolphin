@@ -19,7 +19,7 @@ import java.util.Map;
  **/
 public interface ICourseService {
 
-    ReturnInfo startCourser(ScheduleStartReqBean param, Long ysx_id);
+    Object[] startCourser(ScheduleStartReqBean param, Long ysx_id,Object[] obj);
 
     ReturnInfo delCourse(Integer param);
 
