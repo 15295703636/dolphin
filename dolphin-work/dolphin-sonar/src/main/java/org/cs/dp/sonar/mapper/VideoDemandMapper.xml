@@ -8,11 +8,13 @@
         <result column="course_type" jdbcType="INTEGER" property="course_type"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="create_time"/>
         <result column="create_user" jdbcType="INTEGER" property="create_user"/>
-        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="duration" jdbcType="VARCHAR" property="duration"/>
         <result column="customer_id" jdbcType="INTEGER" property="customer_id"/>
+        <result column="m3u8_url" jdbcType="VARCHAR" property="m3u8_url"/>
+        <result column="mp4_url" jdbcType="VARCHAR" property="mp4_url"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, teacher_name, course_type, create_time, create_user, duration,customer_id
+    id, name, teacher_name, course_type, create_time, create_user, duration,customer_id,m3u8_url,mp4_url
   </sql>
     <select id="selectByCon" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -60,6 +62,12 @@
             <if test="customer_id != null">
                 customer_id,
             </if>
+            <if test="m3u8_url != null">
+                m3u8_url,
+            </if>
+            <if test="mp4_url != null">
+                mp4_url,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -81,10 +89,16 @@
                 #{create_user,jdbcType=INTEGER},
             </if>
             <if test="duration != null">
-                #{duration,jdbcType=INTEGER},
+                #{duration,jdbcType=VARCHAR},
             </if>
             <if test="customer_id != null">
-                customer_id,
+                #{customer_id,jdbcType=INTEGER},
+            </if>
+            <if test="m3u8_url != null">
+                #{m3u8_url,jdbcType=VARCHAR},
+            </if>
+            <if test="mp4_url != null">
+                #{mp4_url,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -107,7 +121,7 @@
                 create_user = #{create_user,jdbcType=INTEGER},
             </if>
             <if test="duration != null">
-                duration = #{duration,jdbcType=INTEGER},
+                duration = #{duration,jdbcType=VARCHAR},
             </if>
             <if test="customer_id != null">
                 customer_id = #{customer_id,jdbcType=INTEGER},

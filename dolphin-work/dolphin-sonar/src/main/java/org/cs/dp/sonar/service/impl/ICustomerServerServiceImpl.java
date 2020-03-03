@@ -7,7 +7,9 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.sonar.domain.entity.CustomerServerEntity;
+import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.CustomerServerMapper;
+import org.cs.dp.sonar.mapper.ServerMapper;
 import org.cs.dp.sonar.service.ICustomerServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.List;
 public class ICustomerServerServiceImpl implements ICustomerServerService {
     @Autowired
     private CustomerServerMapper customerServerMapper;
+    @Autowired
+    private ServerMapper serverMapper;
 
     @Override
     public ReturnInfo addCustomerServer(CustomerServerEntity param) {
@@ -53,5 +57,28 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
+    }
+
+    /**
+     * 根据当前用户信息查询流媒体信息
+     * @return 流媒体序列号，流媒体服务地址
+     */
+    @Override
+    public String[] getCustomerServerByUserInfo() {
+        String res[] = new String[2];
+        //查询流媒体地址
+        //1.先查询当前节点及父节点是否存在流媒体服务
+        //2.如果没有查询公共流媒体服务
+        List<CustomerServerEntity> customerServers = customerServerMapper.selectByOrgIdUp(ThreadLocalUserInfoUtil.get().getOrg_id(),
+                ThreadLocalUserInfoUtil.get().getCustomer_id());
+        if (0 < customerServers.size()) {
+            res[0] = customerServers.get(0).getSerial_number();
+            res[1] = customerServers.get(0).getServer_ip();
+        } else {
+            ServerEntity server = serverMapper.selectAll(14).get(0);
+            res[0] = server.getSerial_number();
+            res[1] = server.getServer_ip();
+        }
+        return res;
     }
 }

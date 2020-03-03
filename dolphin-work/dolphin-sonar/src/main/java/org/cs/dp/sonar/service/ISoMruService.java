@@ -39,6 +39,12 @@ public interface ISoMruService {
     String CONFERENCE_SETDISCMODE = "switch2discussionMode";
     //设置分屏
     String CONFERENCE_SETPEERLAYOUT = "setPeerLayout";
+    //设置直播分屏
+    String CONFERENCE_SETLIVINGSTREAMLAYOUT = "setLivingStreamLayout";
+    //开启直播
+    String CONFERENCE_STARTLIVESTREAMING = "startLiveStreaming";
+    //停止直播
+    String CONFERENCE_STOPLIVESTREAMING = "stopLiveStreaming";
 
     ReturnInfo getServer(String method, Object obj);
 

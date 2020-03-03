@@ -33,6 +33,15 @@ public class CourseEntity {
     @ApiModelProperty(value = "是否直播")
     private String isLive;
 
+    @ApiModelProperty(value = "流媒体uuid")
+    private String stream_id ;
+
+    @ApiModelProperty(value = "流媒体服务地址")
+    private String stream_url;
+
+    @ApiModelProperty(value = "直播地址")
+    private String live_url;
+
     @ApiModelProperty(value = "录制状态")
     private String record_state;
 

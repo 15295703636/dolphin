@@ -9,11 +9,11 @@ import org.cs.dp.sonar.domain.ScheduleArrayBean;
 import org.cs.dp.sonar.domain.ScheduleStartReqBean;
 
 /**
-* @ClassName IScheduleService
-* @Description 日程管理接口
-* @Author LiuJT
-* @Date 2019-12-09 05:55:10
-**/
+ * @ClassName IScheduleService
+ * @Description 日程管理接口
+ * @Author LiuJT
+ * @Date 2019-12-09 05:55:10
+ **/
 public interface IScheduleService {
 
     ReturnInfo addSchedule(ScheduleArrayBean param);
@@ -28,5 +28,7 @@ public interface IScheduleService {
 
     ReturnInfo start(ScheduleStartReqBean param);
 
-    void dealPeerLayout(RestConfReq restConfReq, long ysx_course_id);
+    void dealPeerLayout(RestConfReq restConfReq, long ysx_course_id,String isLive);
+
+    String[] dealLiving(String uuid);
 }

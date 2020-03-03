@@ -1,6 +1,8 @@
 package org.cs.dp.sonar.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.nacos.common.util.UuidUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.exception.BaseException;
@@ -9,16 +11,18 @@ import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dp.radar.api.entity.RestConfReq;
 import org.cs.dp.radar.api.entity.RestEndpoint;
 import org.cs.dp.radar.api.entity.RestError;
+import org.cs.dp.radar.api.entity.brs.BssTaskReq;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
+import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.mapper.CourseDeviceMapper;
 import org.cs.dp.sonar.mapper.CourseMapper;
 import org.cs.dp.sonar.mapper.DeviceMapper;
-import org.cs.dp.sonar.service.ICourseDeviceService;
-import org.cs.dp.sonar.service.IScheduleService;
-import org.cs.dp.sonar.service.ISoMruService;
+import org.cs.dp.sonar.mapper.UcenterMapper;
+import org.cs.dp.sonar.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +38,7 @@ import java.util.stream.Collectors;
  * @Author LiuJT
  * @Date 2019-12-10 01:11:55
  **/
+@Slf4j
 @Service
 public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     @Autowired
@@ -43,9 +48,18 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
+    private UcenterMapper ucenterMapper;
+    @Autowired
     private ISoMruService iSoMruService;
     @Autowired
     private IScheduleService iScheduleService;
+    @Autowired
+    private ISoBrsService iSoBrsService;
+    @Autowired
+    private ICustomerServerService iCustomerServerService;
+
+    @Value("${push.flow.url}")
+    private String flowUrl;
 
     @Override
     public ReturnInfo addCourseDevice(CourseDeviceAddReqBean param) {
@@ -109,6 +123,11 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
         return new ReturnInfo();
     }
 
+    /**
+     * 调用会捷通接口添加设备
+     * @param param
+     * @return
+     */
     private Object[] dealAddCourseDevice(CourseDeviceAddReqBean param) {
         RestPartyReqBean restPartyReq = new RestPartyReqBean();
         restPartyReq.setYxs_id(param.getYsx_id());
@@ -255,6 +274,13 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
                                 param.getYsx_device_ids().stream().filter(deviceId -> !param.getYsx_device_ids().contains(device_id)).collect(Collectors.toList())
                         ));
             }
+            //如果开启直播，设置直播分屏
+            if ("1".equals(param.getIsLive())) {
+                param.getYsx_device_ids().add(Long.parseLong(param.getYsx_device_id()));
+                iSoMruService.getServer(
+                        iSoMruService.CONFERENCE_SETLIVINGSTREAMLAYOUT,
+                        new RestPartyLayoutReqBean(ysx_course_id, ysx_device_id, "3X3", param.getYsx_device_ids()));
+            }
         } else {//取消讨论模式
             returnInfo = speak(param);
             if (returnInfo.getReturnCode() != MessageCode.COMMON_SUCCEED_FLAG) {
@@ -266,7 +292,7 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
         return returnInfo;
     }
 
-    //设置分屏
+    /*//设置分屏
     @Override
     public ReturnInfo setPeerLayout(RestPartyLayoutReqBean param) {
         ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_SETPEERLAYOUT, param);
@@ -274,7 +300,7 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
             return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
         }
         return new ReturnInfo();
-    }
+    }*/
 
     /**
      * 设置发言：直播分屏1*2；主讲看发言1*1；发言看主讲1*1；其他看主讲+发言1*2 其他教师禁言
@@ -315,6 +341,16 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
                 }
             }
 
+            //开启直播,设置直播分屏
+            if ("1".equals(param.getIsLive())) {
+                List devices = Arrays.asList(param.getYsx_speak_device_id(),
+                        Long.parseLong(param.getYsx_device_id())
+                );
+                devices.addAll(param.getYsx_device_ids());
+                iSoMruService.getServer(iSoMruService.CONFERENCE_SETLIVINGSTREAMLAYOUT,
+                        new RestPartyLayoutReqBean(param.getYsx_course_id(), null, "1X3", devices));
+            }
+
             //取消发言人静音
             CourseDeviceMuteReqBean courseDeviceMute = new CourseDeviceMuteReqBean();
             courseDeviceMute.setMuteAudio(false);
@@ -328,11 +364,69 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
             //取消发言 还原成上课状态
             RestConfReq restConfReq = new RestConfReq();
             restConfReq.setLecturerEpId(Long.parseLong(param.getYsx_device_id()));
+            param.getYsx_device_ids().add(param.getYsx_speak_device_id());
             restConfReq.setEndpointIds(param.getYsx_device_ids());
-            iScheduleService.dealPeerLayout(restConfReq, Long.parseLong(param.getYsx_course_id()));
+            iScheduleService.dealPeerLayout(restConfReq, Long.parseLong(param.getYsx_course_id()), param.getIsLive());
             class_state = 1;
         }
         courseMapper.updateClassState(class_state, Integer.valueOf(param.getYsx_course_id()));
+        return returnInfo;
+    }
+
+    /**
+     * 开启直播
+     *
+     * @param course_id
+     * @return
+     */
+    @Override
+    public ReturnInfo startLiveStreaming(String course_id, String type) {
+        String uuid = UuidUtil.generateUuid();
+        //流媒体token,  流媒体url
+        String res[] = iScheduleService.dealLiving(uuid);
+        if (StringUtils.isEmpty(res[1])) {
+            return new ReturnInfo(MessageCode.Fail_Inter_EduContrl_Platform, "开启直播失败");
+        }
+
+        String url = String.format(flowUrl, res[1], uuid, res[0]);
+        if (!"3".equals(type)) {
+            RestLiveStreamingReqBean reqBean = new RestLiveStreamingReqBean();
+            reqBean.setCourser_id(course_id);
+            reqBean.setRecord(true);
+            reqBean.setProfile("GW_WEBCAST");
+            reqBean.setPeoplePlusContentLayoutMode("oneByOne");
+            reqBean.setUrl(url);
+            ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STARTLIVESTREAMING, reqBean);
+            if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+            } else {
+                courseMapper.updateLiveState(res[1], uuid, Integer.parseInt(course_id));
+            }
+        } else {
+            courseMapper.updateLiveState(res[1], uuid, Integer.parseInt(course_id));
+        }
+        return new ReturnInfo(url);
+    }
+
+    /**
+     * 停止直播
+     *
+     * @param course_id
+     * @return
+     */
+    @Override
+    public ReturnInfo stopLiveStreaming(String course_id) {
+        //根据当前用户信息查询流媒体信息 返回：流媒体序列号，流媒体服务地址
+        String str[] = iCustomerServerService.getCustomerServerByUserInfo();
+        CourseEntity course = courseMapper.selectByIdYsxId(Long.parseLong(course_id));
+        //结束流媒体录制服务
+        ReturnInfo returnInfo = iSoBrsService.getServer(iSoBrsService.SOBRS_STOPTASK, course.getStream_id(), str[0]);
+        if (MessageCode.COMMON_SUCCEED_FLAG == returnInfo.getReturnCode()) {
+            //结束会捷通录制
+            returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STOPLIVESTREAMING, course_id);
+        }
+        //查询录制的信息
+        returnInfo = iSoBrsService.getServer(iSoBrsService.SOBRS_QUERYTASK, course.getStream_id(), str[0]);
         return returnInfo;
     }
 
@@ -340,6 +434,9 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
         List<DeviceEntity> deviceEntity = deviceMapper.selectByPrimaryKey(Arrays.asList(param.getDevice_id()));
         if (deviceEntity.size() == 1) {
             param.setYsx_device_id(deviceEntity.get(0).getYsx_id());
+        } else {
+            Long ysx_id = ucenterMapper.selectYsxById(param.getDevice_id());
+            param.setYsx_device_id(ysx_id);
         }
     }
 }

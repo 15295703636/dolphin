@@ -99,8 +99,8 @@ public class MruClient implements IMruClient {
 
     @Override
     @PostMapping(API_PREFIX + "/conferences/startLiveStreaming")
-    public ReturnInfo startLiveStreaming(@RequestBody RestLiveStreamingReq restLiveStreamingReq, @RequestParam String confId,
-                                         @RequestParam String token, @RequestParam String url) {
+    public ReturnInfo startLiveStreaming(@RequestBody RestLiveStreamingReq restLiveStreamingReq, @RequestParam(name = "confId") String confId,
+                                         @RequestParam(name = "token") String token, @RequestParam(name = "url") String url) {
         return iMruService.startLiveStreaming(confId, restLiveStreamingReq, token, url);
     }
 
@@ -141,8 +141,8 @@ public class MruClient implements IMruClient {
 
     @Override
     @PostMapping(API_PREFIX + "/conferences/setLayout")
-    public ReturnInfo setPeerLayout(@RequestParam String confId, @RequestParam String peerId,
-                                    @RequestParam String token, @RequestParam String url,
+    public ReturnInfo setPeerLayout(@RequestParam(name = "confId") String confId, @RequestParam(name = "peerId") String peerId,
+                                    @RequestParam(name = "token") String token, @RequestParam(name = "url") String url,
                                     @RequestBody RestPartyLayout restPartyLayoutt) {
         return iMruService.setPeerLayout(confId, peerId, token, url, restPartyLayoutt);
     }

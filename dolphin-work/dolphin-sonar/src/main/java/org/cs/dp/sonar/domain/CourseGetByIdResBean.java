@@ -22,6 +22,16 @@ public class CourseGetByIdResBean {
     private String course_name;
     private Long ysx_id;
 
+    @ApiModelProperty(value = "直播标志，1直播 0未直播")
+    private String isLive;
+    @ApiModelProperty(value = "流媒体任务ID", hidden = true)
+    private String stream_id;
+    @ApiModelProperty(value = "流媒体服务地址", hidden = true)
+    private String stream_url;
+
+    @ApiModelProperty(value = "直播地址")
+    private String live_url;
+
     @ApiModelProperty(value = "开始时间")
     private String start_time;
 

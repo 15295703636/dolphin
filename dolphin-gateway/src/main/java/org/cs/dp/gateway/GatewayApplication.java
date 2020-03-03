@@ -1,6 +1,7 @@
 package org.cs.dp.gateway;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @SuppressWarnings("ALL")
+@Slf4j
 @SpringBootApplication
 @EnableDiscoveryClient  // 启用服务注册和发现
 @RestController  // 提供一个简单的降级页面
@@ -21,6 +23,7 @@ public class GatewayApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class);
+        log.error("-----------------------GatewayApplication启动成功-----------------------");
     }
 
     /**

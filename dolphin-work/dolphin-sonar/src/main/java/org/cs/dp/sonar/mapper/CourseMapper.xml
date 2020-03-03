@@ -11,6 +11,8 @@
         <result property="teacher_name" column="teacher_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isRecord" column="isRecord" javaType="java.lang.String" jdbcType="CHAR"/>
         <result property="isLive" column="isLive" javaType="java.lang.String" jdbcType="CHAR"/>
+        <result property="stream_id" column="stream_id" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="stream_url" column="stream_url" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="record_state" column="record_state" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="live_state" column="live_state" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result property="isSubtitle" column="isSubtitle" javaType="java.lang.String" jdbcType="CHAR"/>
@@ -52,6 +54,7 @@
     </resultMap>
     <sql id="Base_Column_List">
     course_id, course_name, course_type,duration,user_number, course_state, teacher_name, isRecord, isLive,
+    stream_id,stream_url,
     record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate, 
     start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor, 
     teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img, 
@@ -69,7 +72,7 @@
 
     <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetCourseReqBean" resultMap="BaseResultMap">
         select
-        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive,
+        course_id, course_name, course_type, course_state, teacher_name, isRecord, isLive, stream_id,stream_url,
         record_state, live_state, isSubtitle, isAutoSubmit, isPublish, isComment, isRate,
         start_time, end_time, createTime, course_fontColor, course_wordSize, teacher_fontColor,
         teacher_wordSize, resolving_power, encode_quality, otherParamStr, epilogue_img, prologue_img,
@@ -111,6 +114,12 @@
         FROM course where course_id = #{id}
     </select>
 
+    <select id="selectByIdYsxId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        FROM course where ysx_id = #{ysx_id}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course
     where course_id = #{course_id,jdbcType=INTEGER}
@@ -118,6 +127,10 @@
 
     <update id="updateClassState">
         update course set class_state=#{state} where ysx_id=#{ysx_id}
+    </update>
+
+    <update id="updateLiveState">
+        update course set stream_id=#{uuid},stream_url=#{url} where ysx_id=#{ysx_id}
     </update>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity" useGeneratedKeys="true"
@@ -150,6 +163,12 @@
             </if>
             <if test="isLive != null">
                 isLive,
+            </if>
+            <if test="stream_id != null">
+                stream_id,
+            </if>
+            <if test="stream_url != null">
+                stream_url,
             </if>
             <if test="record_state != null">
                 record_state,
@@ -284,6 +303,12 @@
             </if>
             <if test="isLive != null">
                 #{isLive,jdbcType=CHAR},
+            </if>
+            <if test="stream_id != null">
+                #{stream_id,jdbcType=VARCHAR},
+            </if>
+            <if test="stream_url != null">
+                #{stream_url,jdbcType=VARCHAR},
             </if>
             <if test="record_state != null">
                 #{record_state,jdbcType=VARCHAR},

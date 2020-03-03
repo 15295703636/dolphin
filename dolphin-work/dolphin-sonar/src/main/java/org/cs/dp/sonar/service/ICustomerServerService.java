@@ -21,4 +21,5 @@ public interface ICustomerServerService {
 
     ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Integer> param);
 
+    String[] getCustomerServerByUserInfo();
 }

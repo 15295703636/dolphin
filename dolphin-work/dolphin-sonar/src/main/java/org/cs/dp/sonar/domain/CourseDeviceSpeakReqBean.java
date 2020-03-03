@@ -30,4 +30,7 @@ public class CourseDeviceSpeakReqBean {
 
     @ApiModelProperty(value = "云视讯发言人设备ID")
     private Long ysx_speak_device_id;
+
+    @ApiModelProperty(value = "是否开启直播 1开启 0未开启")
+    private String isLive;
 }

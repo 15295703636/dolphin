@@ -55,11 +55,11 @@ public class CourseController {
         return iCourseService.getById(param.get("id"));
     }
 
-    @PostMapping("liveBro")
+    /*@PostMapping("liveBro")
     @ApiOperation(value = "直播管理", notes = "日程-端管理")
     public ReturnInfo liveBroadcast(@RequestBody Map id) {
         return new ReturnInfo();//iCourseService.liveBroadcast(id);
-    }
+    }*/
 
     @PostMapping("share")
     @ApiOperation(value = "分享管理", notes = "日程-端管理")

@@ -40,7 +40,7 @@ public class RestPartyLayoutReqBean extends RestPartyLayout {
         if (ysx_device_id instanceof Long) {
             this.ysx_device_id = String.valueOf(ysx_device_id);
         } else {
-            this.ysx_course_id = (String) ysx_device_id;
+            this.ysx_device_id = (String) ysx_device_id;
         }
         super.setLayoutType(layoutType);
         super.setDeviceIds(deviceIds);

@@ -33,8 +33,14 @@ public interface ICourseDeviceService {
     ReturnInfo setDiscMode(CourseDeviceSpeakReqBean param);
 
     //设置分屏
-    ReturnInfo setPeerLayout(RestPartyLayoutReqBean param);
+    //ReturnInfo setPeerLayout(RestPartyLayoutReqBean param);
 
     //设置发言
     ReturnInfo speak(CourseDeviceSpeakReqBean param);
+
+    //开启直播
+    ReturnInfo startLiveStreaming(String course_id,String type);
+
+    //停止直播
+    ReturnInfo stopLiveStreaming(String course_id);
 }

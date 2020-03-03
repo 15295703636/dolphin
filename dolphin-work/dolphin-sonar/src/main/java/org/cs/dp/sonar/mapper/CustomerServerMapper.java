@@ -17,6 +17,10 @@ public interface CustomerServerMapper {
             @Param("org_id") Integer org_id,
             @Param("customer_id") Integer customer_id);
 
+    List<CustomerServerEntity> selectByOrgIdUp(
+            @Param("org_id") Integer org_id,
+            @Param("customer_id") Integer customer_id);
+
     int updateByPrimaryKeySelective(CustomerServerEntity record);
 
 }

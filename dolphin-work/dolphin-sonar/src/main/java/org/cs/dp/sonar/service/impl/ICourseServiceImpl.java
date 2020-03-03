@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
@@ -18,10 +19,14 @@ import org.cs.dp.radar.api.entity.RestParty;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
+import org.cs.dp.sonar.domain.entity.VideoDemandEntity;
 import org.cs.dp.sonar.mapper.*;
+import org.cs.dp.sonar.service.ICourseDeviceService;
 import org.cs.dp.sonar.service.ICourseService;
 import org.cs.dp.sonar.service.ISoMruService;
+import org.cs.dp.sonar.service.IVideoDemandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +41,7 @@ import java.util.stream.Collectors;
  * @Author LiuJT
  * @Date 2019-12-10 11:21:47
  **/
+@Slf4j
 @Service
 public class ICourseServiceImpl implements ICourseService {
     @Autowired
@@ -50,6 +56,13 @@ public class ICourseServiceImpl implements ICourseService {
     private CourseHistoryDeviceMapper courseHistoryDeviceMapper;
     @Autowired
     private ISoMruService iSoMruService;
+    @Autowired
+    private ICourseDeviceService iCourseDeviceService;
+    @Autowired
+    private IVideoDemandService iVideoDemandService;
+
+    @Value("${live.streaming.url}")
+    private String liveUrl;
 
     @Override
     public ReturnInfo delCourse(Integer param) {
@@ -81,6 +94,11 @@ public class ICourseServiceImpl implements ICourseService {
             userConditionBean.setOrgId(getCourseReqBean.getOrg_id());
         }
         List<CourseEntity> resList = courseMapper.selectByCondition(getCourseReqBean);
+        resList.forEach(e -> {
+            if ("1".equals(e.getIsLive())) {
+                e.setLive_url(String.format(liveUrl, e.getStream_url(), e.getStream_id()));
+            }
+        });
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
@@ -95,6 +113,7 @@ public class ICourseServiceImpl implements ICourseService {
     public ReturnInfo<CourseGetByIdResBean> getById(Integer id) {
         //查询信息
         CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
+        courseGetByIdRes.setLive_url(String.format(liveUrl, courseGetByIdRes.getStream_url(), courseGetByIdRes.getStream_id()));
         //查询会议信息
         ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_GETCONFINFO, String.valueOf(courseGetByIdRes.getYsx_id()));
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
@@ -144,10 +163,11 @@ public class ICourseServiceImpl implements ICourseService {
      *
      * @param param
      * @param ysx_id
-     * @return
+     * @return 操作结果； 课程类型； 是否开启直播
      */
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
-    public ReturnInfo startCourser(ScheduleStartReqBean param, Long ysx_id) {
+    public Object[] startCourser(ScheduleStartReqBean param, Long ysx_id, Object[] obj) {
+        Object resData[] = new Object[3];
         ScheduleArrayBean res = null;
         //历史开会标志 1历史 其他值日程配置开会
         if (1 == param.getHistorySign()) {
@@ -156,7 +176,9 @@ public class ICourseServiceImpl implements ICourseService {
             res = scheduleMapper.selectById(param.getId());
         }
         if (null == res) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "选择日程不能在!");
+            resData[0] = false;
+            resData[1] = "选择日程不能在!";
+            return resData;
         }
 
         CourseEntity course = new CourseEntity();
@@ -165,6 +187,8 @@ public class ICourseServiceImpl implements ICourseService {
         course.setTeacher_name(res.getTeacher_name());
         course.setDuration(res.getDuration());
         course.setIsLive(res.getIsLive());
+        course.setStream_id((String) obj[2]);
+        course.setStream_url((String) obj[3]);
         course.setIsRecord(res.getIsRecord());
         course.setBandwidth(res.getBandwidth());
         course.setCreaterId(ThreadLocalUserInfoUtil.get().getUser_id());
@@ -178,15 +202,21 @@ public class ICourseServiceImpl implements ICourseService {
         if (2 == res.getType()) {
             course.setClass_state(1);
         }
-        //处理会议主题信息
+        //处理会议主体信息
         courseMapper.insertSelective(course);
-        //处理端
-        if (1 == param.getHistorySign()) {
-            courseDeviceMapper.insertByHistoryId(course.getCourse_id(), param.getId());
-        } else {
-            courseDeviceMapper.insertByScheduleId(course.getCourse_id(), param.getId());
+        if (!"3".equals(res.getType())) {
+            //处理端
+            if (1 == param.getHistorySign()) {
+                courseDeviceMapper.insertByHistoryId(course.getCourse_id(), param.getId());
+            } else {
+                courseDeviceMapper.insertByScheduleId(course.getCourse_id(), param.getId());
+            }
         }
-        return new ReturnInfo();
+        resData[0] = true;
+        resData[1] = res.getType();
+        resData[2] = res.getIsLive();
+
+        return resData;
     }
 
 
@@ -209,11 +239,32 @@ public class ICourseServiceImpl implements ICourseService {
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo end(CourseEndReqBean param) throws BaseException {
+        CourseEntity course = courseMapper.selectByIdResAll(param.getCourse_id());
+        //如果开启直播或者是录播课
+        if ("1".equals(course.getIsLive()) || 3 == course.getCourse_type()) {
+            ReturnInfo returnInfo = iCourseDeviceService.stopLiveStreaming(String.valueOf(param.getYsx_id()));
+            log.info("结束：第一步停止直播返回结果：{}", JSON.toJSONString(returnInfo));
+            if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                return returnInfo;
+            }
+            //开启录制，保存录制信息
+            QueryTaskResBean resBean = JSON.parseObject((String) returnInfo.getReturnData(), QueryTaskResBean.class);
+            iVideoDemandService.addVideoDemand(new VideoDemandEntity(
+                    course.getCourse_name(),
+                    course.getTeacher_name(),
+                    course.getCourse_type(),
+                    resBean.getData().getDuration(),
+                    resBean.getData().getRecord_mp4_path(),
+                    resBean.getData().getVod_ts_url()
+            ));
+        }
+        //会议结束接口
         Object ysx_res[] = dealEnd(param.getYsx_id());
         if (!(boolean) ysx_res[0]) {
             throw new BaseException("云视讯通讯异常", String.valueOf(ysx_res[1]));
         }
-        CourseHistoryEntity courseHistory = JSONObject.parseObject(JSON.toJSONString(courseMapper.selectByIdResAll(param.getCourse_id())), CourseHistoryEntity.class);
+
+        CourseHistoryEntity courseHistory = JSONObject.parseObject(JSON.toJSONString(course), CourseHistoryEntity.class);
         courseHistory.setCourse_id(null);
         courseHistoryMapper.insertSelective(courseHistory);
         courseHistoryDeviceMapper.insertByCourseId(courseHistory.getCourse_id(), param.getCourse_id());

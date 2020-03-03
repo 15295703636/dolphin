@@ -125,6 +125,17 @@ public class ISoMruServiceImpl implements ISoMruService {
                 returnInfo = setPeerLayout(reqBean.getYsx_course_id(), reqBean.getYsx_device_id(),
                         token, url, reqBean);
                 break;
+            case CONFERENCE_SETLIVINGSTREAMLAYOUT:
+                RestPartyLayoutReqBean reqBean2 = (RestPartyLayoutReqBean) obj;
+                returnInfo = setLivingStreamLayout(reqBean2.getYsx_course_id(), token, url, reqBean2);
+                break;
+            case CONFERENCE_STARTLIVESTREAMING:
+                RestLiveStreamingReqBean reqBean1 = (RestLiveStreamingReqBean) obj;
+                returnInfo = startLiveStreaming(reqBean1.getCourser_id(), reqBean1, token, url);
+                break;
+            case CONFERENCE_STOPLIVESTREAMING:
+                returnInfo = stopLiveStreaming((String) obj, token, url);
+                break;
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
                 break;
@@ -396,7 +407,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 开启直播 TODO 未调用
+     * 开启直播
      *
      * @param confId
      * @param restLiveStreamingReq
@@ -420,7 +431,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 结束直播 TODO 未调用
+     * 结束直播
      *
      * @param confId
      * @param token
@@ -516,7 +527,7 @@ public class ISoMruServiceImpl implements ISoMruService {
     }
 
     /**
-     * 设置直播分屏 TODO 未调用
+     * 设置直播分屏
      *
      * @param confId
      * @param token

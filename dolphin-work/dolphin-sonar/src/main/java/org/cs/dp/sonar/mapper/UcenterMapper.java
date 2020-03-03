@@ -13,5 +13,11 @@ public interface UcenterMapper {
      * @return
      */
     String selectById(@Param(value = "userId") Integer userId);
+    /**
+     * 根据用户查询用户密码
+     * @param userId
+     * @return
+     */
+    Long selectYsxById(@Param(value = "userId") Integer userId);
 
 }

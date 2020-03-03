@@ -86,11 +86,11 @@ public class CourseDeviceController {
         return iCourseDeviceService.setDiscMode(param);
     }
 
-    @PostMapping("setPeerLayout")
+    /*@PostMapping("setPeerLayout")
     @ApiOperation(value = "设置分屏模式", notes = "日程-端管理")
     public ReturnInfo setPeerLayout(@RequestBody RestPartyLayoutReqBean param) {
         return iCourseDeviceService.setPeerLayout(param);
-    }
+    }*/
 
     @PostMapping("speak")
     @ApiOperation(value = "设置发言", notes = "日程-端管理")
@@ -98,5 +98,16 @@ public class CourseDeviceController {
         return iCourseDeviceService.speak(param);
     }
 
+   /* @PostMapping("startLiveStreaming")
+    @ApiOperation(value = "开启直播", notes = "日程-端管理")
+    public ReturnInfo startLiveStreaming(@RequestBody LiveStreamingReqBean param){
+        return iCourseDeviceService.startLiveStreaming(param.get("ysx_course_id"),"1");
+    }
+
+    @PostMapping("stopLiveStreaming")
+    @ApiOperation(value = "停止直播", notes = "日程-端管理")
+    public ReturnInfo stopLiveStreaming(@RequestBody LiveStreamingReqBean param){
+        return iCourseDeviceService.stopLiveStreaming(param.get("ysx_course_id"));
+    }*/
 
 }

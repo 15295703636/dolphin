@@ -31,6 +31,21 @@
         WHERE ischild != 0 ) OR c.org_id =#{org_id}
     </select>
 
+    <select id="selectByOrgIdUp" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM customer_server c  WHERE
+            c.org_id IN (
+                SELECT  res._deptCode FROM
+                    ( SELECT @pv AS _deptCode,
+                            (  SELECT  @pv := org_preid FROM organization WHERE org_id = _deptCode )
+                        FROM organization b, (SELECT @pv := #{org_id}) initialisation
+                    ) res
+                WHERE res._deptCode != 0 and customer_id=#{customer_id}
+            )
+        ORDER BY c.org_id DESC
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from customer_server
     where server_id = #{server_id,jdbcType=INTEGER}

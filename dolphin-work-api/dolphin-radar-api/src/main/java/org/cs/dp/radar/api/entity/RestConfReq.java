@@ -35,7 +35,7 @@ public class RestConfReq {
     //录制
     private boolean recordingEnabled;
     //取值见常量：录制/直播类型,建议值为"GW_WEBCAST".
-    private String recordingProfile;
+    private String recordingProfile = "GW_WEBCAST";
     //取值见常量：双流分屏，建议值为"oneByOne".
     private String recordingLayout;
     //推流地址

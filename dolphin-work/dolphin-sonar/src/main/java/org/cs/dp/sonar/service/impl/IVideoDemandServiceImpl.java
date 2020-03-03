@@ -1,8 +1,9 @@
 package org.cs.dp.sonar.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.cs.dolphin.common.base.RequestPage;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
@@ -13,15 +14,15 @@ import org.cs.dp.sonar.service.IVideoDemandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
-* @ClassName IVideoDemandServiceImpl
-* @Description 点播管理实现类
-* @Author LiuJT
-* @Date 2020-02-13 10:04:14
-**/
+ * @ClassName IVideoDemandServiceImpl
+ * @Description 点播管理实现类
+ * @Author LiuJT
+ * @Date 2020-02-13 10:04:14
+ **/
+@Slf4j
 @Service
 public class IVideoDemandServiceImpl implements IVideoDemandService {
     @Autowired
@@ -29,6 +30,7 @@ public class IVideoDemandServiceImpl implements IVideoDemandService {
 
     @Override
     public ReturnInfo addVideoDemand(VideoDemandEntity param) {
+        log.info("保存点播信息：{}", JSONObject.toJSONString(param));
         videoDemandMapper.insertSelective(param);
         return new ReturnInfo();
     }
