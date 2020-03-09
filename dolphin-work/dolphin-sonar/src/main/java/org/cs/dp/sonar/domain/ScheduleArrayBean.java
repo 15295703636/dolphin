@@ -42,4 +42,7 @@ public class ScheduleArrayBean extends ScheduleEntity {
 
     @ApiModelProperty(value = "持续时长—分钟")
     private Integer duration_minute;
+
+    @ApiModelProperty(value = "日程主场(端序列号)")
+    private String device_id_sn;
 }

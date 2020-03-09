@@ -34,7 +34,7 @@ public class CourseEntity {
     private String isLive;
 
     @ApiModelProperty(value = "流媒体uuid")
-    private String stream_id ;
+    private String stream_id;
 
     @ApiModelProperty(value = "流媒体服务地址")
     private String stream_url;
@@ -103,7 +103,7 @@ public class CourseEntity {
     private Integer createrId;
 
     @ApiModelProperty(value = "来源")
-    private String provenance;
+    private String provenance = "platform";
 
     @ApiModelProperty(value = "主教室id")
     private Integer local_classroomId;

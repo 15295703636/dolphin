@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * @ClassName CheckAddInfoReqBean
- * @Description TODO
+ * @Description
  * @Author Liujt
  * @Date 2020/1/18 9:42
  **/
@@ -22,4 +22,7 @@ public class CheckAddInfoReqBean {
 
     @ApiModelProperty(value = "用户手机号")
     private Integer user_id;
+
+    @ApiModelProperty(value = "用户邮箱")
+    private String user_email;
 }

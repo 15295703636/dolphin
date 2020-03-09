@@ -9,6 +9,9 @@ import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.service.ISuperUserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @ClassName UploadDataListener
  * @Description 有个很重要的点 DemoDataListener 不能被spring管理，要每次读取excel都要new,然后里面用到spring可以构造方法传进去
@@ -16,20 +19,17 @@ import org.cs.dp.ucenter.service.ISuperUserService;
  * @Date 2019/12/5 14:52
  **/
 @Slf4j
-public class UploadDataListener extends AnalysisEventListener<SuperUserEntity> {
-    /**
-     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
-     */
-    private ISuperUserService iSuperUserService;
+public class UploadSuperUserListener extends AnalysisEventListener<SuperUserEntity> {
 
-    /**
-     * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
-     *
-     * @param iSuperUserService
-     */
-    public UploadDataListener(ISuperUserService iSuperUserService) {
-        this.iSuperUserService = iSuperUserService;
+    public List<SuperUserEntity> getSuperUserList() {
+        return superUserList;
     }
+
+    public void setSuperUserList(List<SuperUserEntity> superUserList) {
+        this.superUserList = superUserList;
+    }
+
+    private List<SuperUserEntity> superUserList = new ArrayList<>();
 
     /**
      * 这个每一条数据解析都会来调用
@@ -40,8 +40,7 @@ public class UploadDataListener extends AnalysisEventListener<SuperUserEntity> {
     @Override
     public void invoke(SuperUserEntity data, AnalysisContext context) {
         log.info("解析到一条数据:{}", JSON.toJSONString(data));
-        ReturnInfo returnInfo = iSuperUserService.add(data);
-        log.info("写入返回结果：{}", JSON.toJSONString(returnInfo));
+        superUserList.add(data);
     }
 
     /**

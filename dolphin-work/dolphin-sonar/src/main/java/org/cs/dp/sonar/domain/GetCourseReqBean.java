@@ -24,4 +24,7 @@ public class GetCourseReqBean {
 
     @ApiModelProperty(value = "日程名称,主讲姓名，端名称")
     private String name;
+
+    @ApiModelProperty(value = "主讲端Id", hidden = true)
+    private Integer local_classroomId;
 }

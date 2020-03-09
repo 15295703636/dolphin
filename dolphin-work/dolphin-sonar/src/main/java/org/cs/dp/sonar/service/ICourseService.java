@@ -4,12 +4,8 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
-import org.cs.dp.sonar.domain.CourseEndReqBean;
-import org.cs.dp.sonar.domain.GetCourseReqBean;
-import org.cs.dp.sonar.domain.ScheduleStartReqBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseEntity;
-
-import java.util.Map;
 
 /**
  * @ClassName ICourseService
@@ -19,7 +15,7 @@ import java.util.Map;
  **/
 public interface ICourseService {
 
-    Object[] startCourser(ScheduleStartReqBean param, Long ysx_id,Object[] obj);
+    CourseSaveResBean startCourser(ScheduleStartReqBean param, Long ysx_id);
 
     ReturnInfo delCourse(Integer param);
 
@@ -29,9 +25,13 @@ public interface ICourseService {
 
     ReturnInfo getById(Integer id);
 
+    ReturnInfo getDeviceByNameState(GetDeviceByNameStateReqBean param);
+
     ReturnInfo liveBroadcast(Integer id);
 
     ReturnInfo share(Integer id);
 
     ReturnInfo end(CourseEndReqBean param) throws BaseException;
+
+    String exit(Integer device_id);
 }

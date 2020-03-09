@@ -30,9 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +44,8 @@ import java.util.stream.Collectors;
 public class ICourseServiceImpl implements ICourseService {
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private DeviceMapper deviceMapper;
     @Autowired
     private ScheduleMapper scheduleMapper;
     @Autowired
@@ -68,6 +68,15 @@ public class ICourseServiceImpl implements ICourseService {
     public ReturnInfo delCourse(Integer param) {
         courseMapper.deleteByPrimaryKey(param);
         return new ReturnInfo();
+    }
+
+    @Override
+    public String exit(Integer device_id) {
+        CourseEntity course = courseMapper.selectByDeviceId(device_id);
+        if (null != course) {
+            return "设备已占用!";
+        }
+        return null;
     }
 
     @Override
@@ -114,18 +123,84 @@ public class ICourseServiceImpl implements ICourseService {
         //查询信息
         CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(id);
         courseGetByIdRes.setLive_url(String.format(liveUrl, courseGetByIdRes.getStream_url(), courseGetByIdRes.getStream_id()));
+
         //查询会议信息
-        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_GETCONFINFO, String.valueOf(courseGetByIdRes.getYsx_id()));
+        if (!"3".equals(courseGetByIdRes.getCourse_type())) {
+            //查询云视讯会议信息
+            Object ysxInfo = getYsxCourseInfo(courseGetByIdRes.getYsx_id());
+            if (ysxInfo instanceof RestOngoingConf) {
+                RestOngoingConf restOngoingConf = (RestOngoingConf) ysxInfo;
+                //获取会议设备状态信息
+                List<RestParty> restPartyMrus = restOngoingConf.getPartyMrus().get(0).getParties();
+                Map<String, RestParty> map = restPartyMrus.stream().collect(Collectors.toMap(RestParty::getDeviceId, a -> a, (k1, k2) -> k1));
+                //持续时长
+                Integer duration = restOngoingConf.getBasicInfo().getDuration();
+                courseGetByIdRes.setDuration(DateUtil.secToTime(duration));
+
+                List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
+                List<CourseResBean> courseDeviceList = new ArrayList<>();
+                if (courseDevices.size() > 0) {
+                    //筛选处理主讲端 静音/连接/旁观 信息
+                    CourseResBean courseRes = courseDevices.stream().filter(
+                            e -> e.getIsMain().equals(1)).collect(Collectors.toList()).get(0);
+                    RestParty mainDevice = map.get(String.valueOf(courseRes.getYsx_id()));
+                    if (null != mainDevice) {
+                        courseRes.setMute(mainDevice.isAudioMuted());
+                        courseRes.setStatus("connected".equals(mainDevice.getConnectionStatus()) ? 1 : 2);
+                        courseRes.setSideLines(mainDevice.isMonitor());
+                    }
+
+                    //筛选处理远程端 静音/连接/旁观 信息
+                    courseDevices.forEach(e -> {
+                        if (!e.getDevice_id().equals(courseRes.getDevice_id())) {
+                            RestParty restParty = map.get(String.valueOf(e.getYsx_id()));
+                            if (null != restParty) {
+                                e.setMute(restParty.isAudioMuted());
+                                e.setStatus("connected".equals(restParty.getConnectionStatus()) ? 1 : 2);
+                                e.setSideLines(restParty.isMonitor());
+                            }
+                            courseDeviceList.add(e);
+                        }
+                    });
+                    courseGetByIdRes.setRemote(courseDeviceList);
+                    courseGetByIdRes.setMain(courseRes);
+                }
+            } else {
+                return (ReturnInfo) ysxInfo;
+            }
+        } else {
+            courseGetByIdRes.setMain(
+                    JSONObject.parseObject(
+                            JSON.toJSONString(deviceMapper.selectByPrimaryKey(Arrays.asList(courseGetByIdRes.getLocal_classroomId())).get(0))
+                            , CourseResBean.class)
+            );
+        }
+        return new ReturnInfo(courseGetByIdRes);
+    }
+
+
+    private Object getYsxCourseInfo(Long ysx_id) {
+        ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_GETCONFINFO, String.valueOf(ysx_id));
         if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
-            RestOngoingConf restOngoingConf = (RestOngoingConf) returnInfo.getReturnData();
+            return returnInfo.getReturnData();
+        }
+        return returnInfo;
+    }
+
+
+    @Override
+    public ReturnInfo getDeviceByNameState(GetDeviceByNameStateReqBean param) {
+        //查询信息
+        CourseGetByIdResBean courseGetByIdRes = courseMapper.selectById(param.getCourse_id());
+        //查询云视讯会议信息
+        Object ysxInfo = getYsxCourseInfo(courseGetByIdRes.getYsx_id());
+        if (ysxInfo instanceof RestOngoingConf) {
+            RestOngoingConf restOngoingConf = (RestOngoingConf) ysxInfo;
             //获取会议设备状态信息
             List<RestParty> restPartyMrus = restOngoingConf.getPartyMrus().get(0).getParties();
             Map<String, RestParty> map = restPartyMrus.stream().collect(Collectors.toMap(RestParty::getDeviceId, a -> a, (k1, k2) -> k1));
-            //持续时长
-            Integer duration = restOngoingConf.getBasicInfo().getDuration();
-            courseGetByIdRes.setDuration(DateUtil.secToTime(duration));
 
-            List<CourseResBean> courseDevices = courseDeviceMapper.selectByCourseId(id);
+            List<CourseResBean> courseDevices = courseDeviceMapper.selectByName(param.getCourse_id(), param.getName());
             List<CourseResBean> courseDeviceList = new ArrayList<>();
             if (courseDevices.size() > 0) {
                 //筛选处理主讲端 静音/连接/旁观 信息
@@ -137,6 +212,9 @@ public class ICourseServiceImpl implements ICourseService {
                     courseRes.setStatus("connected".equals(mainDevice.getConnectionStatus()) ? 1 : 2);
                     courseRes.setSideLines(mainDevice.isMonitor());
                 }
+                if ((0 == param.getStatus()) || (courseRes.getStatus() == param.getStatus())) {
+                    courseGetByIdRes.setMain(courseRes);
+                }
 
                 //筛选处理远程端 静音/连接/旁观 信息
                 courseDevices.forEach(e -> {
@@ -147,11 +225,12 @@ public class ICourseServiceImpl implements ICourseService {
                             e.setStatus("connected".equals(restParty.getConnectionStatus()) ? 1 : 2);
                             e.setSideLines(restParty.isMonitor());
                         }
-                        courseDeviceList.add(e);
+                        if ((0 == param.getStatus()) || (e.getStatus() == param.getStatus())) {
+                            courseDeviceList.add(e);
+                        }
                     }
                 });
                 courseGetByIdRes.setRemote(courseDeviceList);
-                courseGetByIdRes.setMain(courseRes);
             }
         }
         return new ReturnInfo(courseGetByIdRes);
@@ -163,11 +242,11 @@ public class ICourseServiceImpl implements ICourseService {
      *
      * @param param
      * @param ysx_id
-     * @return 操作结果； 课程类型； 是否开启直播
+     * @return 操作结果； 课程类型； 是否开启直播  日程名称  日程ID
      */
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
-    public Object[] startCourser(ScheduleStartReqBean param, Long ysx_id, Object[] obj) {
-        Object resData[] = new Object[3];
+    public CourseSaveResBean startCourser(ScheduleStartReqBean param, Long ysx_id) {
+        CourseSaveResBean saveRes = new CourseSaveResBean();
         ScheduleArrayBean res = null;
         //历史开会标志 1历史 其他值日程配置开会
         if (1 == param.getHistorySign()) {
@@ -176,9 +255,9 @@ public class ICourseServiceImpl implements ICourseService {
             res = scheduleMapper.selectById(param.getId());
         }
         if (null == res) {
-            resData[0] = false;
-            resData[1] = "选择日程不能在!";
-            return resData;
+            saveRes.setResult_sign(false);
+            saveRes.setError_msg("选择日程不能在!");
+            return saveRes;
         }
 
         CourseEntity course = new CourseEntity();
@@ -187,8 +266,8 @@ public class ICourseServiceImpl implements ICourseService {
         course.setTeacher_name(res.getTeacher_name());
         course.setDuration(res.getDuration());
         course.setIsLive(res.getIsLive());
-        course.setStream_id((String) obj[2]);
-        course.setStream_url((String) obj[3]);
+        /*course.setStream_id((String) obj[2]);
+        course.setStream_url((String) obj[3]);*/
         course.setIsRecord(res.getIsRecord());
         course.setBandwidth(res.getBandwidth());
         course.setCreaterId(ThreadLocalUserInfoUtil.get().getUser_id());
@@ -212,11 +291,12 @@ public class ICourseServiceImpl implements ICourseService {
                 courseDeviceMapper.insertByScheduleId(course.getCourse_id(), param.getId());
             }
         }
-        resData[0] = true;
-        resData[1] = res.getType();
-        resData[2] = res.getIsLive();
-
-        return resData;
+        saveRes.setResult_sign(true);
+        saveRes.setType(res.getType());
+        saveRes.setIsLive(res.getIsLive());
+        saveRes.setName(res.getName());
+        saveRes.setCourse_id(course.getCourse_id());
+        return saveRes;
     }
 
 
@@ -242,7 +322,8 @@ public class ICourseServiceImpl implements ICourseService {
         CourseEntity course = courseMapper.selectByIdResAll(param.getCourse_id());
         //如果开启直播或者是录播课
         if ("1".equals(course.getIsLive()) || 3 == course.getCourse_type()) {
-            ReturnInfo returnInfo = iCourseDeviceService.stopLiveStreaming(String.valueOf(param.getYsx_id()));
+            ReturnInfo returnInfo = iCourseDeviceService.stopLiveStreaming(
+                    String.valueOf(param.getCourse_id()), course.getCourse_type(), param.getOrg_id(), param.getCustomer_id());
             log.info("结束：第一步停止直播返回结果：{}", JSON.toJSONString(returnInfo));
             if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
                 return returnInfo;
@@ -255,22 +336,31 @@ public class ICourseServiceImpl implements ICourseService {
                     course.getCourse_type(),
                     resBean.getData().getDuration(),
                     resBean.getData().getRecord_mp4_path(),
-                    resBean.getData().getVod_ts_url()
+                    resBean.getData().getVod_ts_url(),
+                    param.getCustomer_id()
             ));
         }
-        //会议结束接口
-        Object ysx_res[] = dealEnd(param.getYsx_id());
-        if (!(boolean) ysx_res[0]) {
-            throw new BaseException("云视讯通讯异常", String.valueOf(ysx_res[1]));
+        if (3 != course.getCourse_type()) {
+            //会议结束接口
+            Object ysx_res[] = dealEnd(param.getYsx_id());
+            if (!(boolean) ysx_res[0]) {
+                throw new BaseException("云视讯通讯异常", String.valueOf(ysx_res[1]));
+            }
         }
-
+        //保存会议历史信息
         CourseHistoryEntity courseHistory = JSONObject.parseObject(JSON.toJSONString(course), CourseHistoryEntity.class);
         courseHistory.setCourse_id(null);
+        courseHistory.setEnd_time(courseHistory.getStart_time());
+        courseHistory.setStart_time(DateUtil.getCurrentDate(DateUtil.YMDHMS));
+        courseHistory.setDurationInt((new Date().getTime() - DateUtil.timeStr2Long(courseHistory.getStart_time(), DateUtil.YMDHMS)) / 3600000);
         courseHistoryMapper.insertSelective(courseHistory);
-        courseHistoryDeviceMapper.insertByCourseId(courseHistory.getCourse_id(), param.getCourse_id());
-
         courseMapper.deleteByPrimaryKey(param.getCourse_id());
-        courseDeviceMapper.deleteByCourseId(param.getCourse_id());
+
+        //处理会议历史信息
+        if (3 != course.getCourse_type()) {
+            courseHistoryDeviceMapper.insertByCourseId(courseHistory.getCourse_id(), param.getCourse_id());
+            courseDeviceMapper.deleteByCourseId(param.getCourse_id());
+        }
         return new ReturnInfo();
     }
 

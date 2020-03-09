@@ -108,10 +108,34 @@
         FROM course where course_id = #{id}
     </select>
 
+    <select id="selectDeviceSnByCourseId" resultType="java.lang.String">
+        SELECT d.device_serial_number from course c
+        LEFT JOIN device d on c.local_classroomId = d.device_id
+        where c.course_id = #{course_id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByCustomerId" resultType="org.cs.dp.sonar.domain.CourseGetByIdResBean">
+        select
+        <include refid="Base_Column_List"/>
+        from course c
+        where org_id in
+        (select org_id from organization org where org.customer_id = #{customer_id})
+        <if test="type != null and type !=''">
+            and course_type = #{type,jdbcType=INTEGER}
+        </if>
+    </select>
+
     <select id="selectByIdResAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         FROM course where course_id = #{id}
+    </select>
+
+    <select id="selectByDeviceId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        FROM course where local_classroomId = #{local_classroomId,jdbcType=INTEGER}
+        and course_type=3
     </select>
 
     <select id="selectByIdYsxId" resultMap="BaseResultMap">
@@ -130,7 +154,7 @@
     </update>
 
     <update id="updateLiveState">
-        update course set stream_id=#{uuid},stream_url=#{url} where ysx_id=#{ysx_id}
+        update course set stream_id=#{uuid},stream_url=#{url} where course_id=#{course_id}
     </update>
 
     <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseEntity" useGeneratedKeys="true"

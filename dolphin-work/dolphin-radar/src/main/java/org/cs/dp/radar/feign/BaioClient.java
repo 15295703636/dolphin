@@ -20,9 +20,9 @@ public class BaioClient implements IBaioClient {
     IBaioService iBaioService;
 
     @Override
-    @GetMapping(API_PREFIX+"/sendmsg")
-    public ReturnInfo sendmsg(@RequestParam String msg,@RequestParam String method) {
-        log.info("baio="+msg);
-        return iBaioService.sendmsg(msg,method);
+    @GetMapping(API_PREFIX + "/sendmsg")
+    public ReturnInfo sendmsg(@RequestParam String msg, @RequestParam(name = "queue") String queue) {
+        log.info("baio=" + msg);
+        return iBaioService.sendmsg(msg, queue);
     }
 }

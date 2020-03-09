@@ -26,3 +26,7 @@ management:
     web:
       exposure:
         include: '*'
+
+ribbon:
+  ConnectTimeout: 100000 # ribbon链接超时时长
+  ReadTimeout: 100000 # ribbon读取超时时间长

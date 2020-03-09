@@ -57,9 +57,23 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     private ISoBrsService iSoBrsService;
     @Autowired
     private ICustomerServerService iCustomerServerService;
+    @Autowired
+    private ISoBaioService iSoBaioService;
 
     @Value("${push.flow.url}")
     private String flowUrl;
+
+    @Value("${device.start.data}")
+    private String startData;
+
+    @Value("${device.pause.data}")
+    private String pauseData;
+
+    @Value("${device.continue.data}")
+    private String continueData;
+
+    @Value("${device.stop.data}")
+    private String stopData;
 
     @Override
     public ReturnInfo addCourseDevice(CourseDeviceAddReqBean param) {
@@ -125,6 +139,7 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
 
     /**
      * 调用会捷通接口添加设备
+     *
      * @param param
      * @return
      */
@@ -376,37 +391,49 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
     /**
      * 开启直播
      *
-     * @param course_id
+     * @param ysx_course_id
+     * @param courseSave
+     * @param org_id
+     * @param customer_id
      * @return
      */
     @Override
-    public ReturnInfo startLiveStreaming(String course_id, String type) {
+    public ReturnInfo startLiveStreaming(String ysx_course_id, CourseSaveResBean courseSave, Integer org_id, Integer customer_id) {
         String uuid = UuidUtil.generateUuid();
         //流媒体token,  流媒体url
-        String res[] = iScheduleService.dealLiving(uuid);
+        String res[] = iScheduleService.dealLiving(uuid, org_id, customer_id);
         if (StringUtils.isEmpty(res[1])) {
             return new ReturnInfo(MessageCode.Fail_Inter_EduContrl_Platform, "开启直播失败");
         }
 
         String url = String.format(flowUrl, res[1], uuid, res[0]);
-        if (!"3".equals(type)) {
+        ReturnInfo returnInfo = null;
+        //非录播课，调用会捷通开启直播接口
+        if (3 != courseSave.getType()) {
             RestLiveStreamingReqBean reqBean = new RestLiveStreamingReqBean();
-            reqBean.setCourser_id(course_id);
+            reqBean.setCourser_id(ysx_course_id);
             reqBean.setRecord(true);
             reqBean.setProfile("GW_WEBCAST");
             reqBean.setPeoplePlusContentLayoutMode("oneByOne");
             reqBean.setUrl(url);
-            ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STARTLIVESTREAMING, reqBean);
-            if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STARTLIVESTREAMING, reqBean);
+        } else {//录播课调用端
+            returnInfo = iSoBaioService.sendMsgToBaio(String.format(startData, courseSave.getName(), url), getQueueName(courseSave.getCourse_id()));
+        }
+
+        //判断并处理结果
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            if (returnInfo.getReturnData() instanceof RestError) {
                 return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
             } else {
-                courseMapper.updateLiveState(res[1], uuid, Integer.parseInt(course_id));
+                return returnInfo;
             }
         } else {
-            courseMapper.updateLiveState(res[1], uuid, Integer.parseInt(course_id));
+            courseMapper.updateLiveState(res[1], uuid, courseSave.getCourse_id());
         }
         return new ReturnInfo(url);
     }
+
 
     /**
      * 停止直播
@@ -415,19 +442,61 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
      * @return
      */
     @Override
-    public ReturnInfo stopLiveStreaming(String course_id) {
+    public ReturnInfo stopLiveStreaming(String course_id, Integer type, Integer org_id, Integer customer_id) {
         //根据当前用户信息查询流媒体信息 返回：流媒体序列号，流媒体服务地址
-        String str[] = iCustomerServerService.getCustomerServerByUserInfo();
-        CourseEntity course = courseMapper.selectByIdYsxId(Long.parseLong(course_id));
+        String str[] = iCustomerServerService.getCustomerServerByUserInfo(org_id, customer_id);
+        CourseEntity course = courseMapper.selectByIdResAll(Integer.parseInt(course_id));
         //结束流媒体录制服务
         ReturnInfo returnInfo = iSoBrsService.getServer(iSoBrsService.SOBRS_STOPTASK, course.getStream_id(), str[0]);
-        if (MessageCode.COMMON_SUCCEED_FLAG == returnInfo.getReturnCode()) {
-            //结束会捷通录制
-            returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STOPLIVESTREAMING, course_id);
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            return returnInfo;
+        }
+        //如果是录播课，调用端接口
+        if (null == org_id) {
+            if (3 == type) {
+                returnInfo = iSoBaioService.sendMsgToBaio(stopData, getQueueName(course.getCourse_id()));
+                if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                    return returnInfo;
+                }
+            } else {
+                //结束会捷通录制
+                returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_STOPLIVESTREAMING, String.valueOf(course.getYsx_id()));
+                if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                    RestError restError = (RestError) returnInfo.getReturnData();
+                    int errorCode = restError.getErrorCode();
+                    if (1407 >= errorCode && errorCode >= 1409) {
+                        return returnInfo;
+                    }
+                }
+            }
         }
         //查询录制的信息
         returnInfo = iSoBrsService.getServer(iSoBrsService.SOBRS_QUERYTASK, course.getStream_id(), str[0]);
         return returnInfo;
+    }
+
+    //更新录播状态
+    @Override
+    public ReturnInfo baioControl(BaioControlReqBean param) {
+        String dataStr = null;
+        String state = null;
+        if ("pause".equals(param.getRecord_state())) {
+            dataStr = pauseData;
+            state = "pause";
+        } else {
+            dataStr = continueData;
+            state = "creating";
+        }
+        ReturnInfo returnInfo = iSoBaioService.sendMsgToBaio(dataStr, getQueueName(param.getCourse_id()));
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            return returnInfo;
+        }
+        CourseEntity course = new CourseEntity();
+        course.setCourse_id(param.getCourse_id());
+        course.setRecord_state(state);
+        course.setProvenance(null);
+        courseMapper.updateByPrimaryKeySelective(course);
+        return new ReturnInfo();
     }
 
     private void getDeviceInfo(CourseDeviceReqBean param) {
@@ -438,5 +507,15 @@ public class ICourseDeviceServiceImpl implements ICourseDeviceService {
             Long ysx_id = ucenterMapper.selectYsxById(param.getDevice_id());
             param.setYsx_device_id(ysx_id);
         }
+    }
+
+    /**
+     * 根据日程——录播查询端的序列号
+     *
+     * @param course_id
+     * @return
+     */
+    private String getQueueName(Integer course_id) {
+        return "baio_terminal_".concat(courseMapper.selectDeviceSnByCourseId(course_id));
     }
 }

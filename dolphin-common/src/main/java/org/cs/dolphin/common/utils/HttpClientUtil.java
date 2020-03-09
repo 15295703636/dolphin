@@ -1,5 +1,6 @@
 package org.cs.dolphin.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class HttpClientUtil {
 
     public static String doGet(String url, Map<String, String> param) {
@@ -103,8 +105,7 @@ public class HttpClientUtil {
             try {
                 response.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("未知异常",e);
             }
         }
 
@@ -136,8 +137,7 @@ public class HttpClientUtil {
             try {
                 response.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("未知异常",e);
             }
         }
 
@@ -176,11 +176,9 @@ public class HttpClientUtil {
             }
 
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("未知异常",e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("未知异常",e);
         } finally {
             try {
                 httpclient.close();
@@ -223,11 +221,9 @@ public class HttpClientUtil {
             }
 
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("未知异常",e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("未知异常",e);
         } finally {
             try {
                 httpclient.close();

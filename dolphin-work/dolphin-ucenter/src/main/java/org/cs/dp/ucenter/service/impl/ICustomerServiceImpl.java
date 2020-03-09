@@ -22,6 +22,7 @@ import org.cs.dp.ucenter.mapper.CustomerMapper;
 import org.cs.dp.ucenter.mapper.OrganizationMapper;
 import org.cs.dp.ucenter.mapper.UserOrgMapper;
 import org.cs.dp.ucenter.service.ICustomerService;
+import org.cs.dp.ucenter.service.IOrganizationService;
 import org.cs.dp.ucenter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,9 @@ public class ICustomerServiceImpl implements ICustomerService {
     @Autowired
     private UserOrgMapper userOrgMapper;
 
+    @Autowired
+    private IOrganizationService iOrganizationService;
+
     /**
      * 1.添加租户信息
      * 2.默认添加组织信息
@@ -77,7 +81,7 @@ public class ICustomerServiceImpl implements ICustomerService {
             org.setCustomer_id(customer.getId());
             org.setOrg_name(param.getCustomer_name() + "组织");
             org.setOrg_preid(0);
-            organizationMapper.insertSelective(org);
+            iOrganizationService.addOrg(org);
         }
         return new ReturnInfo(customer.getId());
     }
@@ -104,9 +108,10 @@ public class ICustomerServiceImpl implements ICustomerService {
      * @return
      * @throws BaseException
      */
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo addAdminUser(AddCustomerUserBean param) throws BaseException {
-        if(!param.getUser_name().matches("[a-zA-Z0-9]+")){
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL,Constant.USER_NAME_ERROR_MSG);
+        if (!param.getUser_name().matches("[a-zA-Z0-9]+")) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.USER_NAME_ERROR_MSG);
         }
         List<OrganizationEntity> orgs = organizationMapper.getList(new OrganizationEntity(param.getCustomer_id()));
         if (1 != orgs.size()) {
@@ -124,7 +129,7 @@ public class ICustomerServiceImpl implements ICustomerService {
             throw new BaseException(null, returnInfo.getMsg());
         }
 
-        //添加用户个组织关系
+        //添加用户-组织关系
         userOrgMapper.insertSelective(new UserOrgEntity(null, orgs.get(0).getOrg_id(), user.getUser_id()));
         return new ReturnInfo();
     }

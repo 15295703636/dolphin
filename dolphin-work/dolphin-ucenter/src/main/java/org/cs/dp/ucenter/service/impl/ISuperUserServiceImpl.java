@@ -2,6 +2,7 @@ package org.cs.dp.ucenter.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -21,7 +22,7 @@ import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.ucenter.common.Constant;
 import org.cs.dp.ucenter.common.RedisUtil;
 import org.cs.dp.ucenter.common.SpringUtils;
-import org.cs.dp.ucenter.common.UploadDataListener;
+import org.cs.dp.ucenter.common.UploadSuperUserListener;
 import org.cs.dp.ucenter.domain.*;
 import org.cs.dp.ucenter.domain.entity.SuperUserEntity;
 import org.cs.dp.ucenter.domain.entity.UserEntity;
@@ -33,9 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -91,25 +90,40 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         return new ReturnInfo();
     }
 
+    public ReturnInfo checkUserInfo(CheckAddInfoReqBean record) {
+        List<CheckAddInfoReqBean> checkRes = superUserMapper.checkAddInfo(record);
+        if (0 < checkRes.size()) {
+            for (CheckAddInfoReqBean user : checkRes) {
+                //不等于null是修改
+                if (!Objects.equals(record.getUser_id(), user.getUser_id())) {
+                    if (Objects.equals(user.getUser_name(), record.getUser_name())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_email(), record.getUser_email())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.EMAIL_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_tel(), record.getUser_tel())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PHONE_EXIST_MSG);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public ReturnInfo checkAddInfo(CheckAddInfoReqBean record) {
-        CheckAddInfoReqBean checkRes = superUserMapper.checkAddInfo(record);
-        if (null != checkRes) {
-            if (!StringUtils.isEmpty(record.getUser_name()) && record.getUser_name().equals(checkRes.getUser_name())) {
-                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
-            }
-            if (!StringUtils.isEmpty(record.getUser_tel()) && record.getUser_tel().equals(checkRes.getUser_tel())) {
-                return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PHONE_EXIST_MSG);
-            }
+        ReturnInfo returnInfo = checkUserInfo(record);
+        if (null != returnInfo) {
+            return returnInfo;
         }
         return new ReturnInfo();
     }
 
     @Override
     public ReturnInfo add(SuperUserEntity record) {
-        if (0 < superUserMapper.selectByUserNameCou(record.getUser_name())) {
+        ReturnInfo returnInfo = checkInfo(record);
+        if (null != returnInfo) {
             log.error("用户已存在：{}", JSON.toJSONString(record));
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+            return returnInfo;
         }
         superUserMapper.insertSelective(record);
         return new ReturnInfo();
@@ -126,6 +140,11 @@ public class ISuperUserServiceImpl implements ISuperUserService {
 
     @Override
     public ReturnInfo edit(SuperUserEntity record) {
+        ReturnInfo returnInfo = checkInfo(record);
+        if (null != returnInfo) {
+            log.error("用户已存在：{}", JSON.toJSONString(record));
+            return returnInfo;
+        }
         //如果是超级管理员校验当前密码
         if (2 == record.getUser_type()) {
             SuperUserEntity user = superUserMapper.selectManage(record.getUser_id(), null).get(0);
@@ -151,10 +170,44 @@ public class ISuperUserServiceImpl implements ISuperUserService {
         return new ReturnInfo(param.getPage(), list);
     }
 
+
+    private ReturnInfo checkInfo(SuperUserEntity record) {
+        List<CheckAddInfoReqBean> userInfos = superUserMapper.checkAddInfo(JSONObject.parseObject(JSON.toJSONString(record), CheckAddInfoReqBean.class));
+        if (userInfos.size() > 0) {
+            for (CheckAddInfoReqBean user : userInfos) {
+                //不等于null是修改
+                if (!Objects.equals(record.getUser_id(), user.getUser_id())) {
+                    if (Objects.equals(user.getUser_name(), record.getUser_name())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_email(), record.getUser_email())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.EMAIL_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_tel(), record.getUser_tel())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PHONE_EXIST_MSG);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public ReturnInfo upload(MultipartFile file) throws IOException {
-        EasyExcel.read(file.getInputStream(), SuperUserEntity.class,
-                new UploadDataListener(SpringUtils.getBean(ISuperUserService.class))).sheet().doRead();
+        UploadSuperUserListener uploadSuperUser = new UploadSuperUserListener();
+        EasyExcel.read(file.getInputStream(), SuperUserEntity.class, uploadSuperUser).sheet().doRead();
+        List<SuperUserEntity> superUserList = uploadSuperUser.getSuperUserList();
+        ReturnInfo returnInfo = null;
+        List<String> errorInfo = new ArrayList<>();
+        for (SuperUserEntity addUser : superUserList) {
+            returnInfo = checkInfo(addUser);
+            if (null != returnInfo) {
+                errorInfo.add(String.format("租户:%s 添加失败;原因：%s", addUser.getUser_name(), returnInfo.getMsg()));
+            } else {
+                add(addUser);
+            }
+        }
+        if (errorInfo.size() > 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, JSON.toJSONString(errorInfo));
+        }
         return new ReturnInfo();
     }
 

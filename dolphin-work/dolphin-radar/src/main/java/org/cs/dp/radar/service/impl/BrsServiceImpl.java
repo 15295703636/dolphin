@@ -45,13 +45,13 @@ public class BrsServiceImpl implements IBrsService {
     }
 
     @Override
-    public ReturnInfo recMsgFromBrs1(String msg) {
-        return iSomqClient.receiveMsg(msg);
+    public ReturnInfo keepalive(String msg) {
+        return iSomqClient.keepalive(msg,2);
     }
 
     @Override
     public ReturnInfo recMsgFromBrs2(String msg) {
-        return iSomqClient.receiveMsg(msg);
+        return null;//iSomqClient.receiveMsg(msg);
     }
 
     @Override

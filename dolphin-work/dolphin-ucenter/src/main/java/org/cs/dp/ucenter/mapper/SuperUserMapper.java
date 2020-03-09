@@ -10,7 +10,7 @@ public interface SuperUserMapper {
 
     List<SuperUserEntity> selectManage(@Param(value = "manageId") Integer manageId, @Param(value = "user_name") String user_name);
 
-    CheckAddInfoReqBean checkAddInfo(CheckAddInfoReqBean record);
+    List<CheckAddInfoReqBean> checkAddInfo(CheckAddInfoReqBean record);
 
     int deleteByPrimaryKey(@Param(value = "user_ids") List<Integer> user_ids);
 

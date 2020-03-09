@@ -21,6 +21,7 @@ public class CourseGetByIdResBean {
     private String course_type;
     private String course_name;
     private Long ysx_id;
+    private Integer local_classroomId;
 
     @ApiModelProperty(value = "直播标志，1直播 0未直播")
     private String isLive;
@@ -49,8 +50,14 @@ public class CourseGetByIdResBean {
 
     private List<CourseResBean> remote;
 
+    private String mainName;
+
+    private List<String> remoteDeviceName;
+
     private CourseResBean main;
 
     @ApiModelProperty(value = "互动课专用标志 1上课 2讨论 3发言")
     private Integer class_state;
+
+    private String teacher_name;
 }

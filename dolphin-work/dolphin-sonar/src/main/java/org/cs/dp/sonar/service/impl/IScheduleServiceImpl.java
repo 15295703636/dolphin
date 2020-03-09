@@ -7,35 +7,37 @@ import com.alibaba.nacos.common.util.UuidUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.constant.RedisConstant;
 import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.DateUtil;
 import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
-import org.cs.dp.radar.api.entity.RestConf;
-import org.cs.dp.radar.api.entity.RestConfReq;
-import org.cs.dp.radar.api.entity.RestError;
-import org.cs.dp.radar.api.entity.RestSubtitle;
+import org.cs.dp.radar.api.entity.*;
 import org.cs.dp.radar.api.entity.brs.BssTaskReq;
+import org.cs.dp.sonar.common.redis.RedisUtil;
 import org.cs.dp.sonar.config.ThreadAsyncConfig;
 import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CustomerServerEntity;
+import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.domain.entity.ScheduleDeviceEntity;
 import org.cs.dp.sonar.domain.entity.ServerEntity;
 import org.cs.dp.sonar.mapper.*;
 import org.cs.dp.sonar.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.plugin2.message.Message;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName IScheduleServiceImpl
@@ -71,11 +73,14 @@ public class IScheduleServiceImpl implements IScheduleService {
     @Autowired
     private ICourseDeviceService iCourseDeviceService;
     @Autowired
-    private ISoBaioService iSoBaioService;
+    private RedisUtil redisUtil;
+
+    @Value("${device.timeOut}")
+    private Integer deviceTimeOut;
 
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
-    public ReturnInfo addSchedule(ScheduleArrayBean param) {
+    public ReturnInfo addSchedule(ScheduleArrayBean param) throws BaseException {
 
         if (null == param.getDevice_id() && null == param.getUser_id()) {
             return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "请选择设备!");
@@ -89,10 +94,7 @@ public class IScheduleServiceImpl implements IScheduleService {
 
         //处理端/软终端数据
         dealDevice(param, true);
-
-        if (param.isNew_start()) {
-            start(new ScheduleStartReqBean(param.getId(), 0));
-        }
+        editDaveStart(param.isNew_start(), param.getId());
         return new ReturnInfo();
     }
 
@@ -103,36 +105,35 @@ public class IScheduleServiceImpl implements IScheduleService {
      * @param isEdit
      */
     private void dealDevice(ScheduleArrayBean param, boolean isEdit) {
-        if (!param.getType().equals(3)) {
-            scheduleDeviceMapper.deleteByScheduleId(param.getId());
-            if (isEdit) {
-                //处理端/软终端数据
-                List<ScheduleDeviceEntity> scheduleDevices = new ArrayList<>();
-                if (null != param.getDevice_id()) {
-                    scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 1));
-                } else {
-                    scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 1));
-                }
-                if (null != param.getDeviceIds()) {
-                    param.getDeviceIds().forEach(e -> {
-                        if (null == param.getDevice_id() || !e.equals(param.getDevice_id())) {
-                            scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 2));
-                        }
-                    });
-                }
-                if (null != param.getUserIds()) {
-                    param.getUserIds().forEach(e -> {
-                        if (null == param.getUser_id() || !e.equals(param.getUser_id())) {
-                            scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 2));
-                        }
-                    });
-                }
-                scheduleDeviceMapper.insertBatch(scheduleDevices);
+        scheduleDeviceMapper.deleteByScheduleId(param.getId());
+        if (null != param.getType() && !param.getType().equals(3) && isEdit) {
+            //处理端/软终端数据
+            List<ScheduleDeviceEntity> scheduleDevices = new ArrayList<>();
+            if (null != param.getDevice_id()) {
+                scheduleDevices.add(new ScheduleDeviceEntity(param.getDevice_id(), param.getId(), 0, 1));
+            } else {
+                scheduleDevices.add(new ScheduleDeviceEntity(param.getUser_id(), param.getId(), 1, 1));
             }
+            if (null != param.getDeviceIds()) {
+                param.getDeviceIds().forEach(e -> {
+                    if (null == param.getDevice_id() || !e.equals(param.getDevice_id())) {
+                        scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 0, 2));
+                    }
+                });
+            }
+            if (null != param.getUserIds()) {
+                param.getUserIds().forEach(e -> {
+                    if (null == param.getUser_id() || !e.equals(param.getUser_id())) {
+                        scheduleDevices.add(new ScheduleDeviceEntity(e, param.getId(), 1, 2));
+                    }
+                });
+            }
+            scheduleDeviceMapper.insertBatch(scheduleDevices);
         }
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo delSchedule(Integer param) {
         ScheduleArrayBean scheduleArray = new ScheduleArrayBean();
         scheduleArray.setId(param);
@@ -143,16 +144,29 @@ public class IScheduleServiceImpl implements IScheduleService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
-    public ReturnInfo editSchedule(ScheduleArrayBean param) {
+    public ReturnInfo editSchedule(ScheduleArrayBean param) throws BaseException {
         param.setDevice_ids(JSONArray.toJSONString(param.getDeviceIds()));
         param.setUser_ids(JSONArray.toJSONString(param.getUserIds()));
         param.setDuration(param.getDuration_hour() + "," + param.getDuration_minute());
         scheduleMapper.updateByPrimaryKeySelective(param);
         dealDevice(param, true);
-        if (param.isNew_start()) {
-            start(new ScheduleStartReqBean(param.getId(), 0));
-        }
+        editDaveStart(param.isNew_start(), param.getId());
         return new ReturnInfo();
+    }
+
+    /**
+     * 统一判断处理编辑/保存时是否启动操作
+     *
+     * @param new_start
+     * @param id
+     * @throws BaseException
+     */
+    private void editDaveStart(boolean new_start, Integer id) throws BaseException {
+        if (new_start) {
+            if (MessageCode.COMMON_SUCCEED_FLAG != start(new ScheduleStartReqBean(id, 0)).getReturnCode()) {
+                throw new BaseException("启动日程失败", "启动日程失败");
+            }
+        }
     }
 
     @Override
@@ -187,6 +201,39 @@ public class IScheduleServiceImpl implements IScheduleService {
     }
 
     @Override
+    public ReturnInfo getByDeviceId(Object obj) {
+        List<ScheduleOneDeviceBean> resData = scheduleMapper.selectByDeviceId(obj.toString());
+        List<ScheduleBaioResBean> res = new ArrayList<>();
+        resData.forEach(e -> {
+                    ScheduleBaioResBean schedule = new ScheduleBaioResBean();
+                    schedule.setType(GetNameByCode.getNameByCode(e.getType()));
+                    schedule.setName(e.getName());
+                    schedule.setStart_time(e.getDate());
+
+                    schedule.setStart_time(e.getDate());
+
+                    String duration[] = e.getDuration().split(",");
+                    schedule.setEnd_time(DateUtil.addDate(
+                            DateUtil.addDate(
+                                    DateUtil.timeStr2Long(e.getDate(), DateUtil.YMDHMS), Integer.valueOf(duration[0]), DateUtil.HOUR),
+                            Integer.valueOf(duration[1]), DateUtil.MINUTE, DateUtil.YMDHMS
+                    ));
+
+                    schedule.setLecturer(e.getTeacher_name());
+                    schedule.setConference_number(String.valueOf(e.getId()));
+                    schedule.setLecturer_device(StringUtils.isEmpty(e.getDeviceName()) ? e.getUserName() : e.getDeviceName());
+                    List<String> participants = JSONArray.parseArray("[\"" + e.getDevice_names().replace(",", "\",\"") + "\"]", String.class);
+                    if(null != e.getUser_names()){
+                        participants.addAll(JSONArray.parseArray("[\"" + e.getUser_names().replace(",", "\",\"") + "\"]", String.class));
+                    }
+                    schedule.setParticipants(participants);
+                    res.add(schedule);
+                }
+        );
+        return new ReturnInfo(String.format("{\"code\": 1000,\"data\": %s}", JSONArray.toJSONString(res)));
+    }
+
+    @Override
     public ReturnInfo getById(Integer id) {
         ScheduleOneDeviceBean res = scheduleMapper.selectById(id);
         if (!res.getType().equals(3)) {
@@ -208,7 +255,6 @@ public class IScheduleServiceImpl implements IScheduleService {
             if (null != res.getUser_names()) {
                 res.setUserNames(JSONArray.parseArray("[\"" + res.getUser_names().replace(",", "\",\"") + "\"]", String.class));
             }
-
         }
 
         String duration[] = res.getDuration().split(",");
@@ -226,44 +272,113 @@ public class IScheduleServiceImpl implements IScheduleService {
      */
     @Override
     public ReturnInfo start(ScheduleStartReqBean param) {
-        //调用会捷通接口开启会议    处理结果 会议id 流媒体id 流媒体服务地址
-        Object ysxRes[] = dealStart(param);
-        log.info("第一步：调用会捷通接口开启会议结果：{}", JSONArray.toJSONString(ysxRes));
+        //校验端状态
+        Object obj = checkDeviceState(param);
+        if (obj instanceof String) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, obj.toString());
+        } else {
+            ScheduleOneDeviceBean scheduleOneDevice = (ScheduleOneDeviceBean) obj;
+            //调用会捷通接口开启会议，如果是录播课判断设备是否已被占用
+            DealStartResBean startRes = dealStart(scheduleOneDevice);
+            log.info("第一步：调用会捷通接口开启会议结果：{}", JSON.toJSONString(startRes));
 
-        //判断日程会议是否成功
-        if (!(boolean) ysxRes[0]) {
-            return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, (String) ysxRes[1]);
-        }
-        //保存当前日程信息  操作结果； 课程类型； 是否开启直播
-        Object resData[] = iCourseService.startCourser(param, (Long) ysxRes[1], ysxRes);
-        log.info("第二步：保存当前日程信息结果：{}", JSONArray.toJSONString(resData));
-
-        ReturnInfo returnInfo = new ReturnInfo();
-
-        //开启是否开启直播处理
-        if ((boolean) resData[0]) {
-            //开启直播 || 日程类型为录播课
-            if ("1".equals(resData[2]) || "3".equals(resData[1])) {
-                returnInfo = iCourseDeviceService.startLiveStreaming(String.valueOf(ysxRes[1]), String.valueOf(resData[1]));
-                log.info("第三步：开启是否开启直播处理结果：{}", JSON.toJSONString(returnInfo));
+            //判断日程会议是否成功
+            if (!startRes.isResult_sign()) {
+                return new ReturnInfo(MessageCode.Fail_Inter_RecordServer, startRes.getError_msg());
             }
+            //保存当前日程信息  [操作结果, 课程类型, 是否开启直播, 日程名称]
+            CourseSaveResBean courseSave = iCourseService.startCourser(param, startRes.getYsx_course_id());
+            log.info("第二步：保存当前日程信息结果：{}", JSON.toJSONString(courseSave));
+
+            ReturnInfo returnInfo = new ReturnInfo();
+            //判断保存结果
+            if (courseSave.isResult_sign()) {
+                //开启直播 || 日程类型为录播课
+                if ("1".equals(courseSave.getIsLive()) || "3".equals(courseSave.getType())) {
+                    returnInfo = iCourseDeviceService.startLiveStreaming(String.valueOf(startRes.getYsx_course_id()), courseSave, null, null);
+                    log.info("第三步：开启是否开启直播处理结果：{}", JSON.toJSONString(returnInfo));
+                    if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+                        return returnInfo;
+                    }
+                }
+            } else {
+                returnInfo.setReturnCode(MessageCode.COMMON_DATA_UNNORMAL);
+                returnInfo.setReturnData(courseSave.getError_msg());
+            }
+            return returnInfo;
         }
-        return returnInfo;
     }
 
     /**
+     * 校验端状态是否正常
+     *
      * @param param
-     * @return 处理结果 会议id 流媒体id 流媒体服务地址
+     * @return
      */
-    private Object[] dealStart(ScheduleStartReqBean param) {
+    private Object checkDeviceState(ScheduleStartReqBean param) {
         ScheduleOneDeviceBean res = null;
         if (1 == param.getHistorySign()) {
             res = courseHistoryMapper.selectByIdResYsx(param.getId());
         } else {
             res = scheduleMapper.getStartInfoById(param.getId());
         }
+        List<String> deviceSn = new ArrayList<>();
+        List<Integer> deviceIds = JSONArray.parseArray("[" + res.getDevice_ids() + "]", Integer.class);
+        deviceIds.add(res.getDevice_id());
+        List<DeviceEntity> devices = deviceMapper.selectByYsxId(deviceIds);
+        devices.forEach(e -> deviceSn.add(e.getDevice_serial_number()));
+        List<DeviceStateBean> deviceStates = redisUtil.getMap(RedisConstant.DEVICE_KEEPALIVE_PATH, deviceSn, DeviceStateBean.class);
+        deviceStates = deviceStates.stream().filter(e -> null != e).collect(Collectors.toList());
 
-        Object obj[] = new Object[4];
+        Integer type = res.getType();
+        List<String> offLine = new ArrayList<>();//未查找到设备状态信息或状态信息更新超时
+        List<String> busy = new ArrayList<>();//忙碌(在使用中)
+        if (deviceStates.size() > 0) {
+            Map<String, DeviceStateBean> deviceMap = deviceStates.stream().collect(Collectors.toMap(DeviceStateBean::getSn, a -> a, (k1, k2) -> k1));
+            devices.forEach(e -> {
+                if (34 != e.getDevice_type()) {
+                    DeviceStateBean deviceState = deviceMap.get(e.getDevice_serial_number());
+                    if (null != deviceState) {
+                        if ((new Date().getTime() - deviceState.getDate()) > deviceTimeOut) {
+                            offLine.add(e.getName());
+                        } else if (3 == deviceState.getStatus()) {
+                            busy.add(e.getName());
+                        } else if (3 != type && 2 == deviceState.getStatus()) {
+                            busy.add(e.getName());
+                        }
+                    } else {
+                        offLine.add(e.getName());
+                    }
+                }
+            });
+        } else {
+            StringBuffer str2 = new StringBuffer();
+            devices.forEach(e -> {
+                if (34 != e.getDevice_type()) {
+                    str2.append("所有设备都未接收到设备状态信息");
+                }
+            });
+            if (!str2.toString().equals("")) {
+                return str2;
+            }
+        }
+        String resStr = "";
+        if (busy.size() > 0 || offLine.size() > 0) {
+            resStr = offLine.size() > 0 ? "未接收到设备状态信息：" + resStr.concat(JSON.toJSONString(offLine)) : resStr;
+            resStr = busy.size() > 0 ?
+                    StringUtils.isEmpty(resStr) ? "设备使用中：" + resStr.concat(JSON.toJSONString(busy)) : resStr.concat("设备使用中：").concat(JSON.toJSONString(busy)) : resStr;
+            return resStr;
+        } else {
+            return res;
+        }
+    }
+
+    /**
+     * @param param
+     * @return 处理结果 会议id
+     */
+    private DealStartResBean dealStart(ScheduleOneDeviceBean res) {
+        DealStartResBean startRes = new DealStartResBean();
         //非录播课调用会捷通
         if (!res.getType().equals(3)) {
             RestConfReq restConfReq = new RestConfReq();
@@ -295,24 +410,27 @@ public class IScheduleServiceImpl implements IScheduleService {
             restConfReq.setSubtitle(new RestSubtitle());
             ReturnInfo returnInfo = iSoMruService.getServer(iSoMruService.CONFERENCE_START, restConfReq);
             if (returnInfo.getReturnCode() == MessageCode.COMMON_SUCCEED_FLAG) {
-                obj[0] = true;
-                obj[1] = ((RestConf) returnInfo.getReturnData()).getId();
-
+                startRes.setResult_sign(true);
+                startRes.setYsx_course_id(((RestConf) returnInfo.getReturnData()).getId());
                 //如果是互动课堂，调用设置直播分屏 1*1；听课教师1*1；主讲设3*3 所有听课禁言
                 if (res.getType().equals(2)) {
-                    dealPeerLayout(restConfReq, (Long) obj[1], res.getIsLive());
+                    dealPeerLayout(restConfReq, startRes.getYsx_course_id(), res.getIsLive());
                 }
             } else {
-                obj[0] = false;
-                obj[1] = GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode());
+                startRes.setResult_sign(false);
+                startRes.setError_msg(GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
             }
         } else {
-            //TODO
-            iSoBaioService.sendMsgToBaio(null, null);
-
-            obj[0] = true;
+            //判断端是否被占用
+            String result = iCourseService.exit(res.getDevice_id());
+            if (null != result) {
+                startRes.setResult_sign(false);
+                startRes.setError_msg("设备已占用");
+            } else {
+                startRes.setResult_sign(true);
+            }
         }
-        return obj;
+        return startRes;
     }
 
     /**
@@ -321,9 +439,9 @@ public class IScheduleServiceImpl implements IScheduleService {
      * @param uuid
      * @return 流媒体token,  流媒体url
      */
-    public String[] dealLiving(String uuid) {
+    public String[] dealLiving(String uuid, Integer org_id, Integer customer_id) {
         String res[] = new String[2];
-        String str[] = iCustomerServerService.getCustomerServerByUserInfo();
+        String str[] = iCustomerServerService.getCustomerServerByUserInfo(org_id, customer_id);
         ReturnInfo returnInfo = iSoBrsService.getServer(iSoBrsService.SOBRS_LOGIN, uuid, str[0]);
         String token = null;
         if (MessageCode.COMMON_SUCCEED_FLAG == returnInfo.getReturnCode()) {

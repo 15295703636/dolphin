@@ -34,4 +34,7 @@ public class GetDeviceBean {
 
     @ApiModelProperty(value = "租户ID", hidden = true)
     private Integer customer_id;
+
+    @ApiModelProperty(value = "序列号", hidden = true)
+    private String device_serial_number;
 }

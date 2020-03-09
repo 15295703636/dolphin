@@ -25,13 +25,8 @@ public class BaioServiceImpl implements IBaioService {
     ISomqClient iSomqClient;
 
     @Override
-    public ReturnInfo sendmsg(String msg,String method) {
-        JsonRpcReq jsonRpcReq = new JsonRpcReq();
-        jsonRpcReq.setMethod(method);
-        jsonRpcReq.setParams(msg);
-        String json = JsonRpcReq.generateJsonStr(jsonRpcReq);
-        baioSender.sendAll(json);
-        return null;
+    public ReturnInfo sendmsg(String msg, String queue) {
+        return baioSender.sendAll(msg,queue);
     }
 
     @Override
@@ -40,8 +35,8 @@ public class BaioServiceImpl implements IBaioService {
     }
 
     @Override
-    public ReturnInfo recMsgFromBaio2(String msg) {
-        return iSomqClient.receiveMsg(msg);
+    public ReturnInfo keepalive(String msg) {
+        return iSomqClient.keepalive(msg,1);
     }
 
 

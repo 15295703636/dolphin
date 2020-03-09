@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 import org.cs.dp.sonar.service.IDeviceService;
@@ -43,7 +44,7 @@ public class DeviceController {
 
     @PostMapping("edit")
     @ApiOperation(value = "修改设备-端管理", notes = "设备-端管理")
-    public ReturnInfo editDevice(@RequestBody DeviceEntity param){
+    public ReturnInfo editDevice(@RequestBody DeviceEntity param) {
         return iDeviceService.editDevice(param);
     }
 

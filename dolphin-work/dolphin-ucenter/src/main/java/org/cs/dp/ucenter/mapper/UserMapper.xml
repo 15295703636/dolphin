@@ -42,6 +42,20 @@
         LEFT JOIN organization org ON org.org_id = uo.org_id
     </select>
 
+    <select id="selectByUserNameEmailTel" resultMap="ResultMapWithBLOBs">
+       select * from user where (user_name=#{user_name} or user_email =#{user_email} or user_tel =#{user_tel})
+    </select>
+
+    <select id="getUserCount" resultType="org.cs.dp.ucenter.domain.UserCountBean">
+        SELECT u.role_id, count(1) cou
+        FROM USER u WHERE
+            user_id IN (
+                SELECT uo.user_id FROM organization org, user2org uo
+                WHERE org.org_id = uo.org_id AND org.customer_id = #{customer_id}
+            )
+        GROUP BY u.role_id
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from user
         where user_id in
@@ -214,8 +228,7 @@
     <!--1.先根据当前的组织id查询到所有子节点的组织id，
     2.在关联组织用户关系表，查出用户id，
     3.在关联用户表查询用户信息-->
-    <select id="getUsersList" parameterType="java.lang.Integer"
-            resultType="org.cs.dp.ucenter.domain.GetUserListResBean">
+    <select id="getUsersList" resultType="org.cs.dp.ucenter.domain.GetUserListResBean">
         SELECT
         u.user_id,
         u.user_name,
@@ -251,7 +264,14 @@
             and u.role_id != 1
         </if>
         <if test="user_name != null and user_name != ''">
-            and u.user_name like concat('%',#{user_name},'%')
+            and (u.user_name like concat('%',#{user_name},'%') or
+                <if test='by_name_role == "1"'>
+                    and u.role_id = 1
+                </if>
+                <if test='by_name_role != "1"'>
+                    and u.role_id != 1
+                </if>
+            )
         </if>
     </select>
 

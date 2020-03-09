@@ -32,6 +32,16 @@
         </foreach>
     </select>
 
+    <select id="selectByYsxId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device
+        where ysx_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
     <select id="selectUserById" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.entity.UserEntity">
         select
         user_id, user_name, user_qname, user_email, role_id, user_desc, user_statu, user_number, user_tel, user_code,
@@ -59,7 +69,10 @@
             and (
             name like CONCAT('%',#{name},'%')
             or
-            call_protocol = (select code_id from code where table_name = 'deviceAgreement' and code_name like
+            call_protocol in (select code_id from code where table_name = 'deviceAgreement' and code_name like
+            CONCAT('%',#{name},'%'))
+            or
+            device_type in (select code_id from code where table_name = 'deviceModel' and code_name like
             CONCAT('%',#{name},'%'))
             )
         </if>
@@ -72,7 +85,18 @@
         <if test="call_protocol != null">
             and call_protocol = #{call_protocol,jdbcType=INTEGER}
         </if>
+        <if test="device_serial_number != null">
+            and device_serial_number = #{device_serial_number}
+        </if>
+    </select>
 
+    <select id="getInfoByNum" resultType="org.cs.dp.sonar.domain.DeviceServerBean">
+        select
+            d.device_id, d.ysx_id,d.ysx_info,d.org_id, d.name, d.call_protocol,d.call_num,
+            d.sip, d.ip, d.e_code, d.device_type, d.device_state,
+            d.create_time, d.create_user_id,o.customer_id
+        from device d LEFT JOIN organization o on d.org_id=o.org_id
+        where device_serial_number = #{device_serial_number}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -213,5 +237,10 @@
             </if>
         </set>
         where device_id = #{device_id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateStateByNum">
+        update device set  device_state = #{state,jdbcType=INTEGER}
+        where device_serial_number = #{num,jdbcType=VARCHAR}
     </update>
 </mapper>

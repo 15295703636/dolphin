@@ -14,6 +14,9 @@ public class OrganizationEntity {
     @ApiModelProperty(value = "id")
     private Integer org_id;
 
+    @ApiModelProperty(value = "云视讯Id")
+    private Long ysx_id;
+
     @ApiModelProperty(value = "名称")
     private String org_name;
 

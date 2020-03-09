@@ -1,6 +1,8 @@
 package org.cs.dp.ucenter.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelReader;
+import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,12 +36,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -160,8 +162,9 @@ public class IUserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = {Exception.class, BaseException.class})
     public ReturnInfo add(AddUserBean record, boolean isAuto) throws BaseException {
-        if (null != userMapper.selectByUserName(record.getUser_name())) {
-            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+        ReturnInfo checkRes = checkInfo(record);
+        if (null != checkRes) {
+            return checkRes;
         }
         //添加用户
         userMapper.insertSelective(record);
@@ -188,10 +191,10 @@ public class IUserServiceImpl implements IUserService {
         UserInfo userInfo = ThreadLocalUserInfoUtil.get();
         //添加租户管理员
         if (null != userInfo.getUser_type()) {
-            restOrgUserReq.setCellphone("18211111119");
+            restOrgUserReq.setCellphone(record.getUser_tel());
             restOrgUserReq.setDisplayName("testZh");
-            restOrgUserReq.setEmail("testAdmin9@qq.com");
-            restOrgUserReq.setRole("USER");//TODO 租户管理员是什么角色
+            restOrgUserReq.setEmail(record.getUser_email());
+            restOrgUserReq.setRole("ORG_ADMIN");//
         } else {
             restOrgUserReq.setCellphone(record.getUser_tel());
             restOrgUserReq.setDisplayName(record.getUser_qname());
@@ -243,6 +246,10 @@ public class IUserServiceImpl implements IUserService {
 
     @Override
     public ReturnInfo edit(UserEntity record) {
+        ReturnInfo checkRes = checkInfo(record);
+        if (null != checkRes) {
+            return checkRes;
+        }
         dealEdit(record);
         userMapper.updateByPrimaryKeySelective(record);
         return new ReturnInfo();
@@ -277,6 +284,15 @@ public class IUserServiceImpl implements IUserService {
     public ReturnInfo getUsersList(RequestPage<SplitPageInfo, GetUserReqBean> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         GetUserReqBean getUserReqBean = param.getInfo();
+
+        if (!StringUtils.isEmpty(getUserReqBean.getUser_name())) {
+            if ("管理员".contains(getUserReqBean.getUser_name())) {
+                getUserReqBean.setBy_name_role(1);
+            } else {
+                getUserReqBean.setBy_name_role(2);
+            }
+        }
+
         getUserReqBean.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
         List<GetUserListResBean> userEntities = userMapper.getUsersList(getUserReqBean);
@@ -292,10 +308,45 @@ public class IUserServiceImpl implements IUserService {
     }
 
     @Override
-    public ReturnInfo upload(MultipartFile file) throws IOException {
+    public ReturnInfo upload(MultipartFile file) throws IOException, BaseException {
+        UploadUserListener uploadUserListener = new UploadUserListener();
         EasyExcel.read(file.getInputStream(), AddUserBean.class,
-                new UploadUserListener(SpringUtils.getBean(IUserServiceImpl.class))).sheet().doRead();
+                uploadUserListener).sheet().doRead();
+        List<AddUserBean> addUserBeanList = uploadUserListener.getAddUserBeanList();
+        ReturnInfo returnInfo = null;
+        List<String> errorInfo = new ArrayList<>();
+        for (AddUserBean addUser : addUserBeanList) {
+            returnInfo = checkInfo(addUser);
+            if (null != returnInfo) {
+                errorInfo.add(String.format("用户:%s 添加失败;原因：%s", addUser.getUser_name(), returnInfo.getMsg()));
+            } else {
+                add(addUser, false);
+            }
+        }
+        if (errorInfo.size() > 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, JSON.toJSONString(errorInfo));
+        }
         return new ReturnInfo();
+    }
+
+
+    private ReturnInfo checkInfo(UserEntity record) {
+        List<UserEntity> userInfos = userMapper.selectByUserNameEmailTel(record);
+        if (userInfos.size() > 0) {
+            for (UserEntity user : userInfos) {
+                //不等于null是修改
+                if (!Objects.equals(record.getUser_id(), user.getUser_id())) {
+                    if (Objects.equals(user.getUser_name(), record.getUser_name())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.NAME_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_email(), record.getUser_email())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.EMAIL_EXIST_MSG);
+                    } else if (Objects.equals(user.getUser_tel(), record.getUser_tel())) {
+                        return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, Constant.PHONE_EXIST_MSG);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

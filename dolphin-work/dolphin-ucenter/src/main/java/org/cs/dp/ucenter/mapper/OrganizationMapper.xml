@@ -2,16 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.OrganizationMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.OrganizationEntity">
-        <constructor>
-            <idArg column="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="org_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="org_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="org_preid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="customer_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-        </constructor>
+        <id column="org_id" property="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="ysx_id" property="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result column="org_name" property="org_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="org_type" property="org_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="org_preid" property="org_preid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="customer_id" property="customer_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
-    org_id, org_name, org_type, org_preid, customer_id
+    org_id, ysx_id, org_name, org_type, org_preid, customer_id
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -26,6 +25,9 @@
         from organization where 1=1
         <if test="customer_id != null and customer_id != ''">
             and customer_id = #{customer_id}
+        </if>
+        <if test="org_id != null and org_id != ''">
+            and org_id = #{org_id}
         </if>
     </select>
 
@@ -70,6 +72,9 @@
             <if test="org_id != null">
                 org_id,
             </if>
+            <if test="ysx_id != null">
+                ysx_id,
+            </if>
             <if test="org_name != null">
                 org_name,
             </if>
@@ -86,6 +91,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="org_id != null">
                 #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="ysx_id != null">
+                #{ysx_id,jdbcType=BIGINT},
             </if>
             <if test="org_name != null">
                 #{org_name,jdbcType=VARCHAR},

@@ -21,6 +21,10 @@ public class UserApplyEntity {
 
     private Integer role_id;
 
+    private Integer org_id;
+
+    private String org_name;
+
     private Boolean user_statu;
 
     private String user_number;
@@ -37,22 +41,5 @@ public class UserApplyEntity {
     private Date apply_time;
 
     private String user_desc;
-
-    public UserApplyEntity(Integer user_id, String user_name, String user_qname, String user_pwd, String user_email, Integer role_id, Boolean user_statu, String user_number, String user_tel, String user_code, Integer apply_result, Date create_time, Date apply_time, String user_desc) {
-        this.user_id = user_id;
-        this.user_name = user_name;
-        this.user_qname = user_qname;
-        this.user_pwd = user_pwd;
-        this.user_email = user_email;
-        this.role_id = role_id;
-        this.user_statu = user_statu;
-        this.user_number = user_number;
-        this.user_tel = user_tel;
-        this.user_code = user_code;
-        this.apply_result = apply_result;
-        this.create_time = create_time;
-        this.apply_time = apply_time;
-        this.user_desc = user_desc;
-    }
 
 }

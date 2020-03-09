@@ -61,9 +61,12 @@ public class Constant {
     public static final String NAME_NO_EXIST_MSG = "用户不存在!";
     public static final String NAME_EXIST_MSG = "用户已存在!";
     public static final String PHONE_EXIST_MSG = "手机号已注册!";
+    public static final String EMAIL_EXIST_MSG = "邮箱已注册!";
     public static final String PWD_ERROR_MSG = "密码错误!";
     public static final String NOW_PWD_ERROR_MSG = "当前密码错误!";
     public static final String PWD_NULL_MSG = "请输入当前密码!";
+    public static final String EMAIL_EMPTY_MSG = "邮箱不能为空!";
+    public static final String TEL_EMPTY_MSG = "手机号不能为空!";
 
     public static final String EXCEPTION_MSG = "服务异常!";
 

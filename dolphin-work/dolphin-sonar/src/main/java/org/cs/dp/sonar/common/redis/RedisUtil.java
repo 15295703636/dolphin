@@ -14,6 +14,8 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -170,6 +172,36 @@ public class RedisUtil<T> {
      */
     public void setExpire(final String key, Long expireTime) {
         redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 添加一个hashMap
+     *
+     * @param rediskey
+     * @param value
+     */
+    public void addMap(String rediskey, Map<String, String> value) {
+        redisTemplate.opsForHash().putAll(rediskey, value);
+    }
+
+    /**
+     * 向hashMap中添加一个键值对
+     *
+     * @param rediskey
+     * @param value
+     */
+    public void addMap(String rediskey, String key, Object value) {
+        redisTemplate.opsForHash().put(rediskey, key, value);
+    }
+
+    /**
+     * 根据key获取值
+     *
+     * @param rediskey
+     * @param key
+     */
+    public List<T> getMap(String rediskey, List<String> key, T clazz) {
+        return (List<T>) redisTemplate.opsForHash().multiGet(rediskey, key);
     }
 
 }

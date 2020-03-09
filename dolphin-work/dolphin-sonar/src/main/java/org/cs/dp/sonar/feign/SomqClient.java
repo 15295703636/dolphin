@@ -1,38 +1,35 @@
 package org.cs.dp.sonar.feign;
 
-import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.cs.dolphin.common.base.ReturnInfo;
-import org.cs.dolphin.common.base.SplitPageInfo;
-import org.cs.dolphin.common.jsonrpc.JsonRpcRsp;
 import org.cs.dp.sonar.api.feign.ISomqClient;
+import org.cs.dp.sonar.service.ISoBaioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-
 /**
- * 供radar服务中接收mq的回调
+ * 供radar服务中接收mq的回调 录播课
  */
+@Slf4j
 @RestController
 public class SomqClient implements ISomqClient {
 
+    @Autowired
+    private ISoBaioService iSoBaioService;
+
     @Override
-    @GetMapping(API_PREFIX+"/receivemsg")
+    @GetMapping(API_PREFIX + "/receivemsg")
     public ReturnInfo receiveMsg(@RequestParam String msg) {
-        System.out.println("bsms_keeplive = "+msg);
-        ReturnInfo returnInfo = new ReturnInfo();
-        JsonRpcRsp rsp = JsonRpcRsp.generateMsg(msg, HashMap.class);
-        //处理消息
-//        if( rsp.getError() != null)
-//        {
-//            returnInfo.setReturnCode(rsp.getError().getCode());
-//        }
-//        else
-//        {
-//            returnInfo.setReturnData(rsp.getResult());
-//        }
-        return returnInfo;
+        log.info("录播课入参：{}", msg);
+        return iSoBaioService.recordedBroadcastCourse(msg);
     }
+
+    @Override
+    public ReturnInfo keepalive(String msg,Integer type) {
+        log.info("设备心跳检测入参：{}:{}", type,msg);
+        return iSoBaioService.keepalive(msg,type);
+    }
+
 }

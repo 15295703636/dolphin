@@ -5,11 +5,11 @@ import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseDeviceEntity;
 
 /**
-* @ClassName ICourseDeviceService
-* @Description 日程-端管理接口
-* @Author LiuJT
-* @Date 2019-12-10 01:11:55
-**/
+ * @ClassName ICourseDeviceService
+ * @Description 日程-端管理接口
+ * @Author LiuJT
+ * @Date 2019-12-10 01:11:55
+ **/
 public interface ICourseDeviceService {
 
     ReturnInfo addCourseDevice(CourseDeviceAddReqBean param);
@@ -39,8 +39,10 @@ public interface ICourseDeviceService {
     ReturnInfo speak(CourseDeviceSpeakReqBean param);
 
     //开启直播
-    ReturnInfo startLiveStreaming(String course_id,String type);
+    ReturnInfo startLiveStreaming(String ysx_course_id, CourseSaveResBean courseSave,Integer org_id,Integer customer_id);
 
     //停止直播
-    ReturnInfo stopLiveStreaming(String course_id);
+    ReturnInfo stopLiveStreaming(String course_id, Integer type,Integer org_id,Integer customer_id);
+
+    ReturnInfo baioControl(BaioControlReqBean param);
 }

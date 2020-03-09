@@ -54,13 +54,19 @@
 
     <select id="checkAddInfo" parameterType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean"
             resultType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean">
-        select user_name,user_tel from super_user
+        select user_id,user_name,user_tel from super_user
         where
         <if test="user_id != null and user_id != ''">
             user_id != #{user_id,jdbcType=INTEGER} and
         </if>
         (user_name = #{user_name,jdbcType=VARCHAR}
-        or user_tel = #{user_tel,jdbcType=VARCHAR})
+        <if test="user_tel != null and user_tel !=''">
+            or user_tel = #{user_tel,jdbcType=VARCHAR}
+        </if>
+        <if test="user_email != null and user_email !=''">
+            or user_email = #{user_email,jdbcType=VARCHAR}
+        </if>
+        )
 
     </select>
 

@@ -13,4 +13,14 @@ public interface SonarMapper {
      * @return
      */
     ServerEntity getServerByType(@Param(value = "server_type") Integer server_type);
+
+    /**
+     * 根据组织查询设备
+     */
+    Integer getDeviceByOrg(@Param(value = "customer_id") Integer customer_id,@Param(value = "org_id")Integer org_id);
+
+    /**
+     * 根据组织查询流媒体服务
+     */
+    Integer getServerByOrg(@Param(value = "customer_id") Integer customer_id,@Param(value = "org_id")Integer org_id);
 }

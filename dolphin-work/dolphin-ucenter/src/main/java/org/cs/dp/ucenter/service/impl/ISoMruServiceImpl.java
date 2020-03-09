@@ -94,11 +94,48 @@ public class ISoMruServiceImpl implements ISoMruService {
             case DELETEUSER_NAME:
                 returnInfo = deleteUser(token, url, String.valueOf(obj));
                 break;
+            case ADDDEPT_NAME:
+                returnInfo = addDept(token, url, (RestDeptReq)obj);
+                break;
+            case UPDATEDEPT_NAME:
+                returnInfo = updateDept(token, url,null,(RestDeptReq)obj);
+                break;
+            case GETADDDEPTS_NAME:
+                returnInfo = getDepts(token, url);
+                break;
+            case DELETEADDDEPT_NAME:
+                returnInfo = deleteDept(token, url,String.valueOf(obj));
+                break;
             default:
                 returnInfo = new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "未查询到服务方法!");
         }
         log.info("云视讯：返回：{}——{}", method, JSONObject.toJSONString(returnInfo));
         return returnInfo;
+    }
+
+    @Override
+    public ReturnInfo addDept(String token, String url, RestDeptReq restDeptReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo updateDept(String token, String url, String deptId, RestDeptReq restDeptReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getDepts(String token, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getDept(String token, String deptId, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo deleteDept(String token, String url, String deptId) {
+        return null;
     }
 
     @Override

@@ -15,11 +15,20 @@ import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
 import org.cs.dolphin.common.exception.BaseException;
+import org.cs.dolphin.common.exception.MessageCode;
+import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
+import org.cs.dp.radar.api.entity.RestDept;
+import org.cs.dp.radar.api.entity.RestDeptReq;
+import org.cs.dp.radar.api.entity.RestError;
+import org.cs.dp.ucenter.domain.GetUserReqBean;
 import org.cs.dp.ucenter.domain.TreeNodeBean;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.cs.dp.ucenter.mapper.OrganizationMapper;
+import org.cs.dp.ucenter.mapper.SonarMapper;
+import org.cs.dp.ucenter.mapper.UserMapper;
 import org.cs.dp.ucenter.service.IOrganizationService;
+import org.cs.dp.ucenter.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,13 +52,44 @@ import java.util.List;
 public class IOrganizationServiceImpl implements IOrganizationService {
 
     @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private SonarMapper sonarMapper;
+    @Autowired
     private OrganizationMapper organizationMapper;
+    @Autowired
+    private ISoMruService iSoMruService;
 
     @Override
-    public ReturnInfo addOrg(OrganizationEntity param) {
-        param.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+    @Transactional(rollbackFor = {Exception.class, BaseException.class})
+    public ReturnInfo addOrg(OrganizationEntity param) throws BaseException {
+        if (null == param.getCustomer_id()) {
+            param.setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
+        }
+        param.setYsx_id(dealAddOrg(param));
         organizationMapper.insertSelective(param);
         return new ReturnInfo();
+    }
+
+    /**
+     * 调用云视讯添加组织接口
+     *
+     * @param param
+     */
+    private Long dealAddOrg(OrganizationEntity param) throws BaseException {
+        OrganizationEntity orgParam = new OrganizationEntity();
+        orgParam.setOrg_id(param.getOrg_preid());
+        OrganizationEntity organization = organizationMapper.getList(orgParam).get(0);
+        RestDeptReq restDeptReq = new RestDeptReq();
+        restDeptReq.setParentId(organization.getYsx_id());
+        restDeptReq.setFullName(param.getOrg_name());
+        restDeptReq.setShortName(param.getOrg_name());
+        ReturnInfo returnInfo = iSoMruService.getService(iSoMruService.ADDDEPT_NAME, ThreadLocalUserInfoUtil.get().getCustomer_id(), restDeptReq);
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            throw new BaseException("添加组织调用云视讯接口异常", GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        } else {
+            return ((RestDept) returnInfo.getReturnData()).getId();
+        }
     }
 
     @Override
@@ -67,9 +107,9 @@ public class IOrganizationServiceImpl implements IOrganizationService {
 
         if (null != treeNodeBean) {
             organizationMapper.deleteByPrimaryKey(null, ThreadLocalUserInfoUtil.get().getCustomer_id());
-            OrganizationEntity org = organizationMapper.getList(new OrganizationEntity(20)).get(0);
+            OrganizationEntity org = organizationMapper.getList(new OrganizationEntity(ThreadLocalUserInfoUtil.get().getCustomer_id())).get(0);
+            log.info("Excel遍历{}结果：{};", org.getOrg_id(), JSON.toJSONString(treeNodeBean));
             saveTreeOrg(Arrays.asList(treeNodeBean), org.getOrg_id());
-            log.info("Excel遍历结果：" + JSON.toJSONString(treeNodeBean));
         }
         return new ReturnInfo();
     }
@@ -166,17 +206,66 @@ public class IOrganizationServiceImpl implements IOrganizationService {
     }
 
     @Override
-    public ReturnInfo editOrg(OrganizationEntity param) {
+    public ReturnInfo editOrg(OrganizationEntity param) throws BaseException {
+        dealEditOrg(param);
         organizationMapper.updateByPrimaryKeySelective(param);
         return new ReturnInfo();
     }
 
+    private Long dealEditOrg(OrganizationEntity param) throws BaseException {
+        OrganizationEntity orgParam = new OrganizationEntity();
+        orgParam.setOrg_id(param.getOrg_preid());
+        OrganizationEntity organization = organizationMapper.getList(orgParam).get(0);
+        RestDeptReq restDeptReq = new RestDeptReq();
+        restDeptReq.setParentId(organization.getYsx_id());
+        restDeptReq.setFullName(param.getOrg_name());
+        restDeptReq.setShortName(param.getOrg_name());
+        ReturnInfo returnInfo = iSoMruService.getService(iSoMruService.ADDDEPT_NAME, ThreadLocalUserInfoUtil.get().getCustomer_id(), restDeptReq);
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            throw new BaseException("添加组织调用云视讯接口异常", GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        } else {
+            return ((RestDept) returnInfo.getReturnData()).getId();
+        }
+    }
+
     @Override
-    public ReturnInfo delOrg(List<Integer> id) {
-        List<Integer> childId =  organizationMapper.getChildIdByParentId(id.get(0));
+    public ReturnInfo delOrg(List<Integer> id) throws BaseException {
+        Integer customer_id = ThreadLocalUserInfoUtil.get().getCustomer_id();
+        if (0 < sonarMapper.getDeviceByOrg(customer_id, id.get(0))) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "该组织节点下存在设备!");
+        }
+
+        GetUserReqBean getUser = new GetUserReqBean();
+        getUser.setCustomer_id(customer_id);
+        getUser.setOrg_id(id.get(0));
+        if (userMapper.getUsersList(getUser).size() > 0) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "该组织节点下存在用户!");
+        }
+
+        if (0 < sonarMapper.getServerByOrg(customer_id, id.get(0))) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "该组织节点下存在流媒体服务!");
+        }
+
+        List<Integer> childId = organizationMapper.getChildIdByParentId(id.get(0));
         childId.add(id.get(0));
+
+        for (Integer orgId : childId) {
+            dealDelOrg(orgId);
+        }
         organizationMapper.deleteByPrimaryKey(childId, null);
         return new ReturnInfo();
+    }
+
+    private Long dealDelOrg(Integer orgId) throws BaseException {
+        OrganizationEntity orgParam = new OrganizationEntity();
+        orgParam.setOrg_id(orgId);
+        OrganizationEntity organization = organizationMapper.getList(orgParam).get(0);
+        ReturnInfo returnInfo = iSoMruService.getService(iSoMruService.DELETEADDDEPT_NAME, ThreadLocalUserInfoUtil.get().getCustomer_id(), organization.getYsx_id());
+        if (MessageCode.COMMON_SUCCEED_FLAG != returnInfo.getReturnCode()) {
+            throw new BaseException("删除组织调用云视讯接口异常", GetNameByCode.getNameByCode(((RestError) returnInfo.getReturnData()).getErrorCode()));
+        } else {
+            return ((RestDept) returnInfo.getReturnData()).getId();
+        }
     }
 
     @Override

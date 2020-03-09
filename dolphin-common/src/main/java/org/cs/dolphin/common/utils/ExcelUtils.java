@@ -27,4 +27,5 @@ public class ExcelUtils {
         response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
         EasyExcel.write(response.getOutputStream(), clazz).sheet(sheetName).doWrite(list);
     }
+
 }

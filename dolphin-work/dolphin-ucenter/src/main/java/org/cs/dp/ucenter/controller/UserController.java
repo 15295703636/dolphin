@@ -94,7 +94,7 @@ public class UserController {
 
     @PostMapping("upload")
     @ApiOperation(value = "导入用户列表", notes = "用户信息")
-    public ReturnInfo upload(MultipartFile file) throws IOException {
+    public ReturnInfo upload(MultipartFile file) throws IOException, BaseException {
         return iUserService.upload(file);
     }
 

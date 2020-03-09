@@ -35,5 +35,5 @@ public interface IUserService {
 
     ReturnInfo getUsersList(RequestPage<SplitPageInfo, GetUserReqBean> param);
 
-    ReturnInfo upload(MultipartFile file) throws IOException;
+    ReturnInfo upload(MultipartFile file) throws IOException, BaseException;
 }

@@ -48,7 +48,7 @@ public class ICourseHistoryDeviceServiceImpl implements ICourseHistoryDeviceServ
     public ReturnInfo getCourseHistoryDevice(RequestPage<SplitPageInfo, Object> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<CourseHistoryDeviceEntity> resList = null;//TODO 分页sql要自己实现 courseHistoryDeviceMapper.selectByObj(new HashMap());
+        List<CourseHistoryDeviceEntity> resList = null;//分页sql要自己实现 courseHistoryDeviceMapper.selectByObj(new HashMap());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

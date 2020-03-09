@@ -11,6 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ISomqClient {
     String API_PREFIX = "/somq";
 
-    @GetMapping(API_PREFIX+"/receivemsg")
+    @GetMapping(API_PREFIX + "/receivemsg")
     ReturnInfo receiveMsg(@RequestParam(name = "msg") String msg);
+
+    /**
+     * @param msg
+     * @param type 1终端 2流媒体
+     * @return
+     */
+    @GetMapping(API_PREFIX + "/keepalive")
+    ReturnInfo keepalive(@RequestParam(name = "msg") String msg, @RequestParam(name = "type") Integer type);
 }

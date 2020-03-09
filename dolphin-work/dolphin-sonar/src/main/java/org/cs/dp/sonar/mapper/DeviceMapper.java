@@ -1,6 +1,7 @@
 package org.cs.dp.sonar.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.cs.dp.sonar.domain.DeviceServerBean;
 import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
 
@@ -11,11 +12,16 @@ import java.util.List;
 
 @Mapper
 public interface DeviceMapper {
+
+    DeviceServerBean getInfoByNum(String device_serial_number);
+
     int deleteByPrimaryKey(@Param(value = "device_id") List<Integer> device_id);
 
     int insertSelective(DeviceEntity record);
 
     List<DeviceEntity> selectByPrimaryKey(@Param(value = "ids") List<Integer> ids);
+
+    List<DeviceEntity> selectByYsxId(@Param(value = "ids") List<Integer> ids);
 
     //
     List<UserEntity> selectUserById(@Param(value = "ids") List<Integer> ids);
@@ -23,5 +29,7 @@ public interface DeviceMapper {
     List<DeviceEntity> selectByCondition(GetDeviceBean param);
 
     int updateByPrimaryKeySelective(DeviceEntity record);
+
+    int updateStateByNum(Integer state ,String num);
 
 }

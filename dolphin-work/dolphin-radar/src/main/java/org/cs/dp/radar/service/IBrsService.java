@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IBrsService {
     ReturnInfo sendmsg(String msg, String method);
     ReturnInfo sendmsgtopic(String msg, String method,String queue);
-    ReturnInfo recMsgFromBrs1(String msg);
+    ReturnInfo keepalive(String msg);
     ReturnInfo recMsgFromBrs2(String msg);
     ReturnInfo login( BssTaskReq bssTaskReq,  String queue);
 

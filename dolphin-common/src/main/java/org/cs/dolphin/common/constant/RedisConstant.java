@@ -12,6 +12,14 @@ public class RedisConstant {
      */
     public static final String USER_TOKEN_PATH = "user:token:";
     /**
+     * 设备/端状态心跳检测存储路径
+     */
+    public static final String DEVICE_KEEPALIVE_PATH = "state:device";
+    /**
+     * 流媒体状态心跳检测存储路径
+     */
+    public static final String BRS_KEEPALIVE_PATH = "state:brs";
+    /**
      * websocket
      */
     public static final String WEB_SOCKET_PATH = "web:socket:";

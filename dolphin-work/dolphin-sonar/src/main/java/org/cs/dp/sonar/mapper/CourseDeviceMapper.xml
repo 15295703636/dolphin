@@ -11,6 +11,29 @@
     <sql id="Base_Column_List">
     id, course_id, device_id,type,state
   </sql>
+    <select id="selectByName" resultType="org.cs.dp.sonar.domain.CourseResBean">
+        SELECT
+        cd.id,
+        cd.device_id,
+        cd.device_type as isDevice,
+        cd.state,
+        cd.type as isMain,
+        d.name,
+        d.ysx_id,
+        d.device_type as type,
+        u.user_id,
+        u.role_id,
+        u.user_qname,
+        u.user_name
+        FROM course_device cd
+        LEFT JOIN device d ON cd.device_id = d.device_id
+        LEFT JOIN user u ON cd.device_id = u.user_id
+        where course_id = #{id,jdbcType=INTEGER}
+        <if test="name !=null and name !=''">
+            AND (d.name LIKE CONCAT('%',#{name},'%') OR u.user_name LIKE CONCAT('%',#{name},'%'))
+        </if>
+    </select>
+
     <select id="selectByCourseId" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.CourseResBean">
         SELECT
             cd.id,

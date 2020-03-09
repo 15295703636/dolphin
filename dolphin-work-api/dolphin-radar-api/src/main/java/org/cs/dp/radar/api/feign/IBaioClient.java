@@ -15,5 +15,5 @@ public interface IBaioClient {
 
 
     @GetMapping(API_PREFIX + "/sendmsg")
-    ReturnInfo sendmsg(@RequestParam(name = "msg") String msg, @RequestParam(name = "method") String method);
+    ReturnInfo sendmsg(@RequestParam(name = "msg") String msg,@RequestParam(name = "queue") String queue);
 }

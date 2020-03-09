@@ -48,6 +48,12 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
         return new ReturnInfo();
     }
 
+    /**
+     * TODO 到redis中查询状态
+     *
+     * @param param
+     * @return
+     */
     @Override
     public ReturnInfo getCustomerServer(RequestPage<SplitPageInfo, Integer> param) {
         SplitPageInfo splitPageInfo = param.getPage();
@@ -61,16 +67,20 @@ public class ICustomerServerServiceImpl implements ICustomerServerService {
 
     /**
      * 根据当前用户信息查询流媒体信息
+     *
      * @return 流媒体序列号，流媒体服务地址
      */
     @Override
-    public String[] getCustomerServerByUserInfo() {
+    public String[] getCustomerServerByUserInfo(Integer org_id, Integer customer_id) {
         String res[] = new String[2];
+        if (null != ThreadLocalUserInfoUtil.get()) {
+            org_id = ThreadLocalUserInfoUtil.get().getOrg_id();
+            customer_id = ThreadLocalUserInfoUtil.get().getCustomer_id();
+        }
         //查询流媒体地址
         //1.先查询当前节点及父节点是否存在流媒体服务
         //2.如果没有查询公共流媒体服务
-        List<CustomerServerEntity> customerServers = customerServerMapper.selectByOrgIdUp(ThreadLocalUserInfoUtil.get().getOrg_id(),
-                ThreadLocalUserInfoUtil.get().getCustomer_id());
+        List<CustomerServerEntity> customerServers = customerServerMapper.selectByOrgIdUp(org_id, customer_id);
         if (0 < customerServers.size()) {
             res[0] = customerServers.get(0).getSerial_number();
             res[1] = customerServers.get(0).getServer_ip();

@@ -15,4 +15,10 @@ public class CourseEndReqBean {
     private Integer course_id;
     @ApiModelProperty(value = "云视讯会议id")
     private Long ysx_id;
+
+    @ApiModelProperty(value = "组织Id",hidden = true)
+    private Integer org_id;
+
+    @ApiModelProperty(value = "租户ID",hidden = true)
+    private Integer customer_id;
 }

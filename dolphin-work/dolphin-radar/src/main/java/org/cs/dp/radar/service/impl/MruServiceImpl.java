@@ -220,7 +220,7 @@ public class MruServiceImpl implements IMruService {
     @Override
     public ReturnInfo setPeerLayout(String confId, String peerId, String token, String url, RestPartyLayout restPartyLayout) {
         String strParam = JSON.toJSONString(restPartyLayout);
-        strParam = strParam.replace("personal","isPersonal");
+        strParam = strParam.replace("personal", "isPersonal");
         ResponseEntity<Object> resp = restful(strParam, "http://" + url + "/api/rest/v2.0/ongoingConferences/" + confId + "/parties/" + peerId + "/control/setLayout?token=" + token, HttpMethod.PUT);
         if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
             log.error("login error,error=" + resp.getBody().toString());
@@ -322,6 +322,56 @@ public class MruServiceImpl implements IMruService {
     @Override
     public ReturnInfo deleteUser(String token, String url, String userId) {
         ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/org/users/" + userId + "?token=" + token, HttpMethod.DELETE);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo addDept(String token, String url, RestDeptReq restDeptReq) {
+        ResponseEntity<Object> resp = restful(restDeptReq, "http://" + url + "/api/rest/v2.0/depts?token=" + token, HttpMethod.POST);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo updateDept(String token, String url, String deptId, RestDeptReq restDeptReq) {
+        ResponseEntity<Object> resp = restful(restDeptReq, "http://" + url + "/api/rest/v2.0/depts/" + deptId + "?token=" + token, HttpMethod.PUT);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo getDepts(String token, String url) {
+        ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/depts?token=" + token, HttpMethod.GET);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo getDept(String token, String deptId, String url) {
+        ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/depts/" + deptId + "?token=" + token, HttpMethod.GET);
+        if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
+            log.error("login error,error=" + resp.getBody().toString());
+            return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());
+        }
+        return ReturnInfo.ok(resp.getBody());
+    }
+
+    @Override
+    public ReturnInfo deleteDept(String token, String url, String deptId) {
+        ResponseEntity<Object> resp = restful(null, "http://" + url + "/api/rest/v2.0/depts/" + deptId + "?token=" + token, HttpMethod.DELETE);
         if (200 > resp.getStatusCodeValue() || resp.getStatusCodeValue() > 206) {
             log.error("login error,error=" + resp.getBody().toString());
             return new ReturnInfo(MessageCode.COMMON_FAILURE_FLAG, "mru error", resp.getBody());

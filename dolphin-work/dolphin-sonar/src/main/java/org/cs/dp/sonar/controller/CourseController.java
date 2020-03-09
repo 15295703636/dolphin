@@ -9,6 +9,7 @@ import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.sonar.domain.CourseEndReqBean;
 import org.cs.dp.sonar.domain.CourseGetByIdResBean;
 import org.cs.dp.sonar.domain.GetCourseReqBean;
+import org.cs.dp.sonar.domain.GetDeviceByNameStateReqBean;
 import org.cs.dp.sonar.service.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +54,12 @@ public class CourseController {
     @ApiOperation(value = "查询日程ID查询教学列表数据", notes = "进行中日程管理")
     public ReturnInfo<CourseGetByIdResBean> getById(@RequestBody Map<String, Integer> param) {
         return iCourseService.getById(param.get("id"));
+    }
+
+    @PostMapping("getDeviceByNameState")
+    @ApiOperation(value = "根据端名称，状态筛选", notes = "进行中日程管理")
+    public ReturnInfo<CourseGetByIdResBean> getDeviceByNameState(@RequestBody GetDeviceByNameStateReqBean param) {
+        return iCourseService.getDeviceByNameState(param);
     }
 
     /*@PostMapping("liveBro")

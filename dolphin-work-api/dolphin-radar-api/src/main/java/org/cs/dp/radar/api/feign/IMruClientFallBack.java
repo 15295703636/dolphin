@@ -153,4 +153,29 @@ public class IMruClientFallBack implements IMruClient {
     public ReturnInfo deleteUser(String token, String url, String userId) {
         return null;
     }
+
+    @Override
+    public ReturnInfo addDept(String token, String url, RestDeptReq restDeptReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo updateDept(String token, String url, String userId, RestDeptReq restDeptReq) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getDepts(String token, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo getDept(String token, String deptId, String url) {
+        return null;
+    }
+
+    @Override
+    public ReturnInfo deleteDept(String token, String url, String deptId) {
+        return null;
+    }
 }

@@ -2,62 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.UserApplyMapper">
     <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
-        <constructor>
-            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
-            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="apply_result" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-        </constructor>
-    </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.UserApplyEntity">
-        <constructor>
-            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
-            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
-            <arg column="apply_result" javaType="java.lang.Integer" jdbcType="INTEGER"/>
-            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
-            <arg column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
-        </constructor>
+        <id column="user_id" property="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="user_name" property="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="user_qname" property="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="user_pwd" property="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="user_email" property="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="role_id" property="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="org_id" property="org_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="user_statu" property="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        <result column="user_number" property="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="user_tel" property="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="user_code" property="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="apply_result" property="apply_result" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="create_time" property="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="apply_time" property="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="org_name" property="org_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
+    user_id, user_name, user_qname, user_pwd, user_email, role_id,org_id, user_statu, user_number,
     user_tel, user_code, apply_result, create_time, apply_time
   </sql>
     <sql id="Blob_Column_List">
     user_desc
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
         from user_apply
         where user_id = #{user_id,jdbcType=INTEGER}
     </select>
 
-    <select id="selectAll" resultMap="ResultMapWithBLOBs"  parameterType="java.lang.Integer">
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
-        from user_apply where 1=1
+        user_id, user_name, user_qname, user_pwd, user_email, role_id,ua.org_id, user_statu, user_number,
+        user_tel, user_code, apply_result, ua.create_time, apply_time,org.org_name
+        from user_apply ua LEFT JOIN organization org on ua.org_id = org.org_id
+         where (ua.org_id in(SELECT org_id from organization where  customer_id = #{customer_id}))
         <if test="apply_result != null">
             and apply_result = #{apply_result,jdbcType=INTEGER}
         </if>
@@ -88,6 +68,9 @@
             </if>
             <if test="role_id != null">
                 role_id,
+            </if>
+            <if test="org_id != null">
+                org_id,
             </if>
             <if test="user_statu != null">
                 user_statu,
@@ -132,6 +115,9 @@
             </if>
             <if test="role_id != null">
                 #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="org_id != null">
+                #{org_id,jdbcType=INTEGER},
             </if>
             <if test="user_statu != null">
                 #{user_statu,jdbcType=BIT},

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
 * @ClassName UserApplyController
 * @Description 账号申请
@@ -46,7 +48,7 @@ public class UserApplyController {
 
     @PostMapping("get")
     @ApiOperation(value = "查询账号申请", notes = "账号申请")
-    public ReturnInfo getUserApply(@RequestBody RequestPage<SplitPageInfo, Integer> param){
+    public ReturnInfo<List<UserApplyEntity>> getUserApply(@RequestBody RequestPage<SplitPageInfo, Integer> param){
         return iUserApplyService.getUserApply(param);
     }
 }

@@ -5,7 +5,7 @@ import org.cs.dp.radar.api.entity.RestPartyReq;
 
 /**
  * @ClassName RestPartyReqBean
- * @Description TODO
+ * @Description
  * @Author Liujt
  * @Date 2020/2/25 11:54
  **/

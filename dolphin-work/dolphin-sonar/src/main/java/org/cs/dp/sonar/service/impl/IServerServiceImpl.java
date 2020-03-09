@@ -56,7 +56,7 @@ public class IServerServiceImpl implements IServerService {
     public ReturnInfo getServer(RequestPage<SplitPageInfo, Object> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<ServerEntity> resList = null;//TODO 分页sql要自己实现 serverMapper.selectByObj(new HashMap());
+        List<ServerEntity> resList = null;// 分页sql要自己实现 serverMapper.selectByObj(new HashMap());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);

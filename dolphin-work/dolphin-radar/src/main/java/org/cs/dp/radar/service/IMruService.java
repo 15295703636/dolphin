@@ -86,4 +86,17 @@ public interface IMruService {
     ReturnInfo deleteUser(String token, String url,
                           String userId);
 
+    ReturnInfo addDept(String token, String url,
+                       RestDeptReq restDeptReq);
+
+    ReturnInfo updateDept(String token, String url,
+                          String deptId, RestDeptReq restDeptReq);
+
+    ReturnInfo getDepts(String token, String url);
+
+    ReturnInfo getDept(String token, String deptId, String url);
+
+    ReturnInfo deleteDept(String token, String url,
+                          String deptId);
+
 }

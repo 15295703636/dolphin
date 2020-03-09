@@ -43,13 +43,13 @@ public class VideoDemandEntity {
     public VideoDemandEntity() {
     }
 
-    public VideoDemandEntity(String name, String teacher_name, Integer course_type, String duration, String mp4_url, String m3u8_url) {
+    public VideoDemandEntity(String name, String teacher_name, Integer course_type, String duration, String mp4_url, String m3u8_url, Integer customer_id) {
         this.name = name;
         this.teacher_name = teacher_name;
         this.course_type = course_type;
-        this.create_user = ThreadLocalUserInfoUtil.get().getUser_id();
+        this.create_user = null == ThreadLocalUserInfoUtil.get() ? 0 : ThreadLocalUserInfoUtil.get().getUser_id();
         this.duration = duration;
-        this.customer_id = ThreadLocalUserInfoUtil.get().getCustomer_id();
+        this.customer_id = null == customer_id ? ThreadLocalUserInfoUtil.get().getCustomer_id() : customer_id;
         this.mp4_url = mp4_url;
         this.m3u8_url = m3u8_url;
     }

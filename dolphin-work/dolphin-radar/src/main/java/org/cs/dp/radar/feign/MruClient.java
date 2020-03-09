@@ -213,4 +213,37 @@ public class MruClient implements IMruClient {
                                  @RequestParam String userId) {
         return iMruService.deleteUser(token, url, userId);
     }
+
+    @Override
+    @PostMapping(API_PREFIX + "/addDept")
+    public ReturnInfo addDept(String token, String url,
+                              RestDeptReq restDeptReq) {
+        return iMruService.addDept(token, url, restDeptReq);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX + "/updateDept")
+    public ReturnInfo updateDept(String token, String url,
+                                 String deptId, RestDeptReq restDeptReq) {
+        return iMruService.updateDept(token, url, deptId, restDeptReq);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX + "/getDepts")
+    public ReturnInfo getDepts(String token, String url) {
+        return iMruService.getDepts(token, url);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX + "/getDept")
+    public ReturnInfo getDept(String token, String deptId, String url) {
+        return iMruService.getDept(token, deptId, url);
+    }
+
+    @Override
+    @PostMapping(API_PREFIX + "/deleteDept")
+    public ReturnInfo deleteDept(String token, String url,
+                                 String deptId) {
+        return iMruService.deleteDept(token, url, deptId);
+    }
 }

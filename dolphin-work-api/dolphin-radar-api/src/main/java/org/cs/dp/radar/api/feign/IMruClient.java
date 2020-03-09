@@ -396,4 +396,22 @@ public interface IMruClient {
     @PostMapping(API_PREFIX + "/deleteUser")
     ReturnInfo deleteUser(@RequestParam(name = "token") String token, @RequestParam(name = "url") String url,
                           @RequestParam(name = "userId") String userId);
+
+    @PostMapping(API_PREFIX + "/addDept")
+    ReturnInfo addDept(@RequestParam(name = "token") String token, @RequestParam(name = "url") String url,
+                       @RequestBody RestDeptReq restDeptReq);
+
+    @PostMapping(API_PREFIX + "/updateDept")
+    ReturnInfo updateDept(@RequestParam(name = "token") String token, @RequestParam(name = "url") String url,
+                          @RequestParam(name = "deptId") String deptId, @RequestBody RestDeptReq restDeptReq);
+
+    @PostMapping(API_PREFIX + "/getDepts")
+    ReturnInfo getDepts(@RequestParam(name = "token") String token, @RequestParam(name = "url") String url);
+
+    @PostMapping(API_PREFIX + "/getDept")
+    ReturnInfo getDept(@RequestParam(name = "token") String token, @RequestParam(name = "deptId") String deptId, @RequestParam(name = "url") String url);
+
+    @PostMapping(API_PREFIX + "/deleteDept")
+    ReturnInfo deleteDept(@RequestParam(name = "token") String token, @RequestParam(name = "url") String url,
+                          @RequestParam(name = "deptId") String deptId);
 }

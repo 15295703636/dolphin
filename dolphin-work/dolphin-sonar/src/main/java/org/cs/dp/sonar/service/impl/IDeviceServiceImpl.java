@@ -6,12 +6,17 @@ import com.github.pagehelper.PageInfo;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.constant.RedisConstant;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dolphin.common.exception.MessageCode;
 import org.cs.dolphin.common.utils.GetNameByCode;
 import org.cs.dolphin.common.utils.ThreadLocalUserInfoUtil;
 import org.cs.dp.radar.api.entity.RestEndpoint;
 import org.cs.dp.radar.api.entity.RestEndpointReq;
 import org.cs.dp.radar.api.entity.RestError;
+import org.cs.dp.sonar.common.redis.RedisUtil;
+import org.cs.dp.sonar.domain.DeviceServerBean;
+import org.cs.dp.sonar.domain.DeviceStateBean;
 import org.cs.dp.sonar.domain.EndpointReqBean;
 import org.cs.dp.sonar.domain.GetDeviceBean;
 import org.cs.dp.sonar.domain.entity.DeviceEntity;
@@ -19,10 +24,11 @@ import org.cs.dp.sonar.mapper.DeviceMapper;
 import org.cs.dp.sonar.service.IDeviceService;
 import org.cs.dp.sonar.service.ISoMruService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName IDeviceServiceImpl
@@ -38,9 +44,20 @@ public class IDeviceServiceImpl implements IDeviceService {
     @Autowired
     private ISoMruService iSoMruService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Value("${device.timeOut}")
+    private Integer deviceTimeOut;
+
     @Override
     public ReturnInfo addDevice(DeviceEntity param) {
+        String checkRes = checkExits(param.getDevice_serial_number());
+        if (null != checkRes) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, checkRes);
+        }
         param.setCreate_user_id(ThreadLocalUserInfoUtil.get().getUser_id());
+
         Object ysxRes[] = dealAdd(param);
         if ((boolean) ysxRes[0]) {
             param.setYsx_id(((RestEndpoint) ysxRes[1]).getId());
@@ -50,6 +67,14 @@ public class IDeviceServiceImpl implements IDeviceService {
         }
         deviceMapper.insertSelective(param);
         return new ReturnInfo();
+    }
+
+    private String checkExits(String device_serial_number) {
+        DeviceServerBean deviceServer = deviceMapper.getInfoByNum(device_serial_number);
+        if (null != deviceServer) {
+            return "设备已存在";
+        }
+        return null;
     }
 
     /**
@@ -108,6 +133,10 @@ public class IDeviceServiceImpl implements IDeviceService {
 
     @Override
     public ReturnInfo editDevice(DeviceEntity param) {
+        DeviceServerBean deviceServer = deviceMapper.getInfoByNum(param.getDevice_serial_number());
+        if (!Objects.equals(deviceServer.getDevice_id(), param.getDevice_id())) {
+            return new ReturnInfo(MessageCode.COMMON_DATA_UNNORMAL, "设备已存在");
+        }
         Object ysxRes[] = dealEdit(param);
         if ((boolean) ysxRes[0]) {
             param.setYsx_id((Long) ysxRes[1]);
@@ -152,12 +181,29 @@ public class IDeviceServiceImpl implements IDeviceService {
 
     @Override
     public ReturnInfo getDevice(RequestPage<SplitPageInfo, GetDeviceBean> param) {
+
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
         param.getInfo().setCustomer_id(ThreadLocalUserInfoUtil.get().getCustomer_id());
         List<DeviceEntity> resList = deviceMapper.selectByCondition(param.getInfo());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
+
+        if (resList.size() > 0) {
+            List<String> deviceSn = new ArrayList<>();
+            resList.forEach(e -> deviceSn.add(e.getDevice_serial_number()));
+            List<DeviceStateBean> deviceStates = redisUtil.getMap(RedisConstant.DEVICE_KEEPALIVE_PATH, deviceSn, DeviceStateBean.class);
+            deviceStates = deviceStates.stream().filter(e -> null != e).collect(Collectors.toList());
+            Map<String, DeviceStateBean> deviceMap = deviceStates.stream().collect(Collectors.toMap(DeviceStateBean::getSn, a -> a, (k1, k2) -> k1));
+            resList.forEach(e -> {
+                DeviceStateBean deviceStateBean = deviceMap.get(e.getDevice_serial_number());
+                if (null == deviceStateBean || (new Date().getTime() - deviceStateBean.getDate()) > deviceTimeOut) {
+                    e.setDevice_state(2);
+                } else {
+                    e.setDevice_state(1 == deviceStateBean.getStatus() ? 1 : 2);
+                }
+            });
+        }
         return new ReturnInfo(splitPageInfo, resList);
 
     }

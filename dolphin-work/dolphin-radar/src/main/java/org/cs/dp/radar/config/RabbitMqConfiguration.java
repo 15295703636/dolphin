@@ -26,7 +26,7 @@ public class RabbitMqConfiguration {
      */
     @Bean
     public Queue topicQueue(){
-        return new Queue("topic.baio1");
+        return new Queue("baio_recorded_broadcast_course");
     }
 
     /**
@@ -34,7 +34,7 @@ public class RabbitMqConfiguration {
      */
     @Bean
     public Queue topicQueue2() {
-        return new Queue("topic.baio2");
+        return new Queue("baio_terminal_keepalive");
     }
 
     /**

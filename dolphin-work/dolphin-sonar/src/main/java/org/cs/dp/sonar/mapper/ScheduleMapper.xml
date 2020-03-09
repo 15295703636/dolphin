@@ -29,6 +29,28 @@
     create_user_id,teacher_name
   </sql>
 
+    <select id="selectByDeviceId" resultType="org.cs.dp.sonar.domain.ScheduleOneDeviceBean">
+        SELECT
+        sc.id,
+        sc.date,
+        sc.duration,
+        sc.type,
+        sc.org_id,
+        sc.create_time,
+        sc.teacher_name,
+        sc.user_id,
+        ( SELECT group_concat(d.`name` SEPARATOR ",") FROM device d WHERE d.device_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=0 and sd.state=2) ) AS device_names,
+        ( SELECT group_concat(u.user_name SEPARATOR ",") FROM user u WHERE u.user_id IN (SELECT device_id  FROM schedule_device sd WHERE sd.schedule_id = sc.id and sd.type=1 and sd.state=2)  ) AS user_names,
+        ( SELECT d.name FROM device d WHERE d.device_id = sc.device_id ) AS deviceName,
+        ( SELECT u.user_name FROM user u WHERE u.user_id = sc.user_id  ) AS userName
+        FROM schedule sc
+        WHERE sc.id IN (
+                SELECT sd.schedule_id
+                FROM schedule_device sd, device d
+                WHERE sd.device_id = d.device_id AND d.device_serial_number = #{sn}
+            )
+    </select>
+
     <select id="selectById" resultType="org.cs.dp.sonar.domain.ScheduleOneDeviceBean">
         SELECT
         sc.id,
@@ -140,6 +162,15 @@
             and date like CONCAT(#{param.date},'%')
         </if>
         order by create_time
+    </select>
+
+    <select id="selectByCustomerId" parameterType="org.cs.dp.sonar.domain.GetScheduleBean"
+            resultType="org.cs.dp.sonar.domain.ScheduleArrayBean">
+        SELECT <include refid="Base_Column_List"/> from schedule where org_id in
+        (select org_id from organization org where org.customer_id = #{param.customer_id})
+        <if test="param.date != null and param.date !='' and param.date != 'null'">
+            and date like CONCAT(#{param.date},'%')
+        </if>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

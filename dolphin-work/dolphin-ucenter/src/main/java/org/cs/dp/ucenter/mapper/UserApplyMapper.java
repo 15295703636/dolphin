@@ -12,7 +12,7 @@ public interface UserApplyMapper {
 
     UserApplyEntity selectByPrimaryKey(Integer user_id);
 
-    List<UserApplyEntity> selectAll(@Param(value = "apply_result") Integer apply_result);
+    List<UserApplyEntity> selectAll(@Param(value = "apply_result") Integer apply_result, @Param(value = "customer_id") Integer customer_id);
 
     int updateByPrimaryKeySelective(UserApplyEntity record);
 

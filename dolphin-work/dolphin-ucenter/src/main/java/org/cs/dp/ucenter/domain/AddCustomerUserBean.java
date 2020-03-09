@@ -24,6 +24,14 @@ public class AddCustomerUserBean {
     @ApiModelProperty(value = "用户密码")
     private String user_pwd;
 
+    @NotBlank(message = Constant.EMAIL_EMPTY_MSG)
+    @ApiModelProperty(value = "邮箱")
+    private String user_email;
+
+    @NotBlank(message = Constant.TEL_EMPTY_MSG)
+    @ApiModelProperty(value = "用户手机号")
+    private String user_tel;
+
     @ApiModelProperty(value = "组织ID", hidden = true)
     private Integer org_id;
 

@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @ApiModel(value = "日程历史表")
 public class CourseHistoryEntity {
@@ -20,6 +22,9 @@ public class CourseHistoryEntity {
 
     @ApiModelProperty(value = "时长")
     private String duration;
+
+    @ApiModelProperty(value = "时长")
+    private Long durationInt;
 
     @ApiModelProperty(value = "用户数量")
     private Integer user_number;
@@ -62,6 +67,9 @@ public class CourseHistoryEntity {
 
     @ApiModelProperty(value = "创建时间")
     private String createTime;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date create_time;
 
     @ApiModelProperty(value = "日程字体颜色")
     private String course_fontColor;

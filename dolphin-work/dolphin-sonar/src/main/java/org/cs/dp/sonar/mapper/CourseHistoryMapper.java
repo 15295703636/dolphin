@@ -1,14 +1,15 @@
 package org.cs.dp.sonar.mapper;
 
-import org.cs.dp.sonar.domain.AddGetIdBean;
-import org.cs.dp.sonar.domain.GetCourseHistoryReqBean;
-import org.cs.dp.sonar.domain.ScheduleArrayBean;
-import org.cs.dp.sonar.domain.ScheduleOneDeviceBean;
+import org.cs.dp.sonar.domain.*;
 import org.cs.dp.sonar.domain.entity.CourseHistoryEntity;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.cs.dp.sonar.domain.index.GetClaStaResBean;
+import org.cs.dp.sonar.domain.index.IndexCountReqBean;
+import org.cs.dp.sonar.domain.index.IndexCountDateResBean;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface CourseHistoryMapper {
@@ -29,4 +30,14 @@ public interface CourseHistoryMapper {
 
     int updateByPrimaryKeySelective(CourseHistoryEntity record);
 
+    //根据天维度分组
+    List<IndexCountDateResBean> getDate(IndexCountReqBean param);
+
+    //总数量，时长
+    Map getCount(IndexCountReqBean param);
+
+    //根据类型分组
+    List<IndexCountDateResBean> getType(IndexCountReqBean param);
+
+    GetClaStaResBean getClaSta(Integer customer_id);
 }

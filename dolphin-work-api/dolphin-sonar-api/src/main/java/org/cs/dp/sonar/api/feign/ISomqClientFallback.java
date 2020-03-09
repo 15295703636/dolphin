@@ -11,4 +11,9 @@ public class ISomqClientFallback implements ISomqClient {
     public ReturnInfo receiveMsg(String msg) {
         return null;
     }
+
+    @Override
+    public ReturnInfo keepalive(String msg, Integer type) {
+        return null;
+    }
 }

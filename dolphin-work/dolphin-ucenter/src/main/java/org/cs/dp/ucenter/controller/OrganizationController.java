@@ -6,6 +6,7 @@ import org.cs.dolphin.common.base.ParamValid;
 import org.cs.dolphin.common.base.RequestPage;
 import org.cs.dolphin.common.base.ReturnInfo;
 import org.cs.dolphin.common.base.SplitPageInfo;
+import org.cs.dolphin.common.exception.BaseException;
 import org.cs.dp.ucenter.domain.entity.OrganizationEntity;
 import org.cs.dp.ucenter.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class OrganizationController {
     @ParamValid
     @PostMapping("add")
     @ApiOperation(value = "添加组织信息", notes = "组织信息")
-    public ReturnInfo addOrg(@Valid @RequestBody OrganizationEntity param, BindingResult result) {
+    public ReturnInfo addOrg(@Valid @RequestBody OrganizationEntity param, BindingResult result) throws BaseException {
         return iOrganizationService.addOrg(param);
     }
 
@@ -54,13 +55,13 @@ public class OrganizationController {
 
     @PostMapping("edit")
     @ApiOperation(value = "编辑组织信息", notes = "组织信息")
-    public ReturnInfo editOrg(@RequestBody OrganizationEntity param) {
+    public ReturnInfo editOrg(@RequestBody OrganizationEntity param) throws BaseException {
         return iOrganizationService.editOrg(param);
     }
 
     @PostMapping("del")
     @ApiOperation(value = "删除组织信息", notes = "组织信息")
-    public ReturnInfo delOrg(@RequestBody List<Integer> id) {
+    public ReturnInfo delOrg(@RequestBody List<Integer> id) throws BaseException {
         return iOrganizationService.delOrg(id);
     }
 

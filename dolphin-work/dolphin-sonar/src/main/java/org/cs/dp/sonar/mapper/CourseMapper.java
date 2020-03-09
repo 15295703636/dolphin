@@ -16,7 +16,7 @@ public interface CourseMapper {
 
     int updateLiveState(@Param(value = "url") String url,
                         @Param(value = "uuid") String uuid,
-                        @Param(value = "ysx_id") Integer ysx_id);
+                        @Param(value = "course_id") Integer course_id);
 
     int insertSelective(CourseEntity record);
 
@@ -29,5 +29,17 @@ public interface CourseMapper {
     CourseEntity selectByIdYsxId(Long ysx_id);
 
     int updateByPrimaryKeySelective(CourseEntity record);
+
+    CourseEntity selectByDeviceId(Integer local_classroomId);
+
+    String selectDeviceSnByCourseId(Integer customer_id);
+
+    /**
+     * 首页显示 根据
+     *
+     * @param customer_id
+     * @return
+     */
+    List<CourseGetByIdResBean> selectByCustomerId(@Param(value = "customer_id") Integer customer_id, @Param(value = "type") Integer type);
 
 }

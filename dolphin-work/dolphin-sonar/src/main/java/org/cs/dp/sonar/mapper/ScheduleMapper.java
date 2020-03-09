@@ -18,7 +18,11 @@ public interface ScheduleMapper<T> {
 
     List<T> selectByCondition(@Param(value = "param") GetScheduleBean param);
 
+    List<T> selectByCustomerId(@Param(value = "param") GetScheduleBean param);
+
     ScheduleOneDeviceBean selectById(@Param(value = "id") Integer id);
+
+    List<ScheduleOneDeviceBean> selectByDeviceId(@Param(value = "sn") String sn);
 
     ScheduleOneDeviceBean getStartInfoById(@Param(value = "id") Integer id);
 

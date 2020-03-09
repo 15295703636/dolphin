@@ -21,7 +21,6 @@ public class AddUserBean extends UserEntity {
 
     @ExcelProperty(index = 3)
     @NotNull(message = Constant.ORG_ID_ISEMPTY_MSG)
-
     @ApiModelProperty(value = "组织ID")
     private Integer org_id;
 

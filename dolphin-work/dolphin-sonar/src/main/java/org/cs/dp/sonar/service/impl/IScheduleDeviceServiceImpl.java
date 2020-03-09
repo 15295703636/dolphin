@@ -48,7 +48,7 @@ public class IScheduleDeviceServiceImpl implements IScheduleDeviceService {
     public ReturnInfo getScheduleDevice(RequestPage<SplitPageInfo, Object> param) {
         SplitPageInfo splitPageInfo = param.getPage();
         PageHelper.startPage(splitPageInfo.getCurrPage(), splitPageInfo.getPerPageNum());
-        List<ScheduleDeviceEntity> resList = null;//TODO 分页sql要自己实现 scheduleDeviceMapper.selectByObj(new HashMap());
+        List<ScheduleDeviceEntity> resList = null;// 分页sql要自己实现 scheduleDeviceMapper.selectByObj(new HashMap());
         PageInfo p = new PageInfo(resList);
         splitPageInfo.setTotals((int) p.getTotal());
         return new ReturnInfo(splitPageInfo, resList);
