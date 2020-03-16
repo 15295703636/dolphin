@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/dolphin-common/dolphin-common.iml" filepath="$PROJECT_DIR$/dolphin-common/dolphin-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-gateway/dolphin-gateway.iml" filepath="$PROJECT_DIR$/dolphin-gateway/dolphin-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-oss/dolphin-oss.iml" filepath="$PROJECT_DIR$/dolphin-oss/dolphin-oss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work/dolphin-radar/dolphin-radar.iml" filepath="$PROJECT_DIR$/dolphin-work/dolphin-radar/dolphin-radar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work-api/dolphin-radar-api/dolphin-radar-api.iml" filepath="$PROJECT_DIR$/dolphin-work-api/dolphin-radar-api/dolphin-radar-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work/dolphin-sonar/dolphin-sonar.iml" filepath="$PROJECT_DIR$/dolphin-work/dolphin-sonar/dolphin-sonar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work-api/dolphin-sonar-api/dolphin-sonar-api.iml" filepath="$PROJECT_DIR$/dolphin-work-api/dolphin-sonar-api/dolphin-sonar-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work/dolphin-ucenter/dolphin-ucenter.iml" filepath="$PROJECT_DIR$/dolphin-work/dolphin-ucenter/dolphin-ucenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dolphin-work-api/dolphin-ucenter-api/dolphin-ucenter-api.iml" filepath="$PROJECT_DIR$/dolphin-work-api/dolphin-ucenter-api/dolphin-ucenter-api.iml" />
+    </modules>
+  </component>
+</project>
