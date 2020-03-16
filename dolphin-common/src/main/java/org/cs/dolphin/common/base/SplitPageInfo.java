@@ -1,11 +1,13 @@
 package org.cs.dolphin.common.base;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.cs.dolphin.common.utils.StringUtil;
 
 import java.io.Serializable;
 
-
+@ApiModel(value = "分页参数")
 public class SplitPageInfo implements Serializable {
     /**
      * 注释内容
@@ -15,42 +17,54 @@ public class SplitPageInfo implements Serializable {
     /**
      * 开始记录数
      */
+    @ApiModelProperty(value = "开始记录数",hidden = true)
     protected int beginNum = 0;
 
     /**
      * 结束记录数
      */
+    @ApiModelProperty(value = "结束记录数",hidden = true)
     protected int endNum;
 
     /**
      * 分页查询的URL
      */
+    @ApiModelProperty(value = "", hidden = true)
     private String queryURL;
 
     /**
      * 记录总数
      */
+    @ApiModelProperty(value = "记录总数(前端不传这个字段)", hidden = true)
     private int totals;
 
     /**
      * 每页显示记录数
      */
+    @ApiModelProperty(value = "每页显示记录数")
     private int perPageNum;
 
     /**
      * 总页数
      */
+    @ApiModelProperty(value = "总页数",hidden = true)
     private int allPage;
 
     /**
      * 当前页
      */
+    @ApiModelProperty(value = "当前页")
     private int currPage;
 
     /**
      * 构造
      */
     public SplitPageInfo() {
+    }
+
+    public SplitPageInfo(int perPageNum, int currPage) {
+        this.perPageNum = perPageNum;
+        this.currPage = currPage;
     }
 
     /**
@@ -89,7 +103,7 @@ public class SplitPageInfo implements Serializable {
      * @param aperpagenum int 每页记录数
      */
     public void setPerPageNum(int aperpagenum) {
-        this.perPageNum = aperpagenum;
+        this.perPageNum = aperpagenum == 0 ? 10 : aperpagenum;
     }
 
     /**
@@ -98,7 +112,7 @@ public class SplitPageInfo implements Serializable {
      * @return int 当前页码
      */
     public int getCurrPage() {
-        if (currPage == 0) {
+        if (currPage <= 0) {
             currPage = 1;
         }
         return currPage;

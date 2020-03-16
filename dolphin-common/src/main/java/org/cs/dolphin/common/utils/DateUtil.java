@@ -7,6 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DateUtil {
+
+    /**
+     * 年月日 时分秒
+     */
+    public static final String YMDHMS = "yyyy-MM-dd HH:mm:ss";
     /**
      * 年。
      */
@@ -674,6 +679,7 @@ public class DateUtil {
      */
     public static Date StringToDate(String dateStr, String formatStr) {
         DateFormat sdf = new SimpleDateFormat(formatStr);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         Date date = null;
         try {
             date = sdf.parse(dateStr);
@@ -948,16 +954,35 @@ public class DateUtil {
 
     }
 
-    public static void main(String[] args) {
-
-//		System.out.println(durationConvert("01:00:00"));
-        String[] sourceStrArray = "11112.22".split("\\.");
-        System.out.println(sourceStrArray[0]);
-//		for (int i = 0; i < sourceStrArray.length; i++) {
-//			System.out.println(sourceStrArray[i]);
-//		}
-
+    public static String secToTime(int time) {
+        if (time <= 0)
+            return "";
+        else {
+            String timeStr = null;
+            int hour = 0;
+            int minute = 0;
+            int second = 0;
+            minute = time / 60;
+            if (minute < 60) {
+                second = time % 60;
+                timeStr = unitFormat(minute) + ":" + unitFormat(second);
+            } else {
+                hour = minute / 60;
+                minute = minute % 60;
+                second = time - hour * 3600 - minute * 60;
+                timeStr = unitFormat(hour) + ":" + unitFormat(minute) + ":" + unitFormat(second);
+            }
+            return timeStr;
+        }
     }
 
+    private static String unitFormat(int i) {
+        String retStr = null;
+        if (i >= 0 && i < 10)
+            retStr = "0" + i;
+        else
+            retStr = "" + i;
+        return retStr;
+    }
 
 }

@@ -1,0 +1,32 @@
+server:
+  port: 9010 #提供者的端口
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: dolphin-radar
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server.ip}
+        prefix: dolphin-config
+      discovery:
+        server-addr: ${nacos.server.ip}
+  rabbitmq:
+    host: ${rabbit.server.ip}
+    port: ${rabbit.server.port}
+    username: guest
+    password: guest
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ribbon:
+  ConnectTimeout: 100000 # ribbon链接超时时长
+  ReadTimeout: 100000 # ribbon读取超时时间长

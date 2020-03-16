@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.CodeTableMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.ucenter.domain.entity.CodeTableEntity">
+        <constructor>
+            <idArg column="table_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="table_explain" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    table_name, table_explain
+  </sql>
+    <select id="selectByExplain" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from code_table
+        where 1=1
+        <if test="tableName != null">
+            and table_explain like CONCAT('%',#{tableName},'%')
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from code_table
+    where table_name = #{table_name,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="org.cs.dp.ucenter.domain.entity.CodeTableEntity">
+    insert into code_table (table_name, table_explain)
+    values (#{table_name,jdbcType=VARCHAR}, #{table_explain,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.CodeTableEntity">
+        insert into code_table
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="table_name != null">
+                table_name,
+            </if>
+            <if test="table_explain != null">
+                table_explain,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="table_name != null">
+                #{table_name,jdbcType=VARCHAR},
+            </if>
+            <if test="table_explain != null">
+                #{table_explain,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.CodeTableEntity">
+        update code_table
+        <set>
+            <if test="table_explain != null">
+                table_explain = #{table_explain,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where table_name = #{table_name,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.cs.dp.ucenter.domain.entity.CodeTableEntity">
+    update code_table
+    set table_explain = #{table_explain,jdbcType=VARCHAR}
+    where table_name = #{table_name,jdbcType=VARCHAR}
+  </update>
+</mapper>

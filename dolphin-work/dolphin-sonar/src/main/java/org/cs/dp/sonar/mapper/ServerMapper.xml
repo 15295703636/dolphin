@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.ServerMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.ServerEntity">
+        <constructor>
+            <idArg column="server_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="server_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="server_type" javaType="java.lang.Integer" jdbcType="VARCHAR"/>
+            <arg column="server_ip" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="server_port" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="server_nat_ip" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="server_nat_port" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="server_desc" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="serial_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    server_id, server_name, server_type, server_ip, server_port, server_nat_ip, server_nat_port, 
+    server_desc, serial_number
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from server
+        where server_id = #{server_id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from server
+        where 1=1
+        <if test='server_type != null'>
+            and server_type = #{server_type}
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from server
+    where server_id = #{server_id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.ServerEntity">
+        insert into server
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="server_id != null">
+                server_id,
+            </if>
+            <if test="server_name != null">
+                server_name,
+            </if>
+            <if test="server_type != null">
+                server_type,
+            </if>
+            <if test="server_ip != null">
+                server_ip,
+            </if>
+            <if test="server_port != null">
+                server_port,
+            </if>
+            <if test="server_nat_ip != null">
+                server_nat_ip,
+            </if>
+            <if test="server_nat_port != null">
+                server_nat_port,
+            </if>
+            <if test="server_desc != null">
+                server_desc,
+            </if>
+            <if test="serial_number != null">
+                serial_number,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="server_id != null">
+                #{server_id,jdbcType=INTEGER},
+            </if>
+            <if test="server_name != null">
+                #{server_name,jdbcType=VARCHAR},
+            </if>
+            <if test="server_type != null">
+                #{server_type,jdbcType=INTEGER},
+            </if>
+            <if test="server_ip != null">
+                #{server_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_port != null">
+                #{server_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_nat_ip != null">
+                #{server_nat_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_nat_port != null">
+                #{server_nat_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_desc != null">
+                #{server_desc,jdbcType=VARCHAR},
+            </if>
+            <if test="serial_number != null">
+                #{serial_number,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.ServerEntity">
+        update server
+        <set>
+            <if test="server_name != null">
+                server_name = #{server_name,jdbcType=VARCHAR},
+            </if>
+            <if test="server_type != null">
+                server_type = #{server_type,jdbcType=VARCHAR},
+            </if>
+            <if test="server_ip != null">
+                server_ip = #{server_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_port != null">
+                server_port = #{server_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_nat_ip != null">
+                server_nat_ip = #{server_nat_ip,jdbcType=VARCHAR},
+            </if>
+            <if test="server_nat_port != null">
+                server_nat_port = #{server_nat_port,jdbcType=INTEGER},
+            </if>
+            <if test="server_desc != null">
+                server_desc = #{server_desc,jdbcType=VARCHAR},
+            </if>
+            <if test="serial_number != null">
+                serial_number = #{serial_number,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where server_id = #{server_id,jdbcType=INTEGER}
+    </update>
+</mapper>

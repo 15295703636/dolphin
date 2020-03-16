@@ -13,6 +13,7 @@
     <modules>
         <module>dolphin-ucenter</module>
         <module>dolphin-sonar</module>
+        <module>dolphin-radar</module>
     </modules>
 
 

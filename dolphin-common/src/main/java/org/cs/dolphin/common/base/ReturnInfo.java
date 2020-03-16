@@ -8,7 +8,7 @@ import org.cs.dolphin.common.utils.StringUtil;
 import java.io.Serializable;
 import java.util.List;
 
-public class ReturnInfo implements Serializable {
+public class ReturnInfo<T> implements Serializable {
 
     // 定义jackson对象
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -20,7 +20,7 @@ public class ReturnInfo implements Serializable {
     private String msg;
 
     // 响应中的数据
-    private Object returnData;
+    private T returnData;
 
     private Object page;
 
@@ -40,17 +40,33 @@ public class ReturnInfo implements Serializable {
         returnCode = MessageCode.COMMON_SUCCEED_FLAG;
     }
 
+    public ReturnInfo(SplitPageInfo page,T dataList) {
+        this.page = page;
+        this.returnData = dataList;
+    }
+
+    /**
+     * 失败构造方法
+     * @param code
+     * @param msg
+     * @return
+     */
+    public ReturnInfo(long code, String msg) {
+        this.msg = msg;
+        returnCode = code;
+    }
+
     public static ReturnInfo build(long status, String msg) {
         return new ReturnInfo(status, msg, null);
     }
 
-    public ReturnInfo(long status, String msg, Object data) {
+    public ReturnInfo(long status, String msg, T data) {
         this.returnCode = status;
         this.msg = msg;
         this.returnData = data;
     }
 
-    public ReturnInfo(Object data) {
+    public ReturnInfo(T data) {
         this.returnCode = 1000;
         this.msg = "OK";
         this.returnData = data;
@@ -85,7 +101,7 @@ public class ReturnInfo implements Serializable {
         return returnData;
     }
 
-    public void setReturnData(Object returnData) {
+    public void setReturnData(T returnData) {
         this.returnData = returnData;
     }
 

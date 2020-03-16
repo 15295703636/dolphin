@@ -1,9 +1,288 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cs.dp.ucenter.mapper.UserMapper">
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.UserEntity">
+        <id column="user_id" property="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="user_name" column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_qname" column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_pwd" column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_email" column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="role_id" column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result property="user_statu" column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        <result property="user_number" column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_tel" column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_code" column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result property="user_desc" column="user_desc" javaType="java.lang.String" jdbcType="LONGVARCHAR"/>
+        <result property="ysx_id" column="ysx_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number,
+    user_tel, user_code,ysx_id
+  </sql>
+    <sql id="Blob_Column_List">
+    user_desc
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from user
+        where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
-    <select id="getList" resultType="org.cs.dp.ucenter.api.entity.User" parameterType="map">
-        select * from user
+    <select id="selectByUserName" parameterType="java.lang.String" resultType="org.cs.dolphin.common.base.UserInfo">
+       SELECT uo.*,org.customer_id,org.org_type ,org.org_preid FROM
+        (SELECT u.*, o.org_id FROM user u
+            LEFT JOIN user2org o ON u.user_id = o.user_id where user_name = #{userName,jdbcType=INTEGER}
+        ) uo
+        LEFT JOIN organization org ON org.org_id = uo.org_id
+    </select>
+
+    <select id="selectByUserNameEmailTel" resultMap="ResultMapWithBLOBs">
+       select * from user where (user_name=#{user_name} or user_email =#{user_email} or user_tel =#{user_tel})
+    </select>
+
+    <select id="getUserCount" resultType="org.cs.dp.ucenter.domain.UserCountBean">
+        SELECT u.role_id, count(1) cou
+        FROM USER u WHERE
+            user_id IN (
+                SELECT uo.user_id FROM organization org, user2org uo
+                WHERE org.org_id = uo.org_id AND org.customer_id = #{customer_id}
+            )
+        GROUP BY u.role_id
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from user
+        where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertSelectApply">
+        INSERT INTO user
+        (user_name,
+            user_qname,
+            user_pwd,
+            user_email,
+            role_id,
+            user_desc,
+            user_statu,
+            user_number,
+            user_tel,
+            user_code)
+            SELECT
+            user_name,
+            user_qname,
+            user_pwd,
+            user_email,
+            role_id,
+            user_desc,
+            user_statu,
+            user_number,
+            user_tel,
+            user_code
+         FROM user_apply ua where ua.user_id = #{user_id,jdbcType=INTEGER} and ua.user_name = #{user_name,jdbcType=VARCHAR}
+    </insert>
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="user_id"
+            parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="user_name != null">
+                user_name,
+            </if>
+            <if test="user_qname != null">
+                user_qname,
+            </if>
+            <if test="user_pwd != null">
+                user_pwd,
+            </if>
+            <if test="user_email != null">
+                user_email,
+            </if>
+            <if test="role_id != null">
+                role_id,
+            </if>
+            <if test="user_statu != null">
+                user_statu,
+            </if>
+            <if test="user_number != null">
+                user_number,
+            </if>
+            <if test="user_tel != null">
+                user_tel,
+            </if>
+            <if test="user_code != null">
+                user_code,
+            </if>
+            <if test="user_desc != null">
+                user_desc,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_name != null">
+                #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                #{user_code,jdbcType=VARCHAR},
+            </if>
+            <if test="user_desc != null">
+                #{user_desc,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.UserEntity">
+        update user
+        <set>
+            <if test="user_name != null">
+                user_name = #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                user_qname = #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                user_pwd = #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                user_email = #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                role_id = #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                user_statu = #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                user_number = #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                user_tel = #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                user_code = #{user_code,jdbcType=VARCHAR},
+            </if>
+            <if test="user_desc != null">
+                user_desc = #{user_desc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ysx_id !=null">
+                ysx_id = #{ysx_id,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where user_id = #{user_id,jdbcType=INTEGER}
+    </update>
+
+
+    <!--   <select id="getListByOrgId" parameterType="java.lang.Integer" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+           select u.user_id,
+                  u.user_name,
+                  u.user_qname,
+                  u.user_pwd,
+                  u.user_email,
+                  u.role_id,
+                  u.user_statu,
+                  u.user_number,
+                  u.user_tel,
+                  u.user_code,
+                  u.user_desc from user2org uo
+           LEFT JOIN USER u ON uo.user_id = u.user_id
+           WHERE
+           <![CDATA[
+               0<(SELECT uo.org_id FROM user2org uo WHERE uo.org_id = #{orgId} AND uo.user_id = #{userId} )
+           ]]>
+           and uo.org_id = #{orgId}
+       </select>-->
+
+    <!--1.先根据当前的组织id查询到所有子节点的组织id，
+    2.在关联组织用户关系表，查出用户id，
+    3.在关联用户表查询用户信息-->
+    <select id="getUsersList" resultType="org.cs.dp.ucenter.domain.GetUserListResBean">
+        SELECT
+        u.user_id,
+        u.user_name,
+        u.user_qname,
+        u.user_email,
+        u.role_id,
+        u.user_statu,
+        u.user_number,
+        u.user_tel,
+        u.user_code,
+        u.user_desc,
+        (select org_id from user2org u2o where u2o.user_id = u.user_id) org_id
+        FROM user u
+        where user_id in(
+        select user_id from user2org uo where uo.org_id in(
+        SELECT org_id FROM
+        ( SELECT t1.org_id,
+        IF (
+        find_in_set(org_preid, @pids) > 0,
+        @pids := concat(@pids, ',', org_id),
+        0
+        ) AS ischild
+        FROM ( SELECT org_id, org_preid
+        FROM organization t where t.customer_id=#{customer_id}
+        ORDER BY org_id, org_preid
+        ) t1, ( SELECT @pids := #{org_id} ) t2
+        ) t3
+        WHERE ischild != 0) or uo.org_id=#{org_id})
+        <if test='role_id != null and role_id == "1"'>
+            and u.role_id = 1
+        </if>
+        <if test='role_id != null and role_id != "1"'>
+            and u.role_id != 1
+        </if>
+        <if test="user_name != null and user_name != ''">
+            and (u.user_name like concat('%',#{user_name},'%') or
+                <if test='by_name_role == "1"'>
+                    and u.role_id = 1
+                </if>
+                <if test='by_name_role != "1"'>
+                    and u.role_id != 1
+                </if>
+            )
+        </if>
+    </select>
+
+
+    <select id="checkUserInfo" resultType="org.cs.dp.ucenter.domain.entity.UserEntity">
+        select user_name,user_tel from user
+        where
+        <if test="user_id != null ">
+            user_id != #{user_id,jdbcType=INTEGER} and
+        </if>
+        user_name = #{user_name,jdbcType=VARCHAR}
     </select>
 
 </mapper>

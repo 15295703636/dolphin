@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.CourseDeviceMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="course_id" property="course_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="device_id" property="device_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="type" property="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="state" property="state" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, course_id, device_id,type,state
+  </sql>
+    <select id="selectByName" resultType="org.cs.dp.sonar.domain.CourseResBean">
+        SELECT
+        cd.id,
+        cd.device_id,
+        cd.device_type as isDevice,
+        cd.state,
+        cd.type as isMain,
+        d.name,
+        d.ysx_id,
+        d.device_type as type,
+        u.user_id,
+        u.role_id,
+        u.user_qname,
+        u.user_name
+        FROM course_device cd
+        LEFT JOIN device d ON cd.device_id = d.device_id
+        LEFT JOIN user u ON cd.device_id = u.user_id
+        where course_id = #{id,jdbcType=INTEGER}
+        <if test="name !=null and name !=''">
+            AND (d.name LIKE CONCAT('%',#{name},'%') OR u.user_name LIKE CONCAT('%',#{name},'%'))
+        </if>
+    </select>
+
+    <select id="selectByCourseId" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.CourseResBean">
+        SELECT
+            cd.id,
+            cd.device_id,
+	        cd.device_type as isDevice,
+	        cd.state,
+	        cd.type as isMain,
+            d.name,
+            d.ysx_id,
+            d.device_type as type,
+            u.user_id,
+            u.role_id,
+            u.user_qname,
+            u.user_name
+        FROM
+            course_device cd
+        LEFT JOIN device d ON cd.device_id = d.device_id
+        LEFT JOIN user u ON cd.device_id = u.user_id
+        where course_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByCourseDeviceId" resultType="java.lang.Integer">
+        SELECT
+        device_id
+        FROM
+        course_device
+        where course_id = #{course_id,jdbcType=INTEGER} and device_type = 0
+        and device_id in
+        <foreach collection="device_ids" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectByCourseDeviceId2" resultMap="BaseResultMap">
+        SELECT
+        id, course_id, device_id,type,state
+        FROM
+        course_device
+        where course_id = #{course_id,jdbcType=INTEGER} and device_type = 0
+        and device_id not in
+        <foreach collection="device_ids" item="item" open="(" separator="," close=")">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectByScheduleId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_device where course_id = #{id}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from course_device where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByCourseId" parameterType="java.lang.Integer">
+        delete from course_device where course_id = #{id,jdbcType=INTEGER}
+     </delete>
+
+    <update id="updateType">
+        <if test="updateType == '1'.toString()">
+            update course_device set type=2 where course_id=#{course_id} and id != #{id}
+        </if>
+        <if test="updateType == '2'.toString()">
+            update course_device set type=1 where course_id=#{course_id} and id=#{id}
+        </if>
+    </update>
+
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into course_device (id, course_id, device_id,type,state) values
+        <foreach collection="param" item="list" separator=",">
+            (#{id,jdbcType=INTEGER}, #{course_id,jdbcType=INTEGER},
+            #{device_id,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{state,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <insert id="insertByScheduleId" parameterType="java.lang.Integer">
+        insert into course_device(course_id,device_id,device_type,type)
+            SELECT #{courseId}, device_id, type as device_type,state as type FROM schedule_device
+            WHERE schedule_id = #{scheduleId}
+    </insert>
+
+    <insert id="insertByHistoryId" parameterType="java.lang.Integer">
+        insert into course_device(course_id,device_id,device_type,type)
+            SELECT #{courseId}, device_id,device_type,type FROM course_history_device
+            WHERE course_id = #{scheduleId}
+    </insert>
+
+    <insert id="insertByDeviceId">
+        insert into course_device(course_id,device_id,device_type,type)
+        SELECT #{course_id}, device_id, 0 as device_type,2 as type FROM device
+        WHERE device_id in
+        <foreach collection="device_ids" item="device_id" open="(" separator="," close=")">
+            #{device_id}
+        </foreach>
+    </insert>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        insert into course_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="course_id != null">
+                course_id,
+            </if>
+            <if test="device_id != null">
+                device_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="course_id != null">
+                #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.CourseDeviceEntity">
+        update course_device
+        <set>
+            <if test="course_id != null">
+                course_id = #{course_id,jdbcType=INTEGER},
+            </if>
+            <if test="device_id != null">
+                device_id = #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

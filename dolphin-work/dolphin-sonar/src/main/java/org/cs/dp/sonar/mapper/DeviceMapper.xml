@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.sonar.mapper.DeviceMapper">
+    <resultMap id="BaseResultMap" type="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        <id column="device_id" jdbcType="INTEGER" property="device_id"/>
+        <result column="ysx_id" jdbcType="BIGINT" property="ysx_id"/>
+        <result column="ysx_info" jdbcType="VARCHAR" property="ysx_info"/>
+        <result column="org_id" jdbcType="INTEGER" property="org_id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="call_protocol" jdbcType="VARCHAR" property="call_protocol"/>
+        <result column="call_num" jdbcType="VARCHAR" property="VARCHAR"/>
+        <result column="sip" jdbcType="VARCHAR" property="sip"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="e_code" jdbcType="VARCHAR" property="e_code"/>
+        <result column="device_type" jdbcType="VARCHAR" property="device_type"/>
+        <result column="device_state" jdbcType="VARCHAR" property="device_state"/>
+        <result column="device_serial_number" jdbcType="VARCHAR" property="device_serial_number"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="create_time"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="create_user_id"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    device_id, ysx_id,ysx_info,org_id, name, call_protocol,call_num, sip, ip, e_code, device_type, device_state,
+    device_serial_number, create_time, create_user_id
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device
+        where device_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectByYsxId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from device
+        where ysx_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectUserById" parameterType="java.lang.Integer" resultType="org.cs.dp.sonar.domain.entity.UserEntity">
+        select
+        user_id, user_name, user_qname, user_email, role_id, user_desc, user_statu, user_number, user_tel, user_code,
+        create_time
+        from user where user_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </select>
+
+    <select id="selectByCondition" parameterType="org.cs.dp.sonar.domain.GetDeviceBean" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM device d WHERE (d.org_id IN (
+        SELECT org_id FROM ( SELECT
+        t1.org_id,
+        IF ( find_in_set(org_preid, @pids) > 0, @pids := concat(@pids, ',', org_id), 0 ) AS ischild
+        FROM ( SELECT org_id, org_preid FROM organization t WHERE t.customer_id =#{customer_id}
+        ORDER BY org_id, org_preid ) t1, (SELECT @pids := #{org_id}) t2 ) t3
+        WHERE ischild != 0 ) OR d.org_id = #{org_id})
+        <if test="id != null">
+            and id = #{id,jdbcType=INTEGER}
+        </if>
+        <if test="name != null">
+            and (
+            name like CONCAT('%',#{name},'%')
+            or
+            call_protocol in (select code_id from code where table_name = 'deviceAgreement' and code_name like
+            CONCAT('%',#{name},'%'))
+            or
+            device_type in (select code_id from code where table_name = 'deviceModel' and code_name like
+            CONCAT('%',#{name},'%'))
+            )
+        </if>
+        <if test="device_type != null">
+            and device_type = #{device_type,jdbcType=INTEGER}
+        </if>
+        <if test="device_state != null">
+            and device_state = #{device_state,jdbcType=INTEGER}
+        </if>
+        <if test="call_protocol != null">
+            and call_protocol = #{call_protocol,jdbcType=INTEGER}
+        </if>
+        <if test="device_serial_number != null">
+            and device_serial_number = #{device_serial_number}
+        </if>
+    </select>
+
+    <select id="getInfoByNum" resultType="org.cs.dp.sonar.domain.DeviceServerBean">
+        select
+            d.device_id, d.ysx_id,d.ysx_info,d.org_id, d.name, d.call_protocol,d.call_num,
+            d.sip, d.ip, d.e_code, d.device_type, d.device_state,
+            d.create_time, d.create_user_id,o.customer_id
+        from device d LEFT JOIN organization o on d.org_id=o.org_id
+        where device_serial_number = #{device_serial_number}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from device
+        where device_id in
+        <foreach collection="device_id" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        insert into device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="device_id != null">
+                device_id,
+            </if>
+            <if test="ysx_id != null">
+                ysx_id,
+            </if>
+            <if test="ysx_info != null">
+                ysx_info,
+            </if>
+            <if test="org_id != null">
+                org_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="call_protocol != null">
+                call_protocol,
+            </if>
+            <if test="sip != null">
+                sip,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="e_code != null">
+                e_code,
+            </if>
+            <if test="device_type != null">
+                device_type,
+            </if>
+            <if test="device_state != null">
+                device_state,
+            </if>
+            <if test="device_serial_number != null">
+                device_serial_number,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="create_user_id != null">
+                create_user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="device_id != null">
+                #{device_id,jdbcType=INTEGER},
+            </if>
+            <if test="ysx_id != null">
+                #{ysx_id,jdbcType=BIGINT},
+            </if>
+            <if test="ysx_info != null">
+                #{ysx_info,jdbcType=VARCHAR},
+            </if>
+            <if test="org_id != null">
+                #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="call_protocol != null">
+                #{call_protocol,jdbcType=VARCHAR},
+            </if>
+            <if test="sip != null">
+                #{sip,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="e_code != null">
+                #{e_code,jdbcType=VARCHAR},
+            </if>
+            <if test="device_type != null">
+                #{device_type,jdbcType=VARCHAR},
+            </if>
+            <if test="device_state != null">
+                #{device_state,jdbcType=VARCHAR},
+            </if>
+            <if test="device_serial_number != null">
+                #{device_serial_number,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="create_user_id != null">
+                #{create_user_id,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.sonar.domain.entity.DeviceEntity">
+        update device
+        <set>
+            <if test="org_id != null">
+                org_id = #{org_id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="call_protocol != null">
+                call_protocol = #{call_protocol,jdbcType=VARCHAR},
+            </if>
+            <if test="sip != null">
+                sip = #{sip,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="e_code != null">
+                e_code = #{e_code,jdbcType=VARCHAR},
+            </if>
+            <if test="device_type != null">
+                device_type = #{device_type,jdbcType=VARCHAR},
+            </if>
+            <if test="device_state != null">
+                device_state = #{device_state,jdbcType=VARCHAR},
+            </if>
+            <if test="device_serial_number != null">
+                device_serial_number = #{device_serial_number,jdbcType=VARCHAR},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="create_user_id != null">
+                create_user_id = #{create_user_id,jdbcType=INTEGER},
+            </if>
+        </set>
+        where device_id = #{device_id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateStateByNum">
+        update device set  device_state = #{state,jdbcType=INTEGER}
+        where device_serial_number = #{num,jdbcType=VARCHAR}
+    </update>
+</mapper>

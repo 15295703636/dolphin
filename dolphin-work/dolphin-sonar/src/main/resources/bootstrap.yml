@@ -1,0 +1,110 @@
+server:
+  port: 9006 #提供者的端口
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: dolphin-sonar
+  cloud:
+    nacos:
+      config:
+        server-addr: ${nacos.server.ip}
+        prefix: dolphin-config
+      discovery:
+        server-addr: ${nacos.server.ip}
+    sentinel:
+      transport:
+        dashboard: ${sentinel.server.ip}
+  zipkin:
+    base-url: ${zipkin.server.ip}
+    locator:
+      discovery:
+        enabled: true
+    discovery-client-enabled: false
+  datasource:
+    url: ${jdbc.url}
+    username: ${jdbc.username}
+    password: ${jdbc.password}
+    driver-class-name: ${jdbc.driverClass}
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+
+  redis:
+    isCluster: 2 #1是集群 2是单点
+    database: ${redis.database} #开始存储节点，一般默认为0
+    # Redis服务器地址
+    #----------单机配置(集群模式需要注释掉)----------#
+    host: ${redis.host} # Redis服务器地址
+    port: ${redis.port} # Redis服务端口
+    password: ${redis.password} #Redis服务器连接密码（默认为空）
+
+    jedis.pool.max-active: ${jedis.pool.max-active} #连接池最大连接数（使用负值表示没有限制）
+    jedis.pool.max-wait: ${jedis.pool.max-wait} # 连接池最大阻塞等待时间（使用负值表示没有限制）
+    jedis.pool.max-idle: ${jedis.pool.max-idle} # 连接池中的最大空闲连接
+    jedis.pool.min-idle: ${jedis.pool.min-idle} # 连接池中的最小空闲连接
+    timeout: ${redis.timeout} # 连接超时时间（毫秒）
+
+    #----------集群配置(单点模式需要注释掉)----------#
+    #cluster:
+    #  nodes: 127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6382,127.0.0.1:6383,127.0.0.1:6384 #集群节点
+    #  max-redirects: 3 #集群最大转发的数量
+    #lettuce:
+    #  pool:
+    #    max-active: 32 # 连接池最大连接数（使用负值表示没有限制）
+    #    min-idle: 8 # 连接池中的最大空闲连接
+    #    max-wait: 10000 #连接池最大阻塞等待时间（使用负值表示没有限制）
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+xxl:
+  job:
+    admin:
+      addresses: ${xxl.job.admin.addresses}
+    executor:
+      appname: xxl-job-executor-sonar
+      ip:
+      port: 9999
+      logpath: ${xxl.job.executor.logpath}
+      logretentiondays: ${xxl.job.executor.logretentiondays}
+    accessToken:
+    start: false
+  api:
+    add:
+      job:
+        url: /jobinfo/api/add
+
+thread:
+  corePoolSize: 10
+  maxPoolSize: 30
+  queueCapacity: 1000
+  waitFTTCOS: true
+  awaitTerminationSeconds: 60
+  threadNamePrefix: Sonar
+logging:
+  level:
+    com:
+      alibaba:
+        nacos:
+          client:
+            naming: error
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 20000
+        read-timeout: 20000

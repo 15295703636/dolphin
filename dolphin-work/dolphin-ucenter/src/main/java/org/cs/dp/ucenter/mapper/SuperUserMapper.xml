@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cs.dp.ucenter.mapper.SuperUserMapper">
+    <resultMap id="ResultMapWithBLOBs" type="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
+        <constructor>
+            <idArg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_qname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_pwd" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_email" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="role_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="user_statu" javaType="java.lang.Boolean" jdbcType="BIT"/>
+            <arg column="user_number" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_tel" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="user_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, user_name, user_qname, user_pwd, user_email, role_id, user_statu, user_number, 
+    user_tel, user_code,user_type,create_time
+  </sql>
+    <select id="selectManage" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from super_user
+        where user_type = 1
+        <if test="manageId != null">
+            and user_id = #{manageId,jdbcType=INTEGER}
+        </if>
+        <if test="user_name != null">
+            and (user_name like CONCAT('%',#{user_name},'%') or user_qname like CONCAT('%',#{user_name},'%'))
+        </if>
+    </select>
+
+    <select id="selectByUserId" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from super_user
+        where user_id = #{user_id,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByUserName" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from super_user
+        where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByUserNameCou" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from super_user where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="checkAddInfo" parameterType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean"
+            resultType="org.cs.dp.ucenter.domain.CheckAddInfoReqBean">
+        select user_id,user_name,user_tel from super_user
+        where
+        <if test="user_id != null and user_id != ''">
+            user_id != #{user_id,jdbcType=INTEGER} and
+        </if>
+        (user_name = #{user_name,jdbcType=VARCHAR}
+        <if test="user_tel != null and user_tel !=''">
+            or user_tel = #{user_tel,jdbcType=VARCHAR}
+        </if>
+        <if test="user_email != null and user_email !=''">
+            or user_email = #{user_email,jdbcType=VARCHAR}
+        </if>
+        )
+
+    </select>
+
+    <select id="getSuperUserByCusId" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM super_user su
+        WHERE su.user_id = (
+        SELECT c.manage_id FROM customer c WHERE c.id =#{customer_id}
+        )
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from super_user
+        where user_id in
+        <foreach collection="user_ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertSelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
+        insert into super_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="user_name != null">
+                user_name,
+            </if>
+            <if test="user_qname != null">
+                user_qname,
+            </if>
+            <if test="user_pwd != null">
+                user_pwd,
+            </if>
+            <if test="user_email != null">
+                user_email,
+            </if>
+            <if test="role_id != null">
+                role_id,
+            </if>
+            <if test="user_statu != null">
+                user_statu,
+            </if>
+            <if test="user_number != null">
+                user_number,
+            </if>
+            <if test="user_tel != null">
+                user_tel,
+            </if>
+            <if test="user_code != null">
+                user_code,
+            </if>
+            <if test="user_type != null">
+                user_type,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_name != null">
+                #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                #{user_code,jdbcType=VARCHAR},
+            </if>
+            <if test="user_type != null">
+                #{user_type,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.cs.dp.ucenter.domain.entity.SuperUserEntity">
+        update super_user
+        <set>
+            <if test="user_name != null">
+                user_name = #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_qname != null">
+                user_qname = #{user_qname,jdbcType=VARCHAR},
+            </if>
+            <if test="user_pwd != null">
+                user_pwd = #{user_pwd,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                user_email = #{user_email,jdbcType=VARCHAR},
+            </if>
+            <if test="role_id != null">
+                role_id = #{role_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_statu != null">
+                user_statu = #{user_statu,jdbcType=BIT},
+            </if>
+            <if test="user_number != null">
+                user_number = #{user_number,jdbcType=VARCHAR},
+            </if>
+            <if test="user_tel != null">
+                user_tel = #{user_tel,jdbcType=VARCHAR},
+            </if>
+            <if test="user_code != null">
+                user_code = #{user_code,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{user_id,jdbcType=INTEGER}
+    </update>
+</mapper>
